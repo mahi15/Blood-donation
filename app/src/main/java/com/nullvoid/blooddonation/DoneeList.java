@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -61,7 +60,6 @@ public class DoneeList extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     donee = postSnapshot.getValue(Donee.class);
-                    Log.d("TEST::", donee.getPatientName());
                     donees.add(donee);
                 }
                 DoneeAdapter doneeAdapter = new DoneeAdapter(donees);
