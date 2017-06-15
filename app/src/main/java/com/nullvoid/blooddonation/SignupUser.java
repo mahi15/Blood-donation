@@ -57,7 +57,7 @@ public class SignupUser extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-                startActivity(new Intent(SignupUser.this, LoginUser.class));
+                startActivity(new Intent(SignupUser.this, LoginActivity.class));
             }
         });
 
@@ -82,10 +82,10 @@ public class SignupUser extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Registering You..");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         // creates a user using email and password
-        showToast("Registering...");
         mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -121,6 +121,7 @@ public class SignupUser extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             //If user is added to database
                             showToast("Successfully Registered :)");
+                            finish();
 
                         } else {
                             //if it fails

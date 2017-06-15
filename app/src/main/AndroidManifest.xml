@@ -9,19 +9,35 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <uses-sdk android:minSdkVersion="11"/>
+
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".LoginActivity"
+            android:label="Blood Donation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginUser" android:label="Login"/>
-        <activity android:name=".SignupUser" android:label="Sign Up"/>
-        <activity android:name=".DonorRegistration" android:label="Donate Blood"/>
-        <activity android:name=".DoneeFrom" android:label="Request Blood" />
-        <activity android:name=".DoneeList" android:label="Donees" />
-
+        <activity
+            android:name=".SignupUser"
+            android:label="Sign Up" />
+        <activity
+            android:name=".DoneeFrom"
+            android:label="Request Blood" />
+        <activity
+            android:name=".DonorRegistration"
+            android:label="Donate Blood" />
+        <activity
+            android:name=".DonorListFragment"
+            android:label="Donors"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".AdminConsoleActivity"
+            android:label="Console"
+            android:theme="@style/AppThemeNoActionBar"/>
     </application>
 
 </manifest>

@@ -45,11 +45,11 @@
             android:orientation="horizontal"
             android:padding="20dp">
             <Button
-                android:id="@+id/btn_login"
+                android:id="@+id/btn_logout"
                 style="@style/dash_board_element"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Login" />
+                android:text="Logout" />
         </LinearLayout>
 
         <LinearLayout

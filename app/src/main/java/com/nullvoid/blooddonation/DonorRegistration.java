@@ -53,7 +53,7 @@ public class DonorRegistration extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.donor_registration);
+        setContentView(R.layout.donor_registration_layout);
 
         //Create all the view elements
         name = (EditText)findViewById(R.id.regName);
@@ -138,6 +138,7 @@ public class DonorRegistration extends AppCompatActivity {
     public void registerDonor(Donor donor){
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Sending Your Information..");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         mAuth = FirebaseAuth.getInstance();

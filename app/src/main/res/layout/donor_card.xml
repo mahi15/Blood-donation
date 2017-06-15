@@ -15,14 +15,14 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/donee_group"
+            android:id="@+id/donor_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:padding="5dp"
             android:text="AB+"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/green"
             android:textSize="36sp"
             android:textStyle="bold" />
 
@@ -40,15 +40,15 @@
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Required on : "
+                android:text="Age : "
                 android:textColor="#686868"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/req_date"
+                android:id="@+id/donor_age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20/3/1967"
+                android:text="19"
                 android:textColor="#000" />
         </LinearLayout>
 
@@ -66,12 +66,12 @@
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hospital Name : "
+                android:text="Location : "
                 android:textColor="#686868"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/hospital_name"
+                android:id="@+id/donor_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Kanchipuram"
@@ -115,15 +115,14 @@
                     android:id="@+id/textView12"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Required Time : "
+                    android:text="Gender : "
                     android:textColor="#686868"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/req_time"
+                    android:id="@+id/donor_gender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="00:00"
                     android:textColor="#000" />
             </LinearLayout>
 
@@ -141,12 +140,12 @@
                     android:id="@+id/textView13"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Patient Reference ID : "
+                    android:text="Date of Birth : "
                     android:textColor="#686868"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/patient_id"
+                    android:id="@+id/donor_dob"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="patient id"
@@ -167,12 +166,12 @@
                     android:id="@+id/textView14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Requester Name : "
+                    android:text="Last Donated On : "
                     android:textColor="#686868"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/requester_name"
+                    android:id="@+id/donation_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="good guy"
@@ -219,12 +218,12 @@
                     android:id="@+id/textView16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hospital Address : "
+                    android:text="Email : "
                     android:textColor="#686868"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/hospital_address"
+                    android:id="@+id/donor_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="no, road"
@@ -245,12 +244,12 @@
                     android:id="@+id/textView17"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hospital Ph Number : "
+                    android:text="Address : "
                     android:textColor="#686868"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/hospital_number"
+                    android:id="@+id/donor_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0000"
@@ -271,12 +270,12 @@
                     android:id="@+id/textView18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hospital PIN : "
+                    android:text="Pic Code : "
                     android:textColor="#686868"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/hospital_pin"
+                    android:id="@+id/donor_pin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Kanchipuram"
@@ -284,16 +283,16 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/select_donor"
+                android:id="@+id/choose_this_donor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp"
                 android:padding="5dp"
-                android:text="Select Donor"
+                android:text="Assign Donee"
                 android:textAlignment="viewEnd"
                 android:textAllCaps="true"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/green"
                 android:textStyle="bold" />
 
         </LinearLayout>

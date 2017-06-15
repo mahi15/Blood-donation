@@ -46,7 +46,7 @@ public class DoneeFrom extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.donee_from);
+        setContentView(R.layout.donee_request_layout);
 
         bloodGroupSpinner = (Spinner)findViewById(R.id.reqBloodGroup);
         bloodGroupArray = ArrayAdapter.createFromResource(this, R.array.blood_group, android.R.layout.simple_spinner_item);
@@ -103,6 +103,7 @@ public class DoneeFrom extends AppCompatActivity {
     public void registerDonee(Donee donee){
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Sending your Information...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         dbRef = FirebaseDatabase.getInstance();

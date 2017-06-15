@@ -12,24 +12,30 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button donateBlood, reqBlood, login, admin;
+    Button donateBlood, reqBlood, logout, admin;
     FirebaseAuth mAuth;
     FirebaseUser fbUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_layout);
 
         donateBlood = (Button) findViewById(R.id.btn_donate_blood);
         reqBlood = (Button) findViewById(R.id.btn_req_blood);
-        login = (Button) findViewById(R.id.btn_login);
+        logout = (Button) findViewById(R.id.btn_logout);
         admin = (Button) findViewById(R.id.admin);
 
-        login.setOnClickListener(new View.OnClickListener() {
+        mAuth = FirebaseAuth.getInstance();
+
+        logout.setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LoginUser.class));
+                mAuth.signOut();
+                showToast("Logging out..");
+                finish();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
             }
         });
 
@@ -40,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, DoneeFrom.class));
                 }else{
                     showToast("You Must Login First");
-                    startActivity(new Intent(MainActivity.this, LoginUser.class));
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 }
             }
         });
@@ -52,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, DonorRegistration.class));
                 }else{
                     showToast("You Must Login First");
-                    startActivity(new Intent(MainActivity.this, LoginUser.class));
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 }
             }
         });
@@ -60,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         admin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, DoneeList.class));
+                startActivity(new Intent(MainActivity.this, AdminConsoleActivity.class));
             }
         });
     }
@@ -72,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String checkLoginStatus(){
-        mAuth = FirebaseAuth.getInstance();
         fbUser = mAuth.getCurrentUser();
         if(fbUser != null){
             return fbUser.getUid();
