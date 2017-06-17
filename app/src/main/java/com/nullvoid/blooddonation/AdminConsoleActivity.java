@@ -2,6 +2,7 @@ package com.nullvoid.blooddonation;
 
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +19,6 @@ private ViewPager viewPager;
 private AdminPagerAdapter mAdapter;
 private ActionBar actionBar;
 // Tab titles
-private String[]tabs={"Top Rated","Games","Movies"};
 
 @Override
 protected void onCreate(Bundle savedInstanceState){
@@ -33,6 +33,16 @@ protected void onCreate(Bundle savedInstanceState){
         viewPager = (ViewPager)findViewById(R.id.pager);
         actionBar = getActionBar();
         mAdapter=new AdminPagerAdapter(getSupportFragmentManager(), getApplicationContext());
+
+        // Give the TabLayout the ViewPager
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+
+        // Iterate over all tabs and set the custom view
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            tab.setCustomView(mAdapter.getTabView(i));
+        }
 
         viewPager.setAdapter(mAdapter);
 

@@ -24,17 +24,17 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
     final Context context;
     boolean selectionMode;
 
-    public DonorAdapter(List<Donor> donors, Context context, boolean selectionMode) {
+    public DonorAdapter(List<Donor> donors, Context context) {
         this.donors = donors;
         this.context = context;
-        this.selectionMode = selectionMode;
+//        this.selectionMode = selectionMode;
     }
 
     @Override
     public DonorAdapter.DonorViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.donor_card, parent, false);
+                inflate(R.layout.donor_card_layout, parent, false);
         return new DonorAdapter.DonorViewHolder(itemView);
     }
 

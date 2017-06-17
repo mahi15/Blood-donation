@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="20dp"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp"
-    android:layout_marginTop="20dp"
     tools:context="com.nullvoid.blooddonation.DoneeFrom">
 
     <ScrollView
@@ -18,7 +14,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -28,7 +27,7 @@
                     android:id="@+id/reqName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Name"
+                    android:hint="Your Name"
                     android:inputType="textPersonName"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
@@ -51,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="Choose your blood group"
+                android:text="Choose required  blood group"
                 android:textAlignment="center"
                 android:textSize="18sp" />
 
@@ -73,21 +72,6 @@
                     android:ems="10"
                     android:hint="Required Date(dd/mm/yyyy)"
                     android:inputType="date"
-                    android:orientation="horizontal"
-                    android:textAlignment="center" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/reqNeededTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="Required Time(hh:mm)"
-                    android:inputType="time"
                     android:orientation="horizontal"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
@@ -119,6 +103,21 @@
                     android:ems="10"
                     android:hint="Patient Ref Nos ( OP ID, Room Nos etc )"
                     android:inputType="textPersonName"
+                    android:textAlignment="center" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/reqPatAttendantNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Patient's Attendant's Number"
+                    android:inputType="time"
+                    android:orientation="horizontal"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
 

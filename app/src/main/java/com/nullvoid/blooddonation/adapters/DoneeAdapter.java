@@ -35,9 +35,10 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
     public DoneeAdapter.DoneeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.donee_card, parent, false);
+                inflate(R.layout.donee_card_layout, parent, false);
         return new DoneeAdapter.DoneeViewHolder(itemView);
     }
+
 
     @Override
     public void onBindViewHolder(final DoneeAdapter.DoneeViewHolder holder, int position) {
@@ -46,7 +47,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         holder.phoneNumber.setText(donee.getPhoneNumber());
         holder.bloodGroup.setText(donee.getBloodGroup());
         holder.requDate.setText(donee.getReqDate());
-        holder.reqTime.setText(donee.getReqTime());
+        holder.reqTime.setText(donee.getPatientAttendantNumber());
         holder.patientName.setText(donee.getPatientName());
         holder.patientId.setText(donee.getPatientID());
         holder.hospitalName.setText(donee.getHospitalName());

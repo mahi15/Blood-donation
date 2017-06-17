@@ -4,8 +4,13 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.nullvoid.blooddonation.DoneeListFragment;
+import com.nullvoid.blooddonation.DonorListFragment;
+import com.nullvoid.blooddonation.R;
 
 /**
  * Created by sanath on 15/06/17.
@@ -25,8 +30,7 @@ public class AdminPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new DoneeListFragment();
             case 1:
-                //return new DonorListFragment();
-                return new DoneeListFragment();
+                return new DonorListFragment();
         }
         return null;
     }
@@ -35,6 +39,13 @@ public class AdminPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         // Show 2 total pages.
         return 2;
+    }
+
+    public View getTabView(int position) {
+        View tab = LayoutInflater.from(context).inflate(R.layout.tab_layout, null);
+        TextView tv = (TextView) tab.findViewById(R.id.custom_text);
+        tv.setText(getPageTitle(position));
+        return tab;
     }
 
     @Override

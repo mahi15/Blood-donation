@@ -55,7 +55,7 @@ public class DoneeFrom extends AppCompatActivity {
         name = (TextView)findViewById(R.id.reqName);
         phnumber = (TextView)findViewById(R.id.reqPhoneNumber);
         reqDate = (TextView)findViewById(R.id.reqNeededDate);
-        reqTime  = (TextView)findViewById(R.id.reqNeededTime);
+        reqTime  = (TextView)findViewById(R.id.reqPatAttendantNumber);
         pName  = (TextView)findViewById(R.id.reqPName);
         pId  = (TextView)findViewById(R.id.reqPId);
         hospitalName = (TextView)findViewById(R.id.reqHospitalName);
@@ -87,7 +87,7 @@ public class DoneeFrom extends AppCompatActivity {
                 donee.setPhoneNumber(dNumber);
                 donee.setBloodGroup(dBloodGroup);
                 donee.setReqDate(dRequiredDate);
-                donee.setReqTime(dRequiredTime);
+                donee.setPatientAttendantNumber(dRequiredTime);
                 donee.setPatientName(dPatietsName);
                 donee.setPatientID(dPatientRefNumber);
                 donee.setHospitalName(dHospitalName);

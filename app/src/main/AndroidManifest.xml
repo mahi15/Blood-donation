@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignupUser"
+            android:name=".UserSignupActivity"
             android:label="Sign Up" />
         <activity
             android:name=".DoneeFrom"

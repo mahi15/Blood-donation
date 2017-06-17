@@ -3,10 +3,12 @@ package com.nullvoid.blooddonation;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,18 +23,14 @@ import com.nullvoid.blooddonation.beans.Donor;
 import java.util.ArrayList;
 import java.util.List;
 
-//import android.support.v7.app.ActionBar;
-//our current action bar
-
 /**
  * Created by sanath on 13/06/17.
  */
 
-public class DonorListFragment extends AppCompatActivity {
+public class DonorListFragment extends Fragment {
 
     RecyclerView recyclerView;
     LinearLayoutManager llm;
-
     ProgressDialog progressDialog;
 
     boolean selectionMode = false;
@@ -43,25 +41,19 @@ public class DonorListFragment extends AppCompatActivity {
 
     List<Donor> donors;
 
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.list_view);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.list_view_layout, container, false);
 
-        setMode();
 
-        recyclerView = (RecyclerView) findViewById(R.id.cardList);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
         recyclerView.setHasFixedSize(true);
-        llm = new LinearLayoutManager(this);
+        llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
         donors = new ArrayList<Donor>();
-
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Retriving Donors..");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
 
         db = FirebaseDatabase.getInstance().getReference("donors");
         db.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -71,26 +63,24 @@ public class DonorListFragment extends AppCompatActivity {
                     Donor donor = postSnapshot.getValue(Donor.class);
                     donors.add(donor);
                 }
-                DonorAdapter donorAdapter = new DonorAdapter(donors, DonorListFragment.this, selectionMode);
+                DonorAdapter donorAdapter = new DonorAdapter(donors, getActivity());
                 recyclerView.setAdapter(donorAdapter);
-                progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 progressDialog.dismiss();
-                Toast.makeText(getApplicationContext(), "Something went wrong :(", Toast.LENGTH_SHORT).show();
             }
         });
+        return rootView;
     }
-
-    public void setMode(){
-
-        if(getIntent().getExtras() == null){
-            selectionMode = false;
-        }else if(getIntent().getExtras().getString("from").equals("doneepage")){
-            selectionMode = true;
-        }
-    }
+//
+//    public void setMode(){
+//        if(getIntent().getExtras() == null){
+//            selectionMode = false;
+//        }else if(getIntent().getExtras().getString("from").equals("doneepage")){
+//            selectionMode = true;
+//        }
+//    }
 }
 

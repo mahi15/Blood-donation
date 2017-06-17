@@ -44,18 +44,20 @@ public class LoginActivity extends AppCompatActivity {
         checkLoginStatus();
 
         loginButton = (Button) findViewById(R.id.login_button);
-        email = (EditText) findViewById(R.id.l_email);
-        password = (EditText) findViewById(R.id.l_password);
         forgotPassword = (TextView) findViewById(R.id.forgot_pass);
         registerLink = (TextView) findViewById(R.id.register_link);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 pd = new ProgressDialog(LoginActivity.this);
                 pd.setMessage("Logging In..");
                 pd.setCancelable(false);
                 pd.show();
+
+                email = (EditText) findViewById(R.id.l_email);  // Get the user data
+                password = (EditText) findViewById(R.id.l_password);
 
                 userEmail = email.getText().toString().trim();
                 userPassword = password.getText().toString().trim();
@@ -70,8 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         registerLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                startActivity(new Intent(LoginActivity.this, SignupUser.class));
+                startActivity(new Intent(LoginActivity.this, UserSignupActivity.class));
             }
         });
     }

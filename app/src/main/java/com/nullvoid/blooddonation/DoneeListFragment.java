@@ -47,9 +47,14 @@ public class DoneeListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        setContentView(R.layout.list_view);
 
-        View rootView = inflater.inflate(R.layout.list_view, container, false);
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("Loading");
+        progressDialog.setMessage("Retriving Data");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        View rootView = inflater.inflate(R.layout.list_view_layout, container, false);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
         recyclerView.setHasFixedSize(true);
@@ -69,6 +74,7 @@ public class DoneeListFragment extends Fragment {
                 }
                 DoneeAdapter doneeAdapter = new DoneeAdapter(donees, getActivity());
                 recyclerView.setAdapter(doneeAdapter);
+                progressDialog.dismiss();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

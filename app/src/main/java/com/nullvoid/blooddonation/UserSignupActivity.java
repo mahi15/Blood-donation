@@ -26,7 +26,7 @@ import com.nullvoid.blooddonation.beans.User;
  * Created by sanath on 10/06/17.
  */
 
-public class SignupUser extends AppCompatActivity {
+public class UserSignupActivity extends AppCompatActivity {
 
     private TextView loginLink;
     private EditText password, email, name, number;
@@ -57,7 +57,7 @@ public class SignupUser extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-                startActivity(new Intent(SignupUser.this, LoginActivity.class));
+                startActivity(new Intent(UserSignupActivity.this, LoginActivity.class));
             }
         });
 
