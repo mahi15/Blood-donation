@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    android:animateLayoutChanges="true"
     android:background="#848484"
     card_view:cardCornerRadius="4dp"
-    android:animateLayoutChanges="true">
+    card_view:contentPadding="10dp"
+    android:clickable="true">
 
     <RelativeLayout
         android:id="@+id/visible_part"
@@ -99,7 +101,7 @@
             android:layout_below="@+id/linearLayout"
             android:animateLayoutChanges="true"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:id="@+id/linearLayout9"
@@ -283,7 +285,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/choose_this_donor"
+                android:id="@+id/donor_layout_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"

@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,25 +32,45 @@ public class DoneeListFragment extends Fragment {
 
     ProgressDialog progressDialog;
 
-    FirebaseAuth mAuth;
-    FirebaseUser fbUser;
     DatabaseReference dbRef;
-
     List<Donee> donees;
-    Donee donee;
 
     public DoneeListFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setTitle("Loading");
         progressDialog.setMessage("Retriving Data");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
+
+        donees = new ArrayList<Donee>();
+
+        dbRef = FirebaseDatabase.getInstance().getReference("donee");
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Donee donee = postSnapshot.getValue(Donee.class);
+                    donees.add(donee);
+                }
+                setView();
+                progressDialog.dismiss();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.list_view_layout, container, false);
 
@@ -62,31 +80,13 @@ public class DoneeListFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        donees = new ArrayList<Donee>();
-
-        dbRef = FirebaseDatabase.getInstance().getReference("donee");
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    donee = postSnapshot.getValue(Donee.class);
-                    donees.add(donee);
-                }
-                DoneeAdapter doneeAdapter = new DoneeAdapter(donees, getActivity());
-                recyclerView.setAdapter(doneeAdapter);
-                progressDialog.dismiss();
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                progressDialog.dismiss();
-            }
-        });
         return rootView;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void setView(){
+        DoneeAdapter doneeAdapter = new DoneeAdapter(donees, getActivity());
+        recyclerView.setAdapter(doneeAdapter);
     }
+
 }
 

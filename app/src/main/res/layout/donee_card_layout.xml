@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    android:animateLayoutChanges="true"
     android:background="#848484"
     card_view:cardCornerRadius="4dp"
-    android:animateLayoutChanges="true">
+    card_view:cardElevation="5dp"
+    card_view:contentPadding="10dp">
 
     <RelativeLayout
         android:id="@+id/visible_part"
@@ -284,7 +286,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/select_donor"
+                android:id="@+id/donee_layout_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"

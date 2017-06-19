@@ -18,26 +18,26 @@ import java.util.List;
 /**
  * Created by sanath on 15/06/17.
  */
-public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHolder> {
+public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAdapter.DonorSelectionViewHolder> {
 
-    final Context context;
     private List<Donor> donors;
+    public final Context context;
 
-    public DonorAdapter(List<Donor> donors, Context context) {
+    public DonorSelectionAdapter(List<Donor> donors, Context context) {
         this.donors = donors;
         this.context = context;
     }
 
     @Override
-    public DonorAdapter.DonorViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DonorSelectionAdapter.DonorSelectionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(R.layout.donor_card_layout, parent, false);
-        return new DonorAdapter.DonorViewHolder(itemView);
+        return new DonorSelectionAdapter.DonorSelectionViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(DonorAdapter.DonorViewHolder holder, int position) {
+    public void onBindViewHolder(DonorSelectionViewHolder holder, int position) {
         Donor donor = donors.get(position);
 
         holder.donorName.setText(donor.getName());
@@ -51,29 +51,30 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         holder.donorAddress.setText(donor.getAddress());
         holder.donorLocation.setText(donor.getLocation());
         holder.donorPin.setText(donor.getPincode());
+        holder.chooseThisDonor.setText("CHOOSE THIS DONOR");
 
-        holder.chooseADonee.setOnClickListener(new View.OnClickListener() {
+
+        holder.chooseThisDonor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Assing a donee selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Choose this donor", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     @Override
     public int getItemCount() {
         return donors.size();
     }
 
-    public static class DonorViewHolder extends RecyclerView.ViewHolder {
+    public static class DonorSelectionViewHolder extends RecyclerView.ViewHolder  {
         protected TextView donorName, donorGender, bloodGroup, donorAge, donorDob, donationDate, phoneNumber;
-        protected TextView donorEmail, donorAddress, donorLocation, donorPin, chooseADonee;
+        protected  TextView donorEmail, donorAddress, donorLocation, donorPin, chooseThisDonor;
         protected LinearLayout hiddenPart;
         protected RelativeLayout visiblePart;
 
 
-        public DonorViewHolder(View v) {
+        public DonorSelectionViewHolder(View v) {
             super(v);
             donorName = (TextView) v.findViewById(R.id.donor_name);
             donorGender = (TextView) v.findViewById(R.id.donor_gender);
@@ -86,18 +87,16 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
             donorAddress = (TextView) v.findViewById(R.id.donor_address);
             donorLocation = (TextView) v.findViewById(R.id.donor_location);
             donorPin = (TextView) v.findViewById(R.id.donor_pin);
-
-            chooseADonee = (TextView) v.findViewById(R.id.donor_layout_button);
-
+            chooseThisDonor = (TextView) v.findViewById(R.id.donor_layout_button);
             visiblePart = (RelativeLayout) v.findViewById(R.id.visible_part);
             hiddenPart = (LinearLayout) v.findViewById(R.id.hidden_part);
 
             visiblePart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (hiddenPart.getVisibility() == View.VISIBLE) {
+                    if(hiddenPart.getVisibility() == View.VISIBLE){
                         hiddenPart.setVisibility(View.GONE);
-                    } else {
+                    }else{
                         hiddenPart.setVisibility(View.VISIBLE);
                     }
                 }

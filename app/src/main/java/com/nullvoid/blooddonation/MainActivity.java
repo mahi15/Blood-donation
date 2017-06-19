@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mAuth.signOut();
-                showToast("Logging out..");
                 finish();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
             }
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(checkLoginStatus() != null){
-                    startActivity(new Intent(MainActivity.this, DoneeFrom.class));
+                    startActivity(new Intent(MainActivity.this, DoneeFormActivity.class));
                 }else{
                     showToast("You Must Login First");
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(checkLoginStatus() != null){
-                    startActivity(new Intent(MainActivity.this, DonorRegistration.class));
+                    startActivity(new Intent(MainActivity.this, DonorRegistrationActivity.class));
                 }else{
                     showToast("You Must Login First");
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));

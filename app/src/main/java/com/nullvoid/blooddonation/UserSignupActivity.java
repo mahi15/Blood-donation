@@ -122,6 +122,7 @@ public class UserSignupActivity extends AppCompatActivity {
                             //If user is added to database
                             showToast("Successfully Registered :)");
                             finish();
+                            startActivity(new Intent(UserSignupActivity.this, MainActivity.class));
 
                         } else {
                             //if it fails

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nullvoid.blooddonation.DonorRegistration">
+    tools:context="com.nullvoid.blooddonation.DonorRegistrationActivity">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -36,41 +36,38 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
                 android:paddingTop="10dp">
 
                 <TextView
-                    android:id="@+id/regGenderTitle"
+                    android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:paddingRight="20dp"
                     android:text="Gender"
-                    android:textColor="@android:color/black"
-                    android:textSize="20sp" />
+                    android:textAlignment="textStart"
+                    android:textColorLink="@android:color/black"
+                    android:textSize="18sp" />
 
                 <RadioGroup
                     android:id="@+id/regGender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:gravity="center"
+                    android:baselineAligned="true"
+                    android:gravity="center_horizontal|center"
                     android:orientation="horizontal">
 
                     <RadioButton
                         android:id="@+id/regGenderMale"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="40dp"
                         android:checked="true"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
+                        android:paddingRight="10dp"
                         android:text="Male" />
 
                     <RadioButton
                         android:id="@+id/regGenderFemale"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="15dp"
                         android:paddingRight="15dp"
                         android:text="Female" />
                 </RadioGroup>

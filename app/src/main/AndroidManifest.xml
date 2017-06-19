@@ -25,10 +25,10 @@
             android:name=".UserSignupActivity"
             android:label="Sign Up" />
         <activity
-            android:name=".DoneeFrom"
+            android:name=".DoneeFormActivity"
             android:label="Request Blood" />
         <activity
-            android:name=".DonorRegistration"
+            android:name=".DonorRegistrationActivity"
             android:label="Donate Blood" />
         <activity
             android:name=".DonorListFragment"
@@ -38,6 +38,8 @@
             android:name=".AdminConsoleActivity"
             android:label="Console"
             android:theme="@style/AppThemeNoActionBar"/>
+        <activity android:name=".DonorSelectionActivity"
+            android:label="Select a Donor" />
     </application>
 
 </manifest>

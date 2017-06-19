@@ -5,10 +5,18 @@ package com.nullvoid.blooddonation.beans;
  */
 
 public class Donee {
-    private String requestedBy, name,phoneNumber, bloodGroup, reqDate,
+    private String doneeId, requestedBy, name,phoneNumber, bloodGroup, reqDate,
             patientAttendantNumber, patientName, patientID, hospitalName, hospitalNumber, hospitalAddress, hospitalPin;
 
     public Donee() {
+    }
+
+    public String getDoneeId() {
+        return doneeId;
+    }
+
+    public void setDoneeId(String doneeId) {
+        this.doneeId = doneeId;
     }
 
     public String getRequestedBy() {

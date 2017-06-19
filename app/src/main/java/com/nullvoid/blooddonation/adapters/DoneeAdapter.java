@@ -9,9 +9,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.nullvoid.blooddonation.DonorListFragment;
+import com.nullvoid.blooddonation.DonorSelectionActivity;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.Donee;
 
@@ -24,7 +23,6 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
 
     private List<Donee> donees;
     final Context context;
-
 
     public DoneeAdapter(List<Donee> donees, Context context) {
         this.donees = donees;
@@ -39,10 +37,9 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         return new DoneeAdapter.DoneeViewHolder(itemView);
     }
 
-
     @Override
     public void onBindViewHolder(final DoneeAdapter.DoneeViewHolder holder, int position) {
-        Donee donee = donees.get(position);
+        final Donee donee = donees.get(position);
         holder.requesterName.setText(donee.getName());
         holder.phoneNumber.setText(donee.getPhoneNumber());
         holder.bloodGroup.setText(donee.getBloodGroup());
@@ -58,10 +55,9 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         holder.selectDonor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Donee Selection", Toast.LENGTH_SHORT).show();
-                Intent donorSelector = new Intent(context, DonorListFragment.class);
-                donorSelector.putExtra("from", "doneepage");
-                context.startActivity(donorSelector);
+                Intent intent = new Intent(context, DonorSelectionActivity.class);
+                intent.putExtra("id", donee.getDoneeId());
+                context.startActivity(intent);
             }
         });
     }
@@ -91,11 +87,10 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
             hospitalAddress = (TextView) v.findViewById(R.id.hospital_address);
             hospitalNumber = (TextView) v.findViewById(R.id.hospital_number);
             hospitalPin = (TextView) v.findViewById(R.id.hospital_pin);
-            selectDonor = (TextView) v.findViewById(R.id.select_donor);
+            selectDonor = (TextView) v.findViewById(R.id.donee_layout_button);
 
-            visiblePart = (RelativeLayout) v.findViewById(R.id.visible_part);
             hiddenPart = (LinearLayout) v.findViewById(R.id.hidden_part);
-
+            visiblePart = (RelativeLayout) v.findViewById(R.id.visible_part);
             visiblePart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -108,4 +103,5 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
             });
         }
     }
+
 }

@@ -24,56 +24,61 @@ import com.nullvoid.blooddonation.beans.Donee;
  * Created by sanath on 11/06/17.
  */
 
-public class DoneeFrom extends AppCompatActivity {
+public class DoneeFormActivity extends AppCompatActivity {
     private ArrayAdapter bloodGroupArray;
     private Spinner bloodGroupSpinner;
-    private TextView name, phnumber, reqDate, reqTime, pName, pId, hospitalName;
-    private TextView hospitalNumber, hospitalAddress, hospitalPin;
+    private TextView name, phnumber, reqDate, reqAttendantNumber, pName, pId, hospitalName,
+            hospitalNumber, hospitalAddress, hospitalPin;
     private Button submitButton;
 
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
     private String dName, dNumber, dRequiredDate, dBloodGroup, dRequiredTime, dPatietsName, dPatientRefNumber,
-                    dHospitalName, dHospitalNumber, dHospitalAddress, dHospitalPincode;
+                    dHospitalName, dHospitalNumber, dHospitalAddress, dHospitalPincode, doneeId;
 
     private Donee donee;
 
     private FirebaseUser fbUser;
     private FirebaseDatabase dbRef;
-    String uId;
+    private String uId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.donee_request_layout);
 
         bloodGroupSpinner = (Spinner)findViewById(R.id.reqBloodGroup);
-        bloodGroupArray = ArrayAdapter.createFromResource(this, R.array.blood_group, android.R.layout.simple_spinner_item);
+        bloodGroupArray = ArrayAdapter.createFromResource(DoneeFormActivity.this, R.array.blood_group, android.R.layout.simple_spinner_item);
         bloodGroupArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bloodGroupSpinner.setAdapter(bloodGroupArray);
-        name = (TextView)findViewById(R.id.reqName);
-        phnumber = (TextView)findViewById(R.id.reqPhoneNumber);
-        reqDate = (TextView)findViewById(R.id.reqNeededDate);
-        reqTime  = (TextView)findViewById(R.id.reqPatAttendantNumber);
-        pName  = (TextView)findViewById(R.id.reqPName);
-        pId  = (TextView)findViewById(R.id.reqPId);
-        hospitalName = (TextView)findViewById(R.id.reqHospitalName);
-        hospitalNumber = (TextView)findViewById(R.id.reqHospitalAddress);
-        hospitalAddress = (TextView)findViewById(R.id.reqHospitalAddress);
-        hospitalPin = (TextView)findViewById(R.id.reqHospitalPin);
+
         submitButton = (Button)findViewById(R.id.reqSubmit);
-        donee = new Donee();
-
-
         submitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+                progressDialog = new ProgressDialog(DoneeFormActivity.this);
+                progressDialog.setTitle("Registering");
+                progressDialog.setMessage("Sending your Information");
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
+
+                name = (TextView)findViewById(R.id.reqName);
+                phnumber = (TextView)findViewById(R.id.reqPhoneNumber);
+                reqDate = (TextView)findViewById(R.id.reqNeededDate);
+                reqAttendantNumber = (TextView)findViewById(R.id.reqPatAttendantNumber);
+                pName  = (TextView)findViewById(R.id.reqPName);
+                pId  = (TextView)findViewById(R.id.reqPId);
+                hospitalName = (TextView)findViewById(R.id.reqHospitalName);
+                hospitalNumber = (TextView)findViewById(R.id.reqHospitalAddress);
+                hospitalAddress = (TextView)findViewById(R.id.reqHospitalAddress);
+                hospitalPin = (TextView)findViewById(R.id.reqHospitalPin);
+                donee = new Donee();
 
                 dName = name.getText().toString().toString();
                 dNumber = phnumber.getText().toString().trim();
                 dBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
                 dRequiredDate = reqDate.getText().toString().trim();
-                dRequiredTime = reqTime.getText().toString().trim();
+                dRequiredTime = reqAttendantNumber.getText().toString().trim();
                 dPatietsName = pName.getText().toString().trim();
                 dPatientRefNumber = pId.getText().toString().trim();
                 dHospitalName = hospitalName.getText().toString().trim();
@@ -81,16 +86,19 @@ public class DoneeFrom extends AppCompatActivity {
                 dHospitalAddress = hospitalAddress.getText().toString().trim();
                 dHospitalPincode = hospitalPin.getText().toString().trim();
 
-                if(!validateForm()){return;}
+                if(!validateForm()){
+                    progressDialog.dismiss();
+                    return;
+                }
 
-                donee.setName(dName);
+                donee.setName(toCamelCase(dName));
                 donee.setPhoneNumber(dNumber);
                 donee.setBloodGroup(dBloodGroup);
                 donee.setReqDate(dRequiredDate);
                 donee.setPatientAttendantNumber(dRequiredTime);
-                donee.setPatientName(dPatietsName);
+                donee.setPatientName(toCamelCase(dPatietsName));
                 donee.setPatientID(dPatientRefNumber);
-                donee.setHospitalName(dHospitalName);
+                donee.setHospitalName(toCamelCase(dHospitalName));
                 donee.setHospitalNumber(dHospitalNumber);
                 donee.setHospitalAddress(dHospitalAddress);
                 donee.setHospitalPin(dHospitalPincode);
@@ -101,17 +109,17 @@ public class DoneeFrom extends AppCompatActivity {
     }
 
     public void registerDonee(Donee donee){
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Sending your Information...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
 
         dbRef = FirebaseDatabase.getInstance();
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
         uId = fbUser.getUid();
 
+        //create unique key for donee
+        doneeId = dbRef.getReference().push().getKey();
+
+        donee.setDoneeId(doneeId);
         donee.setRequestedBy(uId);
-        dbRef.getReference("donee").child(donee.getPatientID()).setValue(donee).
+        dbRef.getReference("donee").child(doneeId).setValue(donee).
         addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -120,7 +128,7 @@ public class DoneeFrom extends AppCompatActivity {
                     //If user is added to database
                     showToast("Request Successfully Sent!");
                     finish();
-                    startActivity(new Intent(DoneeFrom.this, MainActivity.class));
+                    startActivity(new Intent(DoneeFormActivity.this, MainActivity.class));
                 } else {
                     //if it fails
                     showToast("Something went wrong :(");
@@ -131,7 +139,7 @@ public class DoneeFrom extends AppCompatActivity {
     }
 
     public void showToast(String text){
-        Toast.makeText(DoneeFrom.this, text, Toast.LENGTH_SHORT).show();
+        Toast.makeText(DoneeFormActivity.this, text, Toast.LENGTH_SHORT).show();
     }
 
     public boolean validateForm() {
@@ -149,7 +157,7 @@ public class DoneeFrom extends AppCompatActivity {
             return false;
         }
         if (TextUtils.isEmpty(dRequiredTime)) {
-            reqTime.setError("Required");
+            reqAttendantNumber.setError("Required");
             return false;
         }
         if (TextUtils.isEmpty(dPatietsName)) {
@@ -177,5 +185,23 @@ public class DoneeFrom extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    public String toCamelCase(final String init) {
+        if (init==null)
+            return null;
+
+        final StringBuilder ret = new StringBuilder(init.length());
+
+        for (final String word : init.split(" ")) {
+            if (!word.isEmpty()) {
+                ret.append(word.substring(0, 1).toUpperCase());
+                ret.append(word.substring(1).toLowerCase());
+            }
+            if (!(ret.length()==init.length()))
+                ret.append(" ");
+        }
+
+        return ret.toString();
     }
 }

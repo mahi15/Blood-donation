@@ -30,7 +30,7 @@ import com.nullvoid.blooddonation.beans.Donor;
  * Created by MeowMeow on 4/30/2017.
  */
 
-public class DonorRegistration extends AppCompatActivity {
+public class DonorRegistrationActivity extends AppCompatActivity {
 
     private String dName, dGender, dBloodGroup, dAge, dDOB, dDonationDate, dNumber, dEmail, dAddress, dLocation;
     private String dPincode;
@@ -44,8 +44,6 @@ public class DonorRegistration extends AppCompatActivity {
     RadioButton gender, donatedBefore;
     ProgressDialog progressDialog;
 
-    Donor donor;
-
     FirebaseAuth mAuth;
     FirebaseUser fbUser;
     FirebaseDatabase dbRef;
@@ -55,27 +53,17 @@ public class DonorRegistration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.donor_registration_layout);
 
-        //Create all the view elements
-        name = (EditText)findViewById(R.id.regName);
-        Gender = (RadioGroup) findViewById(R.id.regGender);
 
-        age = (EditText)findViewById(R.id.regAge);
-        dateOfBirth = (EditText)findViewById(R.id.regDateOfBirth);
-        DateOfDonation = (EditText)findViewById(R.id.regDateOfDonation);
-        email = (EditText)findViewById(R.id.regEmail);
-        phoneNumber = (EditText)findViewById(R.id.regPhoneNumber);
-        address = (EditText)findViewById(R.id.regAddress);
-        location = (EditText)findViewById(R.id.regLocation);
-        pincode = (EditText)findViewById(R.id.regPinCode);
-        submitButton = (Button)findViewById(R.id.regSubmit);
-        DonatedBefore = (RadioGroup)findViewById(R.id.regDonatedBeforeOption);
-        donor = new Donor();        //Java Class Object
         //Add the blood groups to the bloodGroupSpinner (drop down list) in the donorDetails page
         bloodGroupSpinner = (Spinner)findViewById(R.id.regBloodGroup);
         bloodGroupArray = ArrayAdapter.createFromResource(this, R.array.blood_group, android.R.layout.simple_spinner_item);
         bloodGroupArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bloodGroupSpinner.setAdapter(bloodGroupArray);
 
+        submitButton = (Button)findViewById(R.id.regSubmit);
+
+        DonatedBefore = (RadioGroup)findViewById(R.id.regDonatedBeforeOption);
+        DateOfDonation = (EditText)findViewById(R.id.regDateOfDonation);
         DateOfDonation.setVisibility(View.GONE);
         DonatedBefore.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
@@ -96,11 +84,21 @@ public class DonorRegistration extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                dName = name.getText().toString().trim();
 
+                name = (EditText)findViewById(R.id.regName);
+                Gender = (RadioGroup) findViewById(R.id.regGender);
+                age = (EditText)findViewById(R.id.regAge);
+                dateOfBirth = (EditText)findViewById(R.id.regDateOfBirth);
+                email = (EditText)findViewById(R.id.regEmail);
+                phoneNumber = (EditText)findViewById(R.id.regPhoneNumber);
+                address = (EditText)findViewById(R.id.regAddress);
+                location = (EditText)findViewById(R.id.regLocation);
+                pincode = (EditText)findViewById(R.id.regPinCode);
+                Donor donor = new Donor();
+
+                dName = name.getText().toString().trim();
                 gender = (RadioButton)findViewById(Gender.getCheckedRadioButtonId());
                 dGender = gender.getText().toString();
-
                 dBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
                 dAge = age.getText().toString().trim();
                 dDOB = dateOfBirth.getText().toString();
@@ -155,7 +153,7 @@ public class DonorRegistration extends AppCompatActivity {
                     //If user is added to database
                     showToast("Thank You for Registering :)");
                     finish();
-                    startActivity(new Intent(DonorRegistration.this, MainActivity.class));
+                    startActivity(new Intent(DonorRegistrationActivity.this, MainActivity.class));
                 } else {
                     //if it fails
                     showToast("Something went wrong :(");
@@ -166,7 +164,7 @@ public class DonorRegistration extends AppCompatActivity {
 
 
     public void showToast(String text){
-        Toast.makeText(DonorRegistration.this, text, Toast.LENGTH_SHORT).show();
+        Toast.makeText(DonorRegistrationActivity.this, text, Toast.LENGTH_SHORT).show();
     }
 
 
