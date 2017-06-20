@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.nullvoid.blooddonation.DonorRegistrationActivity">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,45 +32,48 @@
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp">
+                android:padding="10dp"
+                android:text="Gender"
+                android:textAlignment="textStart"
+                android:textColorLink="@android:color/black"
+                android:textSize="18sp" />
 
-                <TextView
-                    android:id="@+id/textView"
+
+            <RadioGroup
+                android:id="@+id/regGender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAligned="true"
+                android:gravity="center_horizontal|center"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/regGenderMale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="20dp"
-                    android:text="Gender"
-                    android:textAlignment="textStart"
-                    android:textColorLink="@android:color/black"
-                    android:textSize="18sp" />
+                    android:checked="true"
+                    android:paddingRight="10dp"
+                    android:text="Male" />
 
-                <RadioGroup
-                    android:id="@+id/regGender"
+                <RadioButton
+                    android:id="@+id/regGenderFemale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:baselineAligned="true"
-                    android:gravity="center_horizontal|center"
-                    android:orientation="horizontal">
+                    android:paddingRight="15dp"
+                    android:text="Female" />
 
-                    <RadioButton
-                        android:id="@+id/regGenderMale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:paddingRight="10dp"
-                        android:text="Male" />
-
-                    <RadioButton
-                        android:id="@+id/regGenderFemale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="15dp"
-                        android:text="Female" />
-                </RadioGroup>
-            </LinearLayout>
+                <RadioButton
+                    android:id="@+id/regGenderTrans"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingRight="15dp"
+                    android:text="Transgender" />
+            </RadioGroup>
 
             <TextView
                 android:id="@+id/regChooseBloodGroup"

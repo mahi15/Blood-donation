@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nullvoid.blooddonation.beans.Donee;
 
+import java.util.Calendar;
+
 /**
  * Created by sanath on 11/06/17.
  */
@@ -27,14 +30,16 @@ import com.nullvoid.blooddonation.beans.Donee;
 public class DoneeFormActivity extends AppCompatActivity {
     private ArrayAdapter bloodGroupArray;
     private Spinner bloodGroupSpinner;
-    private TextView name, phnumber, reqDate, reqAttendantNumber, pName, pId, hospitalName,
+    private TextView name, phnumber, reqDate, reqAttendantName, reqAttendantNumber, pName, pId, hospitalName,
             hospitalNumber, hospitalAddress, hospitalPin;
     private Button submitButton;
 
     private ProgressDialog progressDialog;
 
-    private String dName, dNumber, dRequiredDate, dBloodGroup, dRequiredTime, dPatietsName, dPatientRefNumber,
+    private String dName, dNumber, dRequiredDate, dBloodGroup, dAttendantName, dAttendantNumber, dPatietsName, dPatientRefNumber,
                     dHospitalName, dHospitalNumber, dHospitalAddress, dHospitalPincode, doneeId;
+    private DatePicker datePicker;
+    private Calendar calendar;
 
     private Donee donee;
 
@@ -45,7 +50,7 @@ public class DoneeFormActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.donee_request_layout);
+        setContentView(R.layout.layout_donee_request);
 
         bloodGroupSpinner = (Spinner)findViewById(R.id.reqBloodGroup);
         bloodGroupArray = ArrayAdapter.createFromResource(DoneeFormActivity.this, R.array.blood_group, android.R.layout.simple_spinner_item);
@@ -72,13 +77,15 @@ public class DoneeFormActivity extends AppCompatActivity {
                 hospitalNumber = (TextView)findViewById(R.id.reqHospitalAddress);
                 hospitalAddress = (TextView)findViewById(R.id.reqHospitalAddress);
                 hospitalPin = (TextView)findViewById(R.id.reqHospitalPin);
+                reqAttendantName = (TextView)findViewById(R.id.reqPatAttendantName);
                 donee = new Donee();
 
                 dName = name.getText().toString().toString();
                 dNumber = phnumber.getText().toString().trim();
                 dBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
                 dRequiredDate = reqDate.getText().toString().trim();
-                dRequiredTime = reqAttendantNumber.getText().toString().trim();
+                dAttendantName = reqAttendantName.getText().toString().trim();
+                dAttendantNumber = reqAttendantNumber.getText().toString().trim();
                 dPatietsName = pName.getText().toString().trim();
                 dPatientRefNumber = pId.getText().toString().trim();
                 dHospitalName = hospitalName.getText().toString().trim();
@@ -95,7 +102,8 @@ public class DoneeFormActivity extends AppCompatActivity {
                 donee.setPhoneNumber(dNumber);
                 donee.setBloodGroup(dBloodGroup);
                 donee.setReqDate(dRequiredDate);
-                donee.setPatientAttendantNumber(dRequiredTime);
+                donee.setPatientAttendantName(dAttendantName);
+                donee.setPatientAttendantNumber(dAttendantNumber);
                 donee.setPatientName(toCamelCase(dPatietsName));
                 donee.setPatientID(dPatientRefNumber);
                 donee.setHospitalName(toCamelCase(dHospitalName));
@@ -156,7 +164,11 @@ public class DoneeFormActivity extends AppCompatActivity {
             reqDate.setError("Required");
             return false;
         }
-        if (TextUtils.isEmpty(dRequiredTime)) {
+        if (TextUtils.isEmpty(dAttendantName)) {
+            reqAttendantName.setError("Required");
+            return false;
+        }
+        if (TextUtils.isEmpty(dAttendantNumber)) {
             reqAttendantNumber.setError("Required");
             return false;
         }

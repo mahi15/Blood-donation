@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/bd_logo" />
     </LinearLayout>
@@ -53,6 +53,7 @@
         style="@style/button_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:text="Log in" />
 
 

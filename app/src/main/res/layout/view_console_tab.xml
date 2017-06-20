@@ -10,6 +10,5 @@
         android:gravity="center"
         android:textSize="16dip"
         android:textColor="#ffffff"
-        android:maxLines="1"
-        />
+        android:maxLines="1" />
 </LinearLayout>

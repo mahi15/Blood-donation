@@ -42,7 +42,7 @@ public class DonorListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.list_view_layout, container, false);
+        View rootView = inflater.inflate(R.layout.layout_list_view, container, false);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
         recyclerView.setHasFixedSize(true);

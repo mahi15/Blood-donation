@@ -26,7 +26,7 @@ public class AdminConsoleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.admin_console_layout);
+        setContentView(R.layout.layout_admin_console);
 
         //adding the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

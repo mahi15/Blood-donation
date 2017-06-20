@@ -12,7 +12,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.SelectionDonor;
@@ -38,7 +37,7 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
     public DonorSelectionAdapter.DonorSelectionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.donor_card_layout, parent, false);
+                inflate(R.layout.layout_donor_card, parent, false);
         return new DonorSelectionAdapter.DonorSelectionViewHolder(itemView);
     }
 
@@ -70,14 +69,8 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
         holder.donorAddress.setText(selectionDonor.getDonor().getAddress());
         holder.donorLocation.setText(selectionDonor.getDonor().getLocation());
         holder.donorPin.setText(selectionDonor.getDonor().getPincode());
-        holder.chooseThisDonor.setText("CHOOSE THIS DONOR");
+        holder.chooseThisDonor.setVisibility(View.GONE);
 
-        holder.chooseThisDonor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Choose this donor", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override

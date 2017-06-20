@@ -5,7 +5,7 @@ package com.nullvoid.blooddonation.beans;
  */
 
 public class Donee {
-    private String doneeId, requestedBy, name,phoneNumber, bloodGroup, reqDate,
+    private String doneeId, requestedBy, name,phoneNumber, bloodGroup, reqDate, patientAttendantName,
             patientAttendantNumber, patientName, patientID, hospitalName, hospitalNumber, hospitalAddress, hospitalPin;
 
     public Donee() {
@@ -57,6 +57,14 @@ public class Donee {
 
     public void setReqDate(String reqDate) {
         this.reqDate = reqDate;
+    }
+
+    public String getPatientAttendantName() {
+        return patientAttendantName;
+    }
+
+    public void setPatientAttendantName(String patientAttendantName) {
+        this.patientAttendantName = patientAttendantName;
     }
 
     public String getPatientAttendantNumber() {

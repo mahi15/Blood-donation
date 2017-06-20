@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BloodDonation.iml" filepath="$PROJECT_DIR$/BloodDonation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RSS HSS Blood Donors Bureau.iml" filepath="$PROJECT_DIR$/RSS HSS Blood Donors Bureau.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

@@ -42,7 +42,7 @@ public class AdminPagerAdapter extends FragmentPagerAdapter {
     }
 
     public View getTabView(int position) {
-        View tab = LayoutInflater.from(context).inflate(R.layout.tab_layout, null);
+        View tab = LayoutInflater.from(context).inflate(R.layout.view_console_tab, null);
         TextView tv = (TextView) tab.findViewById(R.id.custom_text);
         tv.setText(getPageTitle(position));
         return tab;

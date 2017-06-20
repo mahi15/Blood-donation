@@ -72,7 +72,7 @@ public class DoneeListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.list_view_layout, container, false);
+        View rootView = inflater.inflate(R.layout.layout_list_view, container, false);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
         recyclerView.setHasFixedSize(true);

@@ -35,6 +35,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     private String dName, dGender, dBloodGroup, dAge, dDOB, dDonationDate, dNumber, dEmail, dAddress, dLocation;
     private String dPincode;
 
+
     ArrayAdapter bloodGroupArray;
     Button submitButton;
     EditText name, email, age, phoneNumber, dateOfBirth, address;
@@ -51,7 +52,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.donor_registration_layout);
+        setContentView(R.layout.layout_donor_registration);
 
 
         //Add the blood groups to the bloodGroupSpinner (drop down list) in the donorDetails page
