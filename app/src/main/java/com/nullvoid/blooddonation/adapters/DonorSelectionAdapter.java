@@ -1,17 +1,23 @@
 package com.nullvoid.blooddonation.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nullvoid.blooddonation.R;
-import com.nullvoid.blooddonation.beans.Donor;
+import com.nullvoid.blooddonation.beans.SelectionDonor;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -20,11 +26,11 @@ import java.util.List;
  */
 public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAdapter.DonorSelectionViewHolder> {
 
-    private List<Donor> donors;
+    private List<SelectionDonor> selectionDonors;
     public final Context context;
 
-    public DonorSelectionAdapter(List<Donor> donors, Context context) {
-        this.donors = donors;
+    public DonorSelectionAdapter(List<SelectionDonor> selectionDonors, Context context) {
+        this.selectionDonors = selectionDonors;
         this.context = context;
     }
 
@@ -37,22 +43,34 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
     }
 
     @Override
-    public void onBindViewHolder(DonorSelectionViewHolder holder, int position) {
-        Donor donor = donors.get(position);
+    public void onBindViewHolder(final DonorSelectionViewHolder holder, int position) {
+        final SelectionDonor selectionDonor = selectionDonors.get(position);
 
-        holder.donorName.setText(donor.getName());
-        holder.donorGender.setText(donor.getGender());
-        holder.bloodGroup.setText(donor.getBloodGroup());
-        holder.donorAge.setText(donor.getAge());
-        holder.donorDob.setText(donor.getDateOfBirth());
-        holder.donationDate.setText(donor.getDonatedDate());
-        holder.phoneNumber.setText(donor.getPhoneNumber());
-        holder.donorEmail.setText(donor.getEmail());
-        holder.donorAddress.setText(donor.getAddress());
-        holder.donorLocation.setText(donor.getLocation());
-        holder.donorPin.setText(donor.getPincode());
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(! selectionDonor.isSelected()){
+                    sendSelectionChange(context.getString(R.string.select), selectionDonor);
+                }else{
+                    sendSelectionChange(context.getString(R.string.remove), selectionDonor);
+                }
+                selectionDonor.setSelected(!selectionDonor.isSelected());
+                holder.view.setBackgroundColor(selectionDonor.isSelected() ? Color.parseColor("#b3ffb6") : Color.WHITE);
+            }
+        });
+
+        holder.donorName.setText(selectionDonor.getDonor().getName());
+        holder.donorGender.setText(selectionDonor.getDonor().getGender());
+        holder.bloodGroup.setText(selectionDonor.getDonor().getBloodGroup());
+        holder.donorAge.setText(selectionDonor.getDonor().getAge());
+        holder.donorDob.setText(selectionDonor.getDonor().getDateOfBirth());
+        holder.donationDate.setText(selectionDonor.getDonor().getDonatedDate());
+        holder.phoneNumber.setText(selectionDonor.getDonor().getPhoneNumber());
+        holder.donorEmail.setText(selectionDonor.getDonor().getEmail());
+        holder.donorAddress.setText(selectionDonor.getDonor().getAddress());
+        holder.donorLocation.setText(selectionDonor.getDonor().getLocation());
+        holder.donorPin.setText(selectionDonor.getDonor().getPincode());
         holder.chooseThisDonor.setText("CHOOSE THIS DONOR");
-
 
         holder.chooseThisDonor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +82,14 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
 
     @Override
     public int getItemCount() {
-        return donors.size();
+        return selectionDonors.size();
+    }
+
+    public void sendSelectionChange(String action, SelectionDonor data){
+        Intent intent = new Intent(context.getString(R.string.selection_change));
+        intent.putExtra("action", action);
+        intent.putExtra("data", Parcels.wrap(data));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     public static class DonorSelectionViewHolder extends RecyclerView.ViewHolder  {
@@ -72,10 +97,15 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
         protected  TextView donorEmail, donorAddress, donorLocation, donorPin, chooseThisDonor;
         protected LinearLayout hiddenPart;
         protected RelativeLayout visiblePart;
+        CheckBox checkBox;
+        private View view;
 
 
         public DonorSelectionViewHolder(View v) {
             super(v);
+            view = v;
+            checkBox = (CheckBox) v.findViewById(R.id.checkBox);
+            checkBox.setVisibility(View.VISIBLE);
             donorName = (TextView) v.findViewById(R.id.donor_name);
             donorGender = (TextView) v.findViewById(R.id.donor_gender);
             bloodGroup = (TextView) v.findViewById(R.id.donor_group);

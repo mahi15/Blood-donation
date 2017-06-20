@@ -57,13 +57,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="20dp">
+
             <Button
                 android:id="@+id/admin"
                 style="@style/dash_board_element"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="admin" />
+                android:text="admin"
+                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>

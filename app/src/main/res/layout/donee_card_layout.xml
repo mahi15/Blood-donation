@@ -101,7 +101,7 @@
             android:layout_below="@+id/linearLayout"
             android:animateLayoutChanges="true"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/linearLayout10"

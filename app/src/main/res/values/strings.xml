@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Blood Donation</string>
     <string name="blood_groups">Choose your Blood Group</string>
+    <string name="select">select</string>
+    <string name="remove">remove</string>
+    <string name="isAdmin">isAdmin</string>
+    <string name="user_details">userDetails</string>
+    <string name="selection_change">SELECTION_CHANGE</string>
     <string-array name="blood_group">
         <item>A+</item>
         <item>B+</item>

@@ -101,7 +101,7 @@
             android:layout_below="@+id/linearLayout"
             android:animateLayoutChanges="true"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/linearLayout9"
@@ -298,6 +298,15 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/linearLayout2"
+            android:layout_marginEnd="15dp"
+            android:layout_toStartOf="@+id/donor_group"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

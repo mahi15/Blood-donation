@@ -116,7 +116,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
 
                 if(!validateForm()){return;}
 
-                donor.setName(dName);
+                donor.setName(toCamelCase(dName));
                 donor.setGender(dGender);
                 donor.setBloodGroup(dBloodGroup);
                 donor.setDateOfBirth(dDOB);
@@ -125,7 +125,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                 donor.setPhoneNumber(dNumber);
                 donor.setEmail(dEmail);
                 donor.setAddress(dAddress);
-                donor.setLocation(dLocation);
+                donor.setLocation(toCamelCase(dLocation));
                 donor.setPincode(dPincode);
 
                 registerDonor(donor);
@@ -166,7 +166,6 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     public void showToast(String text){
         Toast.makeText(DonorRegistrationActivity.this, text, Toast.LENGTH_SHORT).show();
     }
-
 
     public boolean validateForm() {
         //validate if the data entered by user is valid nor not
@@ -210,5 +209,23 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    public String toCamelCase(final String init) {
+        if (init==null)
+            return null;
+
+        final StringBuilder ret = new StringBuilder(init.length());
+
+        for (final String word : init.split(" ")) {
+            if (!word.isEmpty()) {
+                ret.append(word.substring(0, 1).toUpperCase());
+                ret.append(word.substring(1).toLowerCase());
+            }
+            if (!(ret.length()==init.length()))
+                ret.append(" ");
+        }
+
+        return ret.toString();
     }
 }

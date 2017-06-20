@@ -8,7 +8,7 @@ package com.nullvoid.blooddonation.beans;
 public class User{
     //A basic container class for holding the user details
     private String name, email, password, mobile;
-    private boolean isAdmin;
+    private boolean isAdmin = false;
 
     public User(){}
 

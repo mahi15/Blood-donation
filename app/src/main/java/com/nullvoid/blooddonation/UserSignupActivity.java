@@ -109,7 +109,7 @@ public class UserSignupActivity extends AppCompatActivity {
         dbReference = FirebaseDatabase.getInstance().getReference();
 
         //use the container class to hold the values entered by the user
-        User myUser = new User(userName, userEmail, userPassword, userNumber);
+        User myUser = new User(toCamelCase(userName), userEmail, userPassword, userNumber);
 
         // what happens here is we get a reference to the database/users/'usesrId'
         //then we add the user details under that structure
@@ -163,5 +163,23 @@ public class UserSignupActivity extends AppCompatActivity {
     //easy function for toasting
     public void showToast(String textToToast) {
         Toast.makeText(this, textToToast, Toast.LENGTH_SHORT).show();
+    }
+
+    public String toCamelCase(final String init) {
+        if (init==null)
+            return null;
+
+        final StringBuilder ret = new StringBuilder(init.length());
+
+        for (final String word : init.split(" ")) {
+            if (!word.isEmpty()) {
+                ret.append(word.substring(0, 1).toUpperCase());
+                ret.append(word.substring(1).toLowerCase());
+            }
+            if (!(ret.length()==init.length()))
+                ret.append(" ");
+        }
+
+        return ret.toString();
     }
 }

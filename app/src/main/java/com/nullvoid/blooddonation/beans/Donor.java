@@ -1,12 +1,16 @@
 package com.nullvoid.blooddonation.beans;
 
+import org.parceler.Parcel;
+
 /**
  * Created by sanath on 10/06/17.
  */
+@Parcel
 public class Donor {
 
     private String name, gender, bloodGroup,
             dateOfBirth, donatedDate, age, phoneNumber, email, address, location, pincode;
+    boolean isAvailable = true;
 
     public Donor() {
     }
@@ -25,6 +29,14 @@ public class Donor {
         this.address = address;
         this.location = location;
         this.pincode = pincode;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
     }
 
     public String getName() {
@@ -115,20 +127,4 @@ public class Donor {
         this.pincode = pincode;
     }
 
-    @Override
-    public String toString() {
-        return "DonorDetails{" +
-                ", name='" + name + '\'' +
-                ", gender='" + gender + '\'' +
-                ", bloodGroup='" + bloodGroup + '\'' +
-                ", dateOfBirth='" + dateOfBirth + '\'' +
-                ", donatedDate='" + donatedDate + '\'' +
-                ", age='" + age + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                ", location='" + location + '\'' +
-                ", pincode='" + pincode + '\'' +
-                '}';
-    }
 }
