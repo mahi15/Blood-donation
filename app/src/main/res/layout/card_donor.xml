@@ -8,8 +8,8 @@
     android:animateLayoutChanges="true"
     android:background="#848484"
     card_view:cardCornerRadius="4dp"
-    card_view:contentPadding="10dp"
-    android:clickable="true">
+    card_view:cardElevation="5dp"
+    card_view:contentPadding="10dp">
 
     <RelativeLayout
         android:id="@+id/visible_part"

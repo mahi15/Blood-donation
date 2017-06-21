@@ -139,8 +139,12 @@ public class LoginActivity extends AppCompatActivity {
         passResetDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                pd.show();
                 resetEmail[0] = input.getText().toString();
+                if(TextUtils.isEmpty(resetEmail[0])){
+                    input.setError("Can't be empty!");
+                    return;
+                }
+                pd.show();
                 FirebaseAuth.getInstance().sendPasswordResetEmail(resetEmail[0])
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

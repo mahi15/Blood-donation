@@ -2,10 +2,15 @@ package com.nullvoid.blooddonation;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,7 +32,7 @@ import java.util.Calendar;
  * Created by sanath on 11/06/17.
  */
 
-public class DoneeFormActivity extends AppCompatActivity {
+public class DoneeRequestActivity extends AppCompatActivity {
     private ArrayAdapter bloodGroupArray;
     private Spinner bloodGroupSpinner;
     private TextView name, phnumber, reqDate, reqAttendantName, reqAttendantNumber, pName, pId, hospitalName,
@@ -44,16 +49,28 @@ public class DoneeFormActivity extends AppCompatActivity {
     private Donee donee;
 
     private FirebaseUser fbUser;
+    private FirebaseAuth mAuth;
     private FirebaseDatabase dbRef;
     private String uId;
+
+    DrawerLayout drawerLayout;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_donee_request);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        initNavigationDrawer();
+
         bloodGroupSpinner = (Spinner)findViewById(R.id.reqBloodGroup);
-        bloodGroupArray = ArrayAdapter.createFromResource(DoneeFormActivity.this, R.array.blood_group, android.R.layout.simple_spinner_item);
+        bloodGroupArray = ArrayAdapter.createFromResource(DoneeRequestActivity.this, R.array.blood_group, android.R.layout.simple_spinner_item);
         bloodGroupArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bloodGroupSpinner.setAdapter(bloodGroupArray);
 
@@ -61,7 +78,7 @@ public class DoneeFormActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                progressDialog = new ProgressDialog(DoneeFormActivity.this);
+                progressDialog = new ProgressDialog(DoneeRequestActivity.this);
                 progressDialog.setTitle("Registering");
                 progressDialog.setMessage("Sending your Information");
                 progressDialog.setCanceledOnTouchOutside(false);
@@ -136,7 +153,7 @@ public class DoneeFormActivity extends AppCompatActivity {
                     //If user is added to database
                     showToast("Request Successfully Sent!");
                     finish();
-                    startActivity(new Intent(DoneeFormActivity.this, MainActivity.class));
+                    startActivity(new Intent(DoneeRequestActivity.this, MainActivity.class));
                 } else {
                     //if it fails
                     showToast("Something went wrong :(");
@@ -147,7 +164,7 @@ public class DoneeFormActivity extends AppCompatActivity {
     }
 
     public void showToast(String text){
-        Toast.makeText(DoneeFormActivity.this, text, Toast.LENGTH_SHORT).show();
+        Toast.makeText(DoneeRequestActivity.this, text, Toast.LENGTH_SHORT).show();
     }
 
     public boolean validateForm() {
@@ -196,6 +213,13 @@ public class DoneeFormActivity extends AppCompatActivity {
             hospitalPin.setError("Required");
             return false;
         }
+        if(dBloodGroup.equals("Choose blood group")){
+            TextView errorText = (TextView)bloodGroupSpinner.getSelectedView();
+            errorText.setError("");
+            errorText.setTextColor(Color.RED);
+            errorText.setText("Please select the blood group!");
+            return false;
+        }
         return true;
     }
 
@@ -215,5 +239,45 @@ public class DoneeFormActivity extends AppCompatActivity {
         }
 
         return ret.toString();
+    }
+
+
+    public void initNavigationDrawer() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_req_from:
+                        startActivity(new Intent(getApplicationContext(), DoneeRequestActivity.class));
+                        break;
+                    case R.id.nav_about:
+                        Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_settings:
+                        Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_logout:
+                        mAuth.signOut();
+                        finish();
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        break;
+                }
+                return true;
+            }
+        });
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 }

@@ -5,8 +5,11 @@
     <string name="remove">remove</string>
     <string name="isAdmin">isAdmin</string>
     <string name="user_details">userDetails</string>
+    <string name="drawer_open">Navigation Drawer Open</string>
+    <string name="drawer_close">Navigation Drawer Close</string>
     <string name="selection_change">SELECTION_CHANGE</string>
     <string-array name="blood_group">
+        <item>Choose blood group</item>
         <item>A+</item>
         <item>B+</item>
         <item>AB+</item>

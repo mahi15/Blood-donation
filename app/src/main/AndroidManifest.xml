@@ -12,7 +12,8 @@
 
         <uses-sdk android:minSdkVersion="11"/>
 
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppThemeNoActionBar"/>
 
         <activity
             android:name=".LoginActivity">
@@ -26,10 +27,12 @@
             android:theme="@style/AppThemeNoActionBar"
             android:label="Sign Up" />
         <activity
-            android:name=".DoneeFormActivity"
+            android:name=".DoneeRequestActivity"
+            android:theme="@style/AppThemeNoActionBar"
             android:label="Request Blood" />
         <activity
             android:name=".DonorRegistrationActivity"
+            android:theme="@style/AppThemeNoActionBar"
             android:label="Donate Blood" />
         <activity
             android:name=".DonorListFragment"

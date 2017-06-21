@@ -2,10 +2,15 @@ package com.nullvoid.blooddonation;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,6 +18,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,11 +55,19 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     FirebaseUser fbUser;
     FirebaseDatabase dbRef;
 
+    DrawerLayout drawerLayout;
+    Toolbar toolbar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_donor_registration);
 
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        initNavigationDrawer();
 
         //Add the blood groups to the bloodGroupSpinner (drop down list) in the donorDetails page
         bloodGroupSpinner = (Spinner)findViewById(R.id.regBloodGroup);
@@ -209,6 +223,14 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             pincode.setError("Required");
             return false;
         }
+        if(dBloodGroup.equals("Choose blood group")){
+            TextView errorText = (TextView)bloodGroupSpinner.getSelectedView();
+            errorText.setError("");
+            errorText.setTextColor(Color.RED);
+            errorText.setText("Please select the blood group!");
+
+            return false;
+        }
         return true;
     }
 
@@ -228,5 +250,44 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         }
 
         return ret.toString();
+    }
+
+    public void initNavigationDrawer() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_req_from:
+                        startActivity(new Intent(getApplicationContext(), DoneeRequestActivity.class));
+                        break;
+                    case R.id.nav_about:
+                        Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_settings:
+                        Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_logout:
+                        mAuth.signOut();
+                        finish();
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        break;
+                }
+                return true;
+            }
+        });
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 }
