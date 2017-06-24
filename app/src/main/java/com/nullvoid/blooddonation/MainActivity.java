@@ -119,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.nav_req_from:

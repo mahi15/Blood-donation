@@ -9,6 +9,7 @@ public class User{
     //A basic container class for holding the user details
     private String name, email, password, mobile;
     private boolean isAdmin = false;
+    private int registrationCount = 0;
 
     public User(){}
 
@@ -18,6 +19,14 @@ public class User{
         this.password = password;
         this.mobile = mobile;
         this.isAdmin = false;
+    }
+
+    public int getRegistrationCount() {
+        return registrationCount;
+    }
+
+    public void setRegistrationCount(int registrationCount) {
+        this.registrationCount = registrationCount;
     }
 
     public String getName() {
@@ -59,4 +68,5 @@ public class User{
     public void setAdmin(boolean admin) {
         isAdmin = admin;
     }
+
 }

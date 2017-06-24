@@ -64,7 +64,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:hint="Phone Number"
+                        android:hint="Your Phone Number"
                         android:inputType="number"
                         android:textAlignment="center" />
                 </android.support.design.widget.TextInputLayout>
@@ -80,11 +80,25 @@
                     android:layout_height="wrap_content">
 
                     <EditText
+                        android:id="@+id/reqAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Required Amount"
+                        android:inputType="textPersonName"
+                        android:textAlignment="center" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
                         android:id="@+id/reqNeededDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:hint="Required Date(dd/mm/yyyy)"
+                        android:hint="Required Date"
+                        android:focusable="false"
                         android:inputType="date"
                         android:orientation="horizontal"
                         android:textAlignment="center" />
@@ -102,6 +116,21 @@
                         android:layout_weight="0.03"
                         android:ems="10"
                         android:hint="Patient's Name"
+                        android:inputType="textPersonName"
+                        android:textAlignment="center" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/reqPAreaOfResidence"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:ems="10"
+                        android:hint="Patient's Area Of Residence"
                         android:inputType="textPersonName"
                         android:textAlignment="center" />
                 </android.support.design.widget.TextInputLayout>
@@ -131,7 +160,7 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:hint="Patient's Attendant's Name"
-                        android:inputType="time"
+                        android:inputType="text"
                         android:orientation="horizontal"
                         android:textAlignment="center" />
                 </android.support.design.widget.TextInputLayout>
@@ -203,7 +232,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:hint="Hospital pin code"
+                        android:hint="Hospital Pin Code"
                         android:inputType="number"
                         android:textAlignment="center" />
                 </android.support.design.widget.TextInputLayout>

@@ -8,27 +8,27 @@ import org.parceler.Parcel;
 @Parcel
 public class Donor {
 
-    private String name, gender, bloodGroup,
+    private String donorId, registeredBy, name, gender, bloodGroup,
             dateOfBirth, donatedDate, age, phoneNumber, email, address, location, pincode;
     boolean isAvailable = true;
 
     public Donor() {
     }
 
-    public Donor(String name, String gender, String bloodGroup, String dateOfBirth,
-                 String donatedDate, String age, String phoneNumber, String email, String address,
-                 String location, String pincode) {
-        this.name = name;
-        this.gender = gender;
-        this.bloodGroup = bloodGroup;
-        this.dateOfBirth = dateOfBirth;
-        this.donatedDate = donatedDate;
-        this.age = age;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.address = address;
-        this.location = location;
-        this.pincode = pincode;
+    public String getDonorId() {
+        return donorId;
+    }
+
+    public String getRegisteredBy() {
+        return registeredBy;
+    }
+
+    public void setRegisteredBy(String registeredBy) {
+        this.registeredBy = registeredBy;
+    }
+
+    public void setDonorId(String donorId) {
+        this.donorId = donorId;
     }
 
     public boolean isAvailable() {

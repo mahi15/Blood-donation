@@ -73,7 +73,9 @@ public class LoginActivity extends AppCompatActivity {
                 userEmail = email.getText().toString().trim();
                 userPassword = password.getText().toString().trim();
 
-                if(!validateForm()){return;}
+                if(!validateForm()){
+                    pd.dismiss();
+                    return;}
 
                 validateUser(userEmail, userPassword);
             }

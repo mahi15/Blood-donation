@@ -1,7 +1,5 @@
 package com.nullvoid.blooddonation;
 
-import android.app.ActionBar;
-import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -16,12 +14,8 @@ import com.nullvoid.blooddonation.adapters.AdminPagerAdapter;
 
 public class AdminConsoleActivity extends AppCompatActivity {
 
-    //reciever for donor mode
-    BroadcastReceiver mMessageReceiver;
     private ViewPager viewPager;
     private AdminPagerAdapter mAdapter;
-    // Tab titles
-    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +28,7 @@ public class AdminConsoleActivity extends AppCompatActivity {
 
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
-        actionBar = getActionBar();
-        mAdapter = new AdminPagerAdapter(getSupportFragmentManager(), getApplicationContext());
+        mAdapter = new AdminPagerAdapter(getSupportFragmentManager(), AdminConsoleActivity.this);
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);

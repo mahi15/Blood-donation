@@ -66,7 +66,7 @@
                         style="@style/dash_board_element"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Donate Blood" />
+                        android:text="register a donor" />
                 </LinearLayout>
 
                 <LinearLayout

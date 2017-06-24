@@ -1,5 +1,6 @@
 package com.nullvoid.blooddonation;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -25,8 +27,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nullvoid.blooddonation.beans.Donor;
+import com.nullvoid.blooddonation.beans.User;
+
+import java.util.Calendar;
 
 /**
  * Created by sanath on 10/06/17.
@@ -39,8 +48,7 @@ import com.nullvoid.blooddonation.beans.Donor;
 public class DonorRegistrationActivity extends AppCompatActivity {
 
     private String dName, dGender, dBloodGroup, dAge, dDOB, dDonationDate, dNumber, dEmail, dAddress, dLocation;
-    private String dPincode;
-
+    private String dPincode, currentUserId;
 
     ArrayAdapter bloodGroupArray;
     Button submitButton;
@@ -51,9 +59,15 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     RadioButton gender, donatedBefore;
     ProgressDialog progressDialog;
 
+    Calendar c = Calendar.getInstance();
+    int cDay = c.get(Calendar.DAY_OF_MONTH);
+    int cMonth = c.get(Calendar.MONTH);
+    int cYear = c.get(Calendar.YEAR);
+    int sDay, sMonth, sYear;
+
     FirebaseAuth mAuth;
     FirebaseUser fbUser;
-    FirebaseDatabase dbRef;
+    DatabaseReference dbRef;
 
     DrawerLayout drawerLayout;
     Toolbar toolbar;
@@ -94,6 +108,16 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             }
         });
 
+        dateOfBirth = (EditText)findViewById(R.id.regDateOfBirth);
+        dateOfBirth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePicker = new DatePickerDialog(DonorRegistrationActivity.this
+                        ,datePickerListener, cYear, cMonth, cDay);
+                datePicker.show();
+            }
+        });
+
 
         //Now add all the donorDetails input to a object
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +127,6 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                 name = (EditText)findViewById(R.id.regName);
                 Gender = (RadioGroup) findViewById(R.id.regGender);
                 age = (EditText)findViewById(R.id.regAge);
-                dateOfBirth = (EditText)findViewById(R.id.regDateOfBirth);
                 email = (EditText)findViewById(R.id.regEmail);
                 phoneNumber = (EditText)findViewById(R.id.regPhoneNumber);
                 address = (EditText)findViewById(R.id.regAddress);
@@ -154,18 +177,24 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        mAuth = FirebaseAuth.getInstance();
-        fbUser = mAuth.getCurrentUser();
-        dbRef = FirebaseDatabase.getInstance();
-        String uId = fbUser.getUid();
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        dbRef = FirebaseDatabase.getInstance().getReference();
+        currentUserId = fbUser.getUid();
+        String donorId = dbRef.push().getKey();
 
-        dbRef.getReference("donors").child(uId).setValue(donor).
+        donor.setDonorId(donorId);
+        donor.setRegisteredBy(currentUserId);
+
+
+
+        dbRef.child("donors").child(donorId).setValue(donor).
         addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressDialog.cancel();
                 if (task.isSuccessful()) {
                     //If user is added to database
+                    addRegistrationCount();
                     showToast("Thank You for Registering :)");
                     finish();
                     startActivity(new Intent(DonorRegistrationActivity.this, MainActivity.class));
@@ -173,6 +202,21 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                     //if it fails
                     showToast("Something went wrong :(");
                 }
+            }
+        });
+    }
+
+    public void addRegistrationCount(){
+
+        dbRef.child("users").child(currentUserId).
+                addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                dbRef.child("users").child(currentUserId).child("registrationCount").setValue(user.getRegistrationCount()+1);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
@@ -233,6 +277,18 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+        // when dialog box is closed, below method will be called.
+        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
+            sYear = selectedYear;
+            sMonth = selectedMonth + 1;
+            sDay = selectedDay;
+            dDOB = String.valueOf(sDay) + "/" + String.valueOf(sMonth) + "/" + String.valueOf(sYear);
+            dateOfBirth.setText(dDOB);
+        }
+    };
+
 
     public String toCamelCase(final String init) {
         if (init==null)

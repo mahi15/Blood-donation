@@ -38,17 +38,11 @@ public class DonorListFragment extends Fragment {
     DatabaseReference db;
 
     List<Donor> donors;
+    DonorAdapter donorAdapter;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.layout_list_view, container, false);
-
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
-        recyclerView.setHasFixedSize(true);
-        llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(llm);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         donors = new ArrayList<Donor>();
 
@@ -60,8 +54,8 @@ public class DonorListFragment extends Fragment {
                     Donor donor = postSnapshot.getValue(Donor.class);
                     donors.add(donor);
                 }
-                DonorAdapter donorAdapter = new DonorAdapter(donors, getActivity());
-                recyclerView.setAdapter(donorAdapter);
+                donorAdapter = new DonorAdapter(donors, getActivity());
+                setView();
             }
 
             @Override
@@ -69,9 +63,26 @@ public class DonorListFragment extends Fragment {
                 progressDialog.dismiss();
             }
         });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.layout_list_view, container, false);
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
+        recyclerView.setHasFixedSize(true);
+        llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+
         return rootView;
     }
 
+    public void setView(){
+        DonorAdapter donorAdapter = new DonorAdapter(donors, getActivity());
+        recyclerView.setAdapter(donorAdapter);
+    }
 
 }
 
