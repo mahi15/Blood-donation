@@ -168,7 +168,7 @@
                     android:id="@+id/textView14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Last Donated On : "
+                    android:text="Donation in last 6 months : "
                     android:textColor="#686868"
                     android:textStyle="bold" />
 

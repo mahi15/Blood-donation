@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         dbRef = FirebaseDatabase.getInstance().getReference();
 
         admin = (Button) findViewById(R.id.admin);
-        isUserAdmin();
 
         donateBlood = (Button) findViewById(R.id.btn_donate_blood);
         reqBlood = (Button) findViewById(R.id.btn_req_blood);

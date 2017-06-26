@@ -150,9 +150,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Previously Donated?"
+                        android:text="Have you donated in the last six months?"
                         android:textColor="@android:color/black"
-                        android:textSize="20sp" />
+                        android:textSize="18sp" />
 
                     <RadioGroup
                         android:id="@+id/regDonatedBeforeOption"
@@ -180,22 +180,6 @@
                             android:text="No" />
                     </RadioGroup>
                 </LinearLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/regDateOfDonation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Date Of Donation (dd/mm/yyyy)"
-                        android:inputType="date"
-                        android:paddingBottom="10dp"
-                        android:paddingTop="10dp"
-                        android:textAlignment="center" />
-                </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"

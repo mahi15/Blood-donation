@@ -9,8 +9,8 @@ import org.parceler.Parcel;
 public class Donor {
 
     private String donorId, registeredBy, name, gender, bloodGroup,
-            dateOfBirth, donatedDate, age, phoneNumber, email, address, location, pincode;
-    boolean isAvailable = true;
+            dateOfBirth, age, phoneNumber, email, address, location, pincode;
+    boolean isAvailable = true, donationInLastSixMonths;
 
     public Donor() {
     }
@@ -71,12 +71,12 @@ public class Donor {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getDonatedDate() {
-        return donatedDate;
+    public boolean isDonationInLastSixMonths() {
+        return donationInLastSixMonths;
     }
 
-    public void setDonatedDate(String donatedDate) {
-        this.donatedDate = donatedDate;
+    public void setDonationInLastSixMonths(boolean donationInLastSixMonths) {
+        this.donationInLastSixMonths = donationInLastSixMonths;
     }
 
     public String getAge() {

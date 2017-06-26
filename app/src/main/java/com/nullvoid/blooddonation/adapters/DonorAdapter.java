@@ -45,7 +45,11 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         holder.bloodGroup.setText(donor.getBloodGroup());
         holder.donorAge.setText(donor.getAge());
         holder.donorDob.setText(donor.getDateOfBirth());
-        holder.donationDate.setText(donor.getDonatedDate());
+        if(donor.isDonationInLastSixMonths()){
+            holder.donationDate.setText("Yes");
+        }else{
+            holder.donationDate.setText("No");
+        }
         holder.phoneNumber.setText(donor.getPhoneNumber());
         holder.donorEmail.setText(donor.getEmail());
         holder.donorAddress.setText(donor.getAddress());

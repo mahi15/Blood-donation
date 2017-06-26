@@ -47,13 +47,14 @@ import java.util.Calendar;
 
 public class DonorRegistrationActivity extends AppCompatActivity {
 
-    private String dName, dGender, dBloodGroup, dAge, dDOB, dDonationDate, dNumber, dEmail, dAddress, dLocation;
+    private String dName, dGender, dBloodGroup, dAge, dDOB, dNumber, dEmail, dAddress, dLocation;
     private String dPincode, currentUserId;
+    private boolean dDonationInLastSixMonths;
 
     ArrayAdapter bloodGroupArray;
     Button submitButton;
     EditText name, email, age, phoneNumber, dateOfBirth, address;
-    EditText location, pincode, DateOfDonation;
+    EditText location, pincode;
     Spinner bloodGroupSpinner;
     RadioGroup Gender, DonatedBefore;
     RadioButton gender, donatedBefore;
@@ -92,18 +93,16 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         submitButton = (Button)findViewById(R.id.regSubmit);
 
         DonatedBefore = (RadioGroup)findViewById(R.id.regDonatedBeforeOption);
-        DateOfDonation = (EditText)findViewById(R.id.regDateOfDonation);
-        DateOfDonation.setVisibility(View.GONE);
         DonatedBefore.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 donatedBefore = (RadioButton)findViewById(DonatedBefore.getCheckedRadioButtonId());
                 if(donatedBefore.getText().toString().equals("Yes")){
-                    DateOfDonation.setVisibility(View.VISIBLE);
+                    dDonationInLastSixMonths = true;
                 }
                 else{
-                    DateOfDonation.setVisibility(View.GONE);
+                    dDonationInLastSixMonths = false;
                 }
             }
         });
@@ -146,12 +145,6 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                 dLocation = location.getText().toString().trim();
                 dPincode = pincode.getText().toString().trim();
 
-                if(DateOfDonation.getVisibility() == View.VISIBLE){
-                    dDonationDate = DateOfDonation.getText().toString();
-                }else{
-                    dDonationDate = "none";
-                }
-
                 if(!validateForm()){return;}
 
                 donor.setName(toCamelCase(dName));
@@ -159,7 +152,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                 donor.setBloodGroup(dBloodGroup);
                 donor.setDateOfBirth(dDOB);
                 donor.setAge(dAge);
-                donor.setDonatedDate(dDonationDate);
+                donor.setDonationInLastSixMonths(dDonationInLastSixMonths);
                 donor.setPhoneNumber(dNumber);
                 donor.setEmail(dEmail);
                 donor.setAddress(dAddress);
@@ -238,10 +231,6 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         }
         if (TextUtils.isEmpty(dDOB)) {
             dateOfBirth.setError("Required");
-            return false;
-        }
-        if (TextUtils.isEmpty(dDonationDate)) {
-            DateOfDonation.setError("Required");
             return false;
         }
         if (TextUtils.isEmpty(dNumber)) {
