@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -87,10 +88,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logoutUser() {
-        Gson gson = new Gson();
         SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.clear().apply();
+        finish();
+        startActivity(new Intent(MainActivity.this, MainActivity.class));
     }
 
     public void initNavigationDrawer() {
@@ -126,8 +128,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_logout:
                         logoutUser();
-                        finish();
-                        startActivity(new Intent(MainActivity.this, MainActivity.class));
                         break;
                 }
                 return true;
@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder phoneDialog = new AlertDialog.Builder(MainActivity.this);
         phoneDialog.setTitle("Enter your Phone Number");
         final EditText phoneText = new EditText(MainActivity.this);
+        phoneText.setInputType(InputType.TYPE_CLASS_NUMBER);
         phoneDialog.setView(phoneText);
         phoneDialog.setPositiveButton("VERIFY", new DialogInterface.OnClickListener() {
             @Override

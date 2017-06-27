@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -260,6 +261,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                             AlertDialog.Builder alreadyExistPrompt = new AlertDialog.Builder(DonorRegistrationActivity.this);
                             alreadyExistPrompt.setTitle("Cannot Register");
                             alreadyExistPrompt.setMessage(getString(R.string.already_exist_error));
+                            alreadyExistPrompt.setPositiveButton("OK", null);
                             progressDialog.dismiss();
                             alreadyExistPrompt.show();
                         }
@@ -297,8 +299,8 @@ public class DonorRegistrationActivity extends AppCompatActivity {
 
                         final AlertDialog.Builder builder = new AlertDialog.Builder(DonorRegistrationActivity.this);
                         final AlertDialog otpDialog = builder.create();
-
                         final EditText otpText = new EditText(DonorRegistrationActivity.this);
+                        otpText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         builder.setTitle(getString(R.string.enter_otp_title));
                         builder.setMessage(getString(R.string.enter_otp_message));
                         builder.setView(otpText);
