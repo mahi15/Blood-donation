@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.nullvoid.blooddonation.adapters.DonorSelectionAdapter;
 import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.beans.SelectionDonor;
+import com.nullvoid.blooddonation.others.AppConstants;
 
 import org.parceler.Parcels;
 
@@ -99,7 +100,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
     }
 
     public void loadData(){
-        db = FirebaseDatabase.getInstance().getReference("donors");
+        db = FirebaseDatabase.getInstance().getReference(AppConstants.donors());
         db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

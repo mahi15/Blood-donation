@@ -1,12 +1,7 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.nullvoid.blooddonation.DoneeRequestActivity">
-
-    <LinearLayout
+ <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -14,7 +9,6 @@
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="false"
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
@@ -29,9 +23,13 @@
         </android.support.design.widget.AppBarLayout>
 
         <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarStyle="insideOverlay">
+            android:scrollbarStyle="insideOverlay"
+            tools:context="com.nullvoid.blooddonation.DoneeRequestActivity">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -80,7 +78,7 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/reqAmount"
+                        android:id="@+id/requiredAmount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Required Amount"
@@ -145,7 +143,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.03"
                         android:ems="10"
-                        android:hint="Patient Ref Nos ( OP ID, Room Nos etc )"
+                        android:hint="Patient's Ref No (If Any)"
                         android:inputType="textPersonName"
                         android:textAlignment="center" />
                 </android.support.design.widget.TextInputLayout>
@@ -249,13 +247,3 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
-    <android.support.design.widget.NavigationView
-        android:id="@+id/navigation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/header_nav_drawer"
-        app:menu="@menu/menu_nav_drawer" />
-
-</android.support.v4.widget.DrawerLayout>

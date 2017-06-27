@@ -40,10 +40,10 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
     @Override
     public void onBindViewHolder(final DoneeAdapter.DoneeViewHolder holder, int position) {
         final Donee donee = donees.get(position);
-        holder.requesterName.setText(donee.getName());
-        holder.phoneNumber.setText(donee.getPhoneNumber());
-        holder.bloodGroup.setText(donee.getBloodGroup());
-        holder.requDate.setText(donee.getReqDate());
+        holder.requesterName.setText(donee.getRequesterName());
+        holder.phoneNumber.setText(donee.getRequesterPhoneNumber());
+        holder.bloodGroup.setText(donee.getRequiredBloodGroup());
+        holder.requDate.setText(donee.getRequiredDate());
         holder.reqTime.setText(donee.getPatientAttendantNumber());
         holder.patientName.setText(donee.getPatientName());
         holder.patientId.setText(donee.getPatientID());

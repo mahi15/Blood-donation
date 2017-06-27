@@ -3,11 +3,22 @@
     <string name="blood_groups">Choose your Blood Group</string>
     <string name="select">select</string>
     <string name="remove">remove</string>
-    <string name="isAdmin">isAdmin</string>
     <string name="user_details">userDetails</string>
     <string name="drawer_open">Navigation Drawer Open</string>
     <string name="drawer_close">Navigation Drawer Close</string>
     <string name="selection_change">SELECTION_CHANGE</string>
+
+    <!--MainActivity strings-->
+<string name="verification_unsuccessful">Sorry that does not seem to be the right code</string>
+
+
+    <!--DonorRegistrationActivity strings-->
+    <string name="enter_otp_message">Enter the One Time Password you received through SMS</string>
+    <string name="enter_otp_title">Enter OTP</string>
+    <string name="already_exist_error">There exists a user with the given phone number.\nPlease use another number.</string>
+    <string name="registration_unsuccessful">Something went wrong\nPlease try again later</string>
+    <string name="registration_successful_greeting">Thank You for Registering</string>
+
     <string-array name="blood_group">
         <item>Choose blood group</item>
         <item>A+</item>

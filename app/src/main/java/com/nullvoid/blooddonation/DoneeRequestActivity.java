@@ -6,12 +6,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,11 +19,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nullvoid.blooddonation.beans.Donee;
+import com.nullvoid.blooddonation.others.AppConstants;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -39,53 +38,55 @@ public class DoneeRequestActivity extends AppCompatActivity {
     private ArrayAdapter bloodGroupArray;
     private Spinner bloodGroupSpinner;
     private TextView name, phnumber, reqDate, reqAmount, reqAttendantName, reqAttendantNumber, pName, pId, hospitalName,
-            hospitalNumber, hospitalAddress, hospitalPin, reqAreaOfResidence;
+                    hospitalNumber, hospitalAddress, hospitalPin, reqAreaOfResidence;
+    private Toolbar toolbar;
     private Button submitButton;
     private ProgressDialog progressDialog;
 
-    //Current date
-    Calendar c = Calendar.getInstance();
-    int cDay = c.get(Calendar.DAY_OF_MONTH);
-    int cMonth = c.get(Calendar.MONTH);
-    int cYear = c.get(Calendar.YEAR);
-    int sDay, sMonth, sYear;
-
     //String for all the fields
-    private String dName, dNumber, dRequiredDate, dBloodGroup, dReqAmount,
+    private String dName, dNumber, dRequiredDate, dBloodGroup, dReqAmount, dRequestedDate,
             dAttendantName, dAttendantNumber, dPatietsName, dPatientRefNumber,
             dHospitalName, dHospitalNumber, dHospitalAddress, dHospitalPincode, doneeId, dPAreaOfResidence;
+
+    //Current date
+    Calendar calendar = Calendar.getInstance();
+    int cDay = calendar.get(Calendar.DAY_OF_MONTH);
+    int cMonth = calendar.get(Calendar.MONTH);
+    int cYear = calendar.get(Calendar.YEAR);
+    int sDay, sMonth, sYear;
+
+    //object to store all the user entered data
     private Donee donee;
 
     //firebase database stuff
-    private FirebaseUser fbUser;
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase dbRef;
-    private String uId;
-
-    //toolbar and navbar stuff
-    DrawerLayout drawerLayout;
-    Toolbar toolbar;
+    private DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_donee_request);
 
-        mAuth = FirebaseAuth.getInstance();
-
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //Initilize important objects
+        dbRef = FirebaseDatabase.getInstance().getReference();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        initNavigationDrawer();
-
         bloodGroupSpinner = (Spinner)findViewById(R.id.reqBloodGroup);
-        bloodGroupArray = ArrayAdapter.createFromResource(DoneeRequestActivity.this, R.array.blood_group, android.R.layout.simple_spinner_item);
-        bloodGroupArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        bloodGroupSpinner.setAdapter(bloodGroupArray);
-
-
+        bloodGroupArray = ArrayAdapter.createFromResource(DoneeRequestActivity.this,
+                R.array.blood_group, android.R.layout.simple_spinner_item);
+        submitButton = (Button)findViewById(R.id.reqSubmit);
         reqDate = (TextView)findViewById(R.id.reqNeededDate);
 
+        //getting ready
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        bloodGroupArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bloodGroupSpinner.setAdapter(bloodGroupArray);
+        submitButton.setOnClickListener(getInfo);
         reqDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,81 +96,80 @@ public class DoneeRequestActivity extends AppCompatActivity {
             }
         });
 
-        submitButton = (Button)findViewById(R.id.reqSubmit);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                progressDialog = new ProgressDialog(DoneeRequestActivity.this);
-                progressDialog.setTitle("Registering");
-                progressDialog.setMessage("Sending your Information");
-                progressDialog.setCanceledOnTouchOutside(false);
-                progressDialog.show();
-
-                name = (TextView)findViewById(R.id.reqName);
-                phnumber = (TextView)findViewById(R.id.reqPhoneNumber);
-                reqAttendantNumber = (TextView)findViewById(R.id.reqPatAttendantNumber);
-                pName  = (TextView)findViewById(R.id.reqPName);
-                reqAmount = (TextView) findViewById(R.id.reqAmount);
-                pId  = (TextView)findViewById(R.id.reqPId);
-                hospitalName = (TextView)findViewById(R.id.reqHospitalName);
-                hospitalNumber = (TextView)findViewById(R.id.reqHospitalAddress);
-                hospitalAddress = (TextView)findViewById(R.id.reqHospitalAddress);
-                hospitalPin = (TextView)findViewById(R.id.reqHospitalPin);
-                reqAttendantName = (TextView)findViewById(R.id.reqPatAttendantName);
-                reqAreaOfResidence = (TextView)findViewById(R.id.reqPAreaOfResidence);
-                donee = new Donee();
-
-                dName = name.getText().toString().toString();
-                dNumber = phnumber.getText().toString().trim();
-                dBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
-                dRequiredDate = reqDate.getText().toString().trim();
-                dReqAmount = reqAmount.getText().toString().trim();
-                dAttendantName = reqAttendantName.getText().toString().trim();
-                dAttendantNumber = reqAttendantNumber.getText().toString().trim();
-                dPatietsName = pName.getText().toString().trim();
-                dPatientRefNumber = pId.getText().toString().trim();
-                dHospitalName = hospitalName.getText().toString().trim();
-                dHospitalNumber = hospitalNumber.getText().toString().trim();
-                dHospitalAddress = hospitalAddress.getText().toString().trim();
-                dHospitalPincode = hospitalPin.getText().toString().trim();
-                dPAreaOfResidence = reqAreaOfResidence.getText().toString().trim();
-
-                if(!validateForm()){
-                    progressDialog.dismiss();
-                    return;
-                }
-
-                donee.setName(toCamelCase(dName));
-                donee.setPhoneNumber(dNumber);
-                donee.setBloodGroup(dBloodGroup);
-                donee.setReqAmount(dReqAmount);
-                donee.setReqDate(dRequiredDate);
-                donee.setPatientAttendantName(dAttendantName);
-                donee.setPatientAttendantNumber(dAttendantNumber);
-                donee.setPatientName(toCamelCase(dPatietsName));
-                donee.setPatientID(dPatientRefNumber);
-                donee.setHospitalName(toCamelCase(dHospitalName));
-                donee.setHospitalNumber(dHospitalNumber);
-                donee.setHospitalAddress(dHospitalAddress);
-                donee.setHospitalPin(dHospitalPincode);
-                donee.setPatientAreaofResidence(dPAreaOfResidence);
-
-                registerDonee(donee);
-            }
-        });
     }
+
+    View.OnClickListener getInfo = new View.OnClickListener() {
+        public void onClick(View v) {
+            progressDialog = new ProgressDialog(DoneeRequestActivity.this);
+            progressDialog.setTitle("Registering");
+            progressDialog.setMessage("Sending your Information");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
+            name = (TextView)findViewById(R.id.reqName);
+            phnumber = (TextView)findViewById(R.id.reqPhoneNumber);
+            reqAttendantNumber = (TextView)findViewById(R.id.reqPatAttendantNumber);
+            pName  = (TextView)findViewById(R.id.reqPName);
+            reqAmount = (TextView) findViewById(R.id.requiredAmount);
+            pId  = (TextView)findViewById(R.id.reqPId);
+            hospitalName = (TextView)findViewById(R.id.reqHospitalName);
+            hospitalNumber = (TextView)findViewById(R.id.reqHospitalAddress);
+            hospitalAddress = (TextView)findViewById(R.id.reqHospitalAddress);
+            hospitalPin = (TextView)findViewById(R.id.reqHospitalPin);
+            reqAttendantName = (TextView)findViewById(R.id.reqPatAttendantName);
+            reqAreaOfResidence = (TextView)findViewById(R.id.reqPAreaOfResidence);
+            donee = new Donee();
+
+            dName = name.getText().toString().toString();
+            dNumber = phnumber.getText().toString().trim();
+            dBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
+            dRequiredDate = reqDate.getText().toString().trim();
+            dReqAmount = reqAmount.getText().toString().trim();
+            dAttendantName = reqAttendantName.getText().toString().trim();
+            dAttendantNumber = reqAttendantNumber.getText().toString().trim();
+            dPatietsName = pName.getText().toString().trim();
+            dPatientRefNumber = pId.getText().toString().trim();
+            dHospitalName = hospitalName.getText().toString().trim();
+            dHospitalNumber = hospitalNumber.getText().toString().trim();
+            dHospitalAddress = hospitalAddress.getText().toString().trim();
+            dHospitalPincode = hospitalPin.getText().toString().trim();
+            dPAreaOfResidence = reqAreaOfResidence.getText().toString().trim();
+
+            if(!validateForm()){
+                progressDialog.dismiss();
+                return;
+            }
+
+            SimpleDateFormat myDate = new SimpleDateFormat("dd/MM/yyyy/HH:mm");
+            dRequestedDate = myDate.format(new Timestamp(System.currentTimeMillis()));
+
+            donee.setRequesterName(toCamelCase(dName));
+            donee.setRequesterPhoneNumber(dNumber);
+            donee.setRequiredBloodGroup(dBloodGroup);
+            donee.setRequiredAmount(dReqAmount);
+            donee.setRequiredDate(dRequiredDate);
+            donee.setPatientAttendantName(dAttendantName);
+            donee.setPatientAttendantNumber(dAttendantNumber);
+            donee.setPatientName(toCamelCase(dPatietsName));
+            donee.setPatientID(dPatientRefNumber);
+            donee.setHospitalName(toCamelCase(dHospitalName));
+            donee.setHospitalNumber(dHospitalNumber);
+            donee.setHospitalAddress(dHospitalAddress);
+            donee.setHospitalPin(dHospitalPincode);
+            donee.setPatientAreaofResidence(dPAreaOfResidence);
+            donee.setRequestedDate(dRequestedDate);
+
+            registerDonee(donee);
+        }
+    };
 
     public void registerDonee(Donee donee){
 
-        dbRef = FirebaseDatabase.getInstance();
-        fbUser = FirebaseAuth.getInstance().getCurrentUser();
-        uId = fbUser.getUid();
-
         //create unique key for donee
-        doneeId = dbRef.getReference().push().getKey();
-
+        doneeId = dbRef.push().getKey();
         donee.setDoneeId(doneeId);
-        donee.setRequestedBy(uId);
-        dbRef.getReference("donee").child(doneeId).setValue(donee).
+
+        dbRef.child(AppConstants.donees()).child(doneeId).setValue(donee).
         addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -220,9 +220,8 @@ public class DoneeRequestActivity extends AppCompatActivity {
             return false;
         }
         if (TextUtils.isEmpty(dPatientRefNumber)) {
-            pId.setError("Required");
+            dPatientRefNumber = "Not Provided";
             pId.requestFocus();
-            return false;
         }
         if (dAttendantName.length() < 3) {
             reqAttendantName.setError("Not Valid");
@@ -294,43 +293,4 @@ public class DoneeRequestActivity extends AppCompatActivity {
             reqDate.setText(dRequiredDate);
         }
     };
-
-    public void initNavigationDrawer() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_home:
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.nav_req_from:
-                        startActivity(new Intent(getApplicationContext(), DoneeRequestActivity.class));
-                        break;
-                    case R.id.nav_about:
-                        Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.nav_settings:
-                        Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.nav_logout:
-                        mAuth.signOut();
-                        finish();
-                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                        break;
-                }
-                return true;
-            }
-        });
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-    }
 }

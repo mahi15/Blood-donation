@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nullvoid.blooddonation.adapters.DonorAdapter;
 import com.nullvoid.blooddonation.beans.Donor;
+import com.nullvoid.blooddonation.others.AppConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class DonorListFragment extends Fragment {
 
         donors = new ArrayList<Donor>();
 
-        db = FirebaseDatabase.getInstance().getReference("donors");
+        db = FirebaseDatabase.getInstance().getReference(AppConstants.donors());
         db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

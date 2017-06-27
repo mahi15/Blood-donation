@@ -8,9 +8,9 @@ import org.parceler.Parcel;
 @Parcel
 public class Donor {
 
-    private String donorId, registeredBy, name, gender, bloodGroup,
-            dateOfBirth, age, phoneNumber, email, address, location, pincode;
-    boolean isAvailable = true, donationInLastSixMonths;
+    private String donorId, name, gender, bloodGroup, dateOfBirth, age,
+            phoneNumber, email, address, location, pincode, registeredDate;
+    boolean isAvailable = true, donationInLastSixMonths, admin = false;
 
     public Donor() {
     }
@@ -19,24 +19,8 @@ public class Donor {
         return donorId;
     }
 
-    public String getRegisteredBy() {
-        return registeredBy;
-    }
-
-    public void setRegisteredBy(String registeredBy) {
-        this.registeredBy = registeredBy;
-    }
-
     public void setDonorId(String donorId) {
         this.donorId = donorId;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(boolean available) {
-        isAvailable = available;
     }
 
     public String getName() {
@@ -69,14 +53,6 @@ public class Donor {
 
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
-    }
-
-    public boolean isDonationInLastSixMonths() {
-        return donationInLastSixMonths;
-    }
-
-    public void setDonationInLastSixMonths(boolean donationInLastSixMonths) {
-        this.donationInLastSixMonths = donationInLastSixMonths;
     }
 
     public String getAge() {
@@ -127,4 +103,56 @@ public class Donor {
         this.pincode = pincode;
     }
 
+    public String getRegisteredDate() {
+        return registeredDate;
+    }
+
+    public void setRegisteredDate(String registeredDate) {
+        this.registeredDate = registeredDate;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    public boolean isDonationInLastSixMonths() {
+        return donationInLastSixMonths;
+    }
+
+    public void setDonationInLastSixMonths(boolean donationInLastSixMonths) {
+        this.donationInLastSixMonths = donationInLastSixMonths;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    @Override
+    public String toString() {
+        return "Donor{" +
+                "donorId='" + donorId + '\'' +
+                ", name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", bloodGroup='" + bloodGroup + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", age='" + age + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", location='" + location + '\'' +
+                ", pincode='" + pincode + '\'' +
+                ", registeredDate='" + registeredDate + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", donationInLastSixMonths=" + donationInLastSixMonths +
+                ", admin=" + admin +
+                '}';
+    }
 }

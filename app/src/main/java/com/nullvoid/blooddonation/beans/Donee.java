@@ -5,9 +5,9 @@ package com.nullvoid.blooddonation.beans;
  */
 
 public class Donee {
-    private String doneeId, requestedBy, name,phoneNumber, bloodGroup, reqAmount, reqDate, patientAttendantName,
+    private String doneeId, requesterName, requesterPhoneNumber, requiredBloodGroup, requiredAmount, requiredDate, patientAttendantName,
             patientAttendantNumber, patientName, patientAreaofResidence, patientID, hospitalName,
-            hospitalNumber, hospitalAddress, hospitalPin;
+            hospitalNumber, hospitalAddress, hospitalPin, requestedDate;
 
     public Donee() {
     }
@@ -20,64 +20,48 @@ public class Donee {
         this.doneeId = doneeId;
     }
 
-    public String getRequestedBy() {
-        return requestedBy;
+    public String getRequesterName() {
+        return requesterName;
     }
 
-    public void setRequestedBy(String requestedBy) {
-        this.requestedBy = requestedBy;
+    public void setRequesterName(String requesterName) {
+        this.requesterName = requesterName;
     }
 
-    public String getName() {
-        return name;
+    public String getRequesterPhoneNumber() {
+        return requesterPhoneNumber;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRequesterPhoneNumber(String requesterPhoneNumber) {
+        this.requesterPhoneNumber = requesterPhoneNumber;
     }
 
-    public String getReqAmount() {
-        return reqAmount;
+    public String getRequiredBloodGroup() {
+        return requiredBloodGroup;
     }
 
-    public void setReqAmount(String reqAmount) {
-        this.reqAmount = reqAmount;
+    public void setRequiredBloodGroup(String requiredBloodGroup) {
+        this.requiredBloodGroup = requiredBloodGroup;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getRequiredAmount() {
+        return requiredAmount;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setRequiredAmount(String requiredAmount) {
+        this.requiredAmount = requiredAmount;
     }
 
-    public String getBloodGroup() {
-        return bloodGroup;
+    public String getRequiredDate() {
+        return requiredDate;
     }
 
-    public void setBloodGroup(String bloodGroup) {
-        this.bloodGroup = bloodGroup;
-    }
-
-    public String getReqDate() {
-        return reqDate;
-    }
-
-    public void setReqDate(String reqDate) {
-        this.reqDate = reqDate;
+    public void setRequiredDate(String requiredDate) {
+        this.requiredDate = requiredDate;
     }
 
     public String getPatientAttendantName() {
         return patientAttendantName;
-    }
-
-    public String getPatientAreaofResidence() {
-        return patientAreaofResidence;
-    }
-
-    public void setPatientAreaofResidence(String patientAreaofResidence) {
-        this.patientAreaofResidence = patientAreaofResidence;
     }
 
     public void setPatientAttendantName(String patientAttendantName) {
@@ -98,6 +82,14 @@ public class Donee {
 
     public void setPatientName(String patientName) {
         this.patientName = patientName;
+    }
+
+    public String getPatientAreaofResidence() {
+        return patientAreaofResidence;
+    }
+
+    public void setPatientAreaofResidence(String patientAreaofResidence) {
+        this.patientAreaofResidence = patientAreaofResidence;
     }
 
     public String getPatientID() {
@@ -138,5 +130,13 @@ public class Donee {
 
     public void setHospitalPin(String hospitalPin) {
         this.hospitalPin = hospitalPin;
+    }
+
+    public String getRequestedDate() {
+        return requestedDate;
+    }
+
+    public void setRequestedDate(String requestedDate) {
+        this.requestedDate = requestedDate;
     }
 }

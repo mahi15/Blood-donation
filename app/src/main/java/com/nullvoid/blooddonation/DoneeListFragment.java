@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nullvoid.blooddonation.adapters.DoneeAdapter;
 import com.nullvoid.blooddonation.beans.Donee;
+import com.nullvoid.blooddonation.others.AppConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,6 @@ public class DoneeListFragment extends Fragment {
 
     RecyclerView recyclerView;
     LinearLayoutManager llm;
-
     ProgressDialog progressDialog;
 
     DatabaseReference dbRef;
@@ -50,8 +50,8 @@ public class DoneeListFragment extends Fragment {
 
         donees = new ArrayList<Donee>();
 
-        dbRef = FirebaseDatabase.getInstance().getReference("donee");
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbRef = FirebaseDatabase.getInstance().getReference();
+        dbRef.child(AppConstants.donees()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {

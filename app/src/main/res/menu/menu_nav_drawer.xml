@@ -6,8 +6,16 @@
             android:icon="@drawable/ic_home_black_24dp"
             android:title="Home" />
         <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="Profile"/>
+        <item
             android:id="@+id/nav_req_from"
             android:icon="@drawable/ic_add_circle_outline_black_24dp"
+            android:title="Blood Request" />
+        <item
+            android:id="@+id/nav_don_from"
+            android:icon="@drawable/ic_person_add_black_24dp"
             android:title="Blood Request" />
         <item
             android:id="@+id/nav_about"
@@ -17,9 +25,5 @@
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_exit_to_app_black_24dp"
             android:title="Logout"/>
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings_black_24dp"
-            android:title="Settings"/>
     </group>
 </menu>
