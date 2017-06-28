@@ -8,8 +8,11 @@
     <string name="drawer_close">Navigation Drawer Close</string>
     <string name="selection_change">SELECTION_CHANGE</string>
 
+    <string name="no_internet_message">Please check your Internet connection and try again</string>
+
     <!--MainActivity strings-->
-<string name="verification_unsuccessful">Sorry that does not seem to be the right code</string>
+    <string name="wrong_otp">Sorry that does not seem to be the right code</string>
+    <string name="verification_unsuccessful">Unable to verify the phone number you entered.</string>
 
 
     <!--DonorRegistrationActivity strings-->

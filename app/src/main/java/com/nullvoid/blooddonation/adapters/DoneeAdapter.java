@@ -33,7 +33,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
     public DoneeAdapter.DoneeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.card_donee, parent, false);
+                inflate(R.layout.view_card_donee, parent, false);
         return new DoneeAdapter.DoneeViewHolder(itemView);
     }
 

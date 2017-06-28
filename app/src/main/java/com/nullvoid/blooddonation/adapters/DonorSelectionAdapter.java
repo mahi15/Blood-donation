@@ -37,7 +37,7 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
     public DonorSelectionAdapter.DonorSelectionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.card_donor, parent, false);
+                inflate(R.layout.view_card_donor, parent, false);
         return new DonorSelectionAdapter.DonorSelectionViewHolder(itemView);
     }
 

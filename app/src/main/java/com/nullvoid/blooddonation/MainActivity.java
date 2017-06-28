@@ -1,8 +1,12 @@
 package com.nullvoid.blooddonation;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -19,7 +23,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -37,13 +44,15 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     Button donateBlood, reqBlood, admin;
+    DrawerLayout drawerLayout;
+    Toolbar toolbar;
+    ProgressDialog verifying;
+
     FirebaseAuth mAuth;
     DatabaseReference dbRef;
 
     Donor currentUser;
-
-    DrawerLayout drawerLayout;
-    Toolbar toolbar;
+    Donor tempDonor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.layout_main);
         admin = (Button) findViewById(R.id.admin);
 
-        setCurrentUser();
+        setCurrentUserFromSharedPreference();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -87,14 +96,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void logoutUser() {
-        SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.clear().apply();
-        finish();
-        startActivity(new Intent(MainActivity.this, MainActivity.class));
-    }
-
     public void initNavigationDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_profile:
                         drawerLayout.closeDrawers();
                         if(currentUser == null){
-                            signInDonor();
+                            checkIfDonorAlreadyExists();
                         } else {
                             startActivity(new Intent(getApplicationContext(), DonorProfileActivity.class));
                         }
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    public void setCurrentUser() {
+    public void setCurrentUserFromSharedPreference() {
         SharedPreferences mPref = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
         Gson gson = new Gson();
         String json = mPref.getString(AppConstants.currentUser(), null);
@@ -160,85 +161,130 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void signInDonor() {
+    public void checkIfDonorAlreadyExists() {
 
+        if(!isNetworkAvailable()){
+            Toast.makeText(MainActivity.this, getString(R.string.no_internet_message),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //show a dialog box for the user to enter the phone number
         AlertDialog.Builder phoneDialog = new AlertDialog.Builder(MainActivity.this);
         phoneDialog.setTitle("Enter your Phone Number");
         final EditText phoneText = new EditText(MainActivity.this);
         phoneText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        phoneText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         phoneDialog.setView(phoneText);
         phoneDialog.setPositiveButton("VERIFY", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                //show a loader while verfying the number
+                verifying = new ProgressDialog(MainActivity.this);
+                verifying.setTitle("Loading");
+                verifying.setMessage("Verifying your phone number");
+                verifying.setCanceledOnTouchOutside(false);
+                verifying.show();
+
                 String phoneNumber = phoneText.getText().toString().trim();
                 dbRef.child(AppConstants.donors()).orderByChild("phoneNumber").equalTo(phoneNumber).limitToFirst(1)
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 for(DataSnapshot d : dataSnapshot.getChildren()){
-                                    Donor user = d.getValue(Donor.class);
-                                    verifyPhoneNumber(user);
+                                    tempDonor = d.getValue(Donor.class);
                                 }
+                                if(tempDonor.getPhoneNumber() == null){
+                                    verifying.dismiss();
+                                    showFailedDialog("There is no donor with the given phone number");
+                                    return;
+                                }
+                                verifyPhoneNumber(tempDonor.getPhoneNumber());
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
+                                verifying.dismiss();
+                                showFailedDialog("Something went wrong\nPlease try again later.");
                             }
                         });
             }
         });
 
-        phoneDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
+        phoneDialog.setNegativeButton("CANCEL", null);
         phoneDialog.show();
     }
 
-    public void verifyPhoneNumber(final Donor user) {
+    public void showFailedDialog(String message){
+        AlertDialog.Builder failedDialog = new AlertDialog.Builder(MainActivity.this);
+        failedDialog.setTitle("Verification Failed");
+        failedDialog.setMessage(message);
+        failedDialog.setCancelable(false);
+        failedDialog.setPositiveButton("OK", null);
+        failedDialog.show();
+    }
 
-        PhoneAuthProvider phoneAuth = PhoneAuthProvider.getInstance();
-        phoneAuth.verifyPhoneNumber(user.getPhoneNumber(), 120, TimeUnit.SECONDS, MainActivity.this,
+    public void verifyPhoneNumber(final String phoneNumber) {
+
+        final PhoneAuthProvider phoneAuth = PhoneAuthProvider.getInstance();
+        phoneAuth.verifyPhoneNumber(phoneNumber, 120, TimeUnit.SECONDS, MainActivity.this,
                 new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                     @Override
                     public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-                        writeToSharedPreference(user);
+                        signInUser(phoneAuthCredential);
+                        verifying.dismiss();
                     }
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
-
+                        verifying.dismiss();
+                        showFailedDialog(getString(R.string.verification_unsuccessful));
                     }
 
                     @Override
-                    public void onCodeSent(final String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                        super.onCodeSent(s, forceResendingToken);
-
-                        AlertDialog.Builder otpDialog = new AlertDialog.Builder(MainActivity.this);
-                        final EditText otpText = new EditText(MainActivity.this);
-                        otpDialog.setTitle(getString(R.string.enter_otp_title));
-                        otpDialog.setMessage(getString(R.string.enter_otp_message));
-                        otpDialog.setView(otpText);
-                        otpDialog.setCancelable(false);
-                        otpDialog.setPositiveButton("VERIFY", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String enteredCode = otpText.getText().toString().trim();
-                                String sentCode = PhoneAuthProvider.getCredential(s, enteredCode).getSmsCode();
-                                if (sentCode.equals(enteredCode)) {
-                                    writeToSharedPreference(user);
-                                } else {
-                                    AlertDialog.Builder vFailDialog = new AlertDialog.Builder(MainActivity.this);
-                                    vFailDialog.setTitle("Failed");
-                                    vFailDialog.setMessage(getString(R.string.verification_unsuccessful));
-                                    vFailDialog.setPositiveButton("OK", null);
-                                }
-                            }
-                        });
-                        otpDialog.show();
+                    public void onCodeSent(final String verificationId, final PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                        super.onCodeSent(verificationId, forceResendingToken);
+                        verifying.dismiss();
+                        showOtpPrompt(verificationId);
                     }
                 });
+    }
+
+    private void showOtpPrompt(final String verificationId){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        final EditText otpText = new EditText(MainActivity.this);
+
+        otpText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        otpText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        builder.setTitle(getString(R.string.enter_otp_title));
+        builder.setMessage(getString(R.string.enter_otp_message));
+        builder.setView(otpText);
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("VERIFY", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String enteredCode = otpText.getText().toString().trim();
+                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, enteredCode);
+                signInUser(credential);
+            }
+        });
+        builder.setNegativeButton("CANCEL", null);
+        builder.show();
+    }
+
+    public void signInUser(PhoneAuthCredential credential){
+
+        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    writeToSharedPreference(tempDonor);
+                } else {
+                    showFailedDialog("Unable to verify\nPlease try again later");
+                }
+            }
+        });
     }
 
     public void writeToSharedPreference(Donor donor) {
@@ -250,6 +296,23 @@ public class MainActivity extends AppCompatActivity {
         prefsEditor.commit();
         finish();
         startActivity(new Intent(MainActivity.this, MainActivity.class));
+    }
+
+    public void logoutUser() {
+
+        mAuth.signOut();
+        SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.clear().apply();
+        finish();
+        startActivity(new Intent(MainActivity.this, MainActivity.class));
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 

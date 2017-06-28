@@ -84,7 +84,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        bloodGroupArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bloodGroupArray.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         bloodGroupSpinner.setAdapter(bloodGroupArray);
         submitButton.setOnClickListener(getInfo);
         reqDate.setOnClickListener(new View.OnClickListener() {
