@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 public class Match {
-    private String matchId, doneeId, matchedDate, matchedTime;
+    private String matchId, doneeId, matchedDate, matchedTime, completedDate;
     private ArrayList<String> contactedDonors, helpedDonors;
     private boolean completed;
 
@@ -65,5 +65,13 @@ public class Match {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public String getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(String completedDate) {
+        this.completedDate = completedDate;
     }
 }

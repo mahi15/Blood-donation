@@ -19,6 +19,7 @@ import com.nullvoid.blooddonation.others.AppConstants;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -123,5 +124,10 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
                 }
             });
         }
+    }
+
+    public void loadData(ArrayList<SelectionDonor> newList){
+        selectionDonors = newList;
+        notifyDataSetChanged();
     }
 }

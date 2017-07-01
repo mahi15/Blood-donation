@@ -6,10 +6,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,7 +26,6 @@ import com.nullvoid.blooddonation.beans.Donee;
 import com.nullvoid.blooddonation.others.AppConstants;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by sanath on 11/06/17.
@@ -33,8 +37,12 @@ public class DoneeListFragment extends Fragment {
     LinearLayoutManager llm;
     ProgressDialog progressDialog;
 
+    Toolbar toolbar;
+
     DatabaseReference dbRef;
-    List<Donee> donees;
+
+    ArrayList<Donee> doneesList;
+    DoneeAdapter doneeAdapter;
 
     public DoneeListFragment() {
     }
@@ -43,19 +51,14 @@ public class DoneeListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        doneesList = new ArrayList<Donee>();
+        dbRef = FirebaseDatabase.getInstance().getReference();
+
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setTitle("Loading");
         progressDialog.setMessage("Retriving Data");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-
-        donees = new ArrayList<Donee>();
-        dbRef = FirebaseDatabase.getInstance().getReference();
-
-        getData();
-    }
-
-    public void getData(){
 
         dbRef.child(AppConstants.donees()).orderByChild(AppConstants.status())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -63,17 +66,17 @@ public class DoneeListFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             Donee donee = postSnapshot.getValue(Donee.class);
-                            donees.add(donee);
-                            setView();
-                            progressDialog.dismiss();
+                            doneesList.add(donee);
                         }
+                        doneeAdapter = new DoneeAdapter(doneesList, getActivity());
+                        recyclerView.setAdapter(doneeAdapter);
+                        progressDialog.dismiss();
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         progressDialog.dismiss();
                     }
                 });
-
     }
 
     @Override
@@ -83,21 +86,61 @@ public class DoneeListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.layout_list_view, container, false);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
-        recyclerView.setHasFixedSize(true);
         llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(llm);
+
+        loadAdditionals(rootView);
+
         return rootView;
     }
 
-    public void setView(){
-        DoneeAdapter doneeAdapter = new DoneeAdapter(donees, (AdminConsoleActivity) getActivity());
-        recyclerView.setAdapter(doneeAdapter);
-    }
+    public void loadAdditionals(View rootView){
 
-    public void log(String text){
-        Log.d("CHECK",text);
-    }
+        //loading the search bar
+        toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        final EditText searchField = (EditText) rootView.findViewById(R.id.search_bar_edittext);
+        ImageView clearText = (ImageView) rootView.findViewById(R.id.search_bar_close);
 
+        toolbar.setVisibility(View.VISIBLE);
+
+        clearText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchField.setText("");
+                searchField.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                doneeAdapter.loadData(doneesList);
+
+            }
+        });
+
+        searchField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String searchQuery = s.toString().toLowerCase();
+                ArrayList<Donee> resultDonees = new ArrayList<Donee>();
+                for(Donee donee : doneesList){
+                    if (donee.getPatientName().toLowerCase().contains(searchQuery) ||
+                            donee.getPatientAreaofResidence().toLowerCase().contains(searchQuery) ||
+                            donee.getHospitalPin().contains(searchQuery) ||
+                            donee.getHospitalAddress().toLowerCase().contains(searchQuery)){
+                        resultDonees.add(donee);
+                    }
+                }
+                doneeAdapter.loadData(resultDonees);
+            }
+        });
+    }
 }
 

@@ -29,6 +29,7 @@ import com.nullvoid.blooddonation.AdminConsoleActivity;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.Donor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,6 +81,12 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         });
 
     }
+
+    public void loadData(ArrayList<Donor> newDonorList){
+        donors = newDonorList;
+        notifyDataSetChanged();
+    }
+
 
     public void makeCall(final String number, final String name) {
 

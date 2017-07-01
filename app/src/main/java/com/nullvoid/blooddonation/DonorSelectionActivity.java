@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,7 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -61,6 +65,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
 
     ArrayList<SelectionDonor> donorsList;
     ArrayList<Donor> selectedDonorsList;
+    DonorSelectionAdapter donorSelectionAdapter;
 
 
     @Override
@@ -69,9 +74,9 @@ public class DonorSelectionActivity extends AppCompatActivity {
 
         //get ready the necessary view components
         setContentView(R.layout.layout_list_view);
-        AppBarLayout appBar = (AppBarLayout) findViewById(R.id.appbar);
-        appBar.setVisibility(View.VISIBLE);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        toolbar.setVisibility(View.VISIBLE);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
@@ -98,6 +103,55 @@ public class DonorSelectionActivity extends AppCompatActivity {
         });
 
         loadData();
+        loadAdditionals();
+    }
+
+    public void loadAdditionals(){
+
+        //loading the search bar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final EditText searchField = (EditText) findViewById(R.id.search_bar_edittext);
+        ImageView clearText = (ImageView) findViewById(R.id.search_bar_close);
+
+        toolbar.setVisibility(View.VISIBLE);
+
+        clearText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchField.setText("");
+                searchField.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                donorSelectionAdapter.loadData(donorsList);
+
+            }
+        });
+
+        searchField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String searchQuery = s.toString().toLowerCase();
+                ArrayList<SelectionDonor> resultDonors = new ArrayList<>();
+                for(SelectionDonor selectionDonor : donorsList){
+                    if(selectionDonor.getDonor().getName().toLowerCase().contains(searchQuery) ||
+                            selectionDonor.getDonor().getBloodGroup().toLowerCase().contains(searchQuery) ||
+                            selectionDonor.getDonor().getLocation().toLowerCase().contains(searchQuery) ||
+                            selectionDonor.getDonor().getPincode().contains(searchQuery) ||
+                            selectionDonor.getDonor().getAddress().toLowerCase().contains(searchQuery)){
+                        resultDonors.add(selectionDonor);
+                    }
+                }
+                donorSelectionAdapter.loadData(resultDonors);
+            }
+        });
 
     }
 
@@ -170,11 +224,10 @@ public class DonorSelectionActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Donor donor = postSnapshot.getValue(Donor.class);
-                    SelectionDonor selectionDonor = new SelectionDonor(donor);
+                    SelectionDonor selectionDonor = new SelectionDonor(postSnapshot.getValue(Donor.class));
                     donorsList.add(selectionDonor);
                 }
-                DonorSelectionAdapter donorSelectionAdapter = new DonorSelectionAdapter(donorsList,
+                donorSelectionAdapter = new DonorSelectionAdapter(donorsList,
                         getApplicationContext());
                 recyclerView.setAdapter(donorSelectionAdapter);
             }

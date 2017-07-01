@@ -1,6 +1,7 @@
 package com.nullvoid.blooddonation.adapters;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -34,6 +36,7 @@ import com.nullvoid.blooddonation.others.AppConstants;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,10 +44,10 @@ import java.util.List;
  */
 public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHolder> {
 
-    AdminConsoleActivity adminConsoleActivity;
+    Context adminConsoleActivity;
     private List<Donee> donees;
 
-    public DoneeAdapter(List<Donee> donees, AdminConsoleActivity adminConsoleActivity) {
+    public DoneeAdapter(List<Donee> donees, Context adminConsoleActivity) {
         this.donees = donees;
         this.adminConsoleActivity = adminConsoleActivity;
     }
@@ -151,7 +154,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         if (ActivityCompat.checkSelfPermission(adminConsoleActivity,
                 Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 
-            Dexter.withActivity(adminConsoleActivity).withPermission(Manifest.permission.CALL_PHONE).
+            Dexter.withActivity((AdminConsoleActivity)adminConsoleActivity).withPermission(Manifest.permission.CALL_PHONE).
                     withListener(new PermissionListener() {
                         @Override
                         public void onPermissionGranted(PermissionGrantedResponse response) {
@@ -183,6 +186,11 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
             adminConsoleActivity.startActivity(callIntent);
         }
 
+    }
+
+    public void loadData(ArrayList<Donee> newDoneeList){
+        donees = newDoneeList;
+        notifyDataSetChanged();
     }
 
     @Override
