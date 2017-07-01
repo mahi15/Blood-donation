@@ -5,17 +5,39 @@ package com.nullvoid.blooddonation.others;
  */
 
 public class AppConstants {
-    static final String donees = "donees";
-    static final String donors = "donors";
-    static final String currentUser = "CURRENT_USER";
 
-    public static String donees(){
-        return donees;
+    public static final String select(){
+        return "SELECT";
     }
-    public static String donors(){
-        return donors;
+    public static final String remove(){
+        return "REMOVE";
     }
-    public static String currentUser() {
-        return currentUser;
+    public static final String donees(){
+        return "donees";
     }
+    public static final String donors(){
+        return "donors";
+    }
+    public static final String currentUser() {
+        return "CURRENT_USER";
+    }
+    public static final String donee(){
+        return "DONEE";
+    }
+    public static final String statusPending(){
+        return "PENDING";
+    }
+    public static final String statusNotComplete(){
+        return "NOT_COMPLETE";
+    }
+    public static final String statusComplete(){
+        return "COMPLETE";
+    }
+    public static final String status(){
+        return "status";
+    }
+    public static final String matches(){
+        return "matches";
+    }
+    public static final String notProvided(){return "Not Provided";}
 }

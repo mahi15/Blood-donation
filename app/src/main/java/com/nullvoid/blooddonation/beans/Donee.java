@@ -1,19 +1,30 @@
 package com.nullvoid.blooddonation.beans;
 
+import org.parceler.Parcel;
+
 /**
  * Created by sanath on 11/06/17.
  */
 
+@Parcel
 public class Donee {
     private String doneeId, requesterName, requesterPhoneNumber, requiredBloodGroup, requiredAmount, requiredDate, patientAttendantName,
             patientAttendantNumber, patientName, patientAreaofResidence, patientID, hospitalName,
-            hospitalNumber, hospitalAddress, hospitalPin, requestedDate;
+            hospitalNumber, hospitalAddress, hospitalPin, requestedDate, requestedTime, status;
 
     public Donee() {
     }
 
     public String getDoneeId() {
         return doneeId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setDoneeId(String doneeId) {
@@ -138,5 +149,13 @@ public class Donee {
 
     public void setRequestedDate(String requestedDate) {
         this.requestedDate = requestedDate;
+    }
+
+    public String getRequestedTime() {
+        return requestedTime;
+    }
+
+    public void setRequestedTime(String requestedTime) {
+        this.requestedTime = requestedTime;
     }
 }

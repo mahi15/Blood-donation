@@ -40,5 +40,8 @@ dependencies {
 
     //gson for representing java objects in json format
     compile 'com.google.code.gson:gson:2.8.1'
+
+    //easy permission requester
+    compile 'com.karumi:dexter:4.1.0'
 }
 apply plugin: 'com.google.gms.google-services'

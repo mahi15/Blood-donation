@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.SelectionDonor;
+import com.nullvoid.blooddonation.others.AppConstants;
 
 import org.parceler.Parcels;
 
@@ -49,9 +50,9 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
             @Override
             public void onClick(View view) {
                 if(! selectionDonor.isSelected()){
-                    sendSelectionChange(context.getString(R.string.select), selectionDonor);
+                    sendSelectionChange(AppConstants.select(), selectionDonor);
                 }else{
-                    sendSelectionChange(context.getString(R.string.remove), selectionDonor);
+                    sendSelectionChange(AppConstants.remove(), selectionDonor);
                 }
                 selectionDonor.setSelected(!selectionDonor.isSelected());
                 holder.view.setBackgroundColor(selectionDonor.isSelected() ? Color.parseColor("#b3ffb6") : Color.WHITE);
@@ -69,8 +70,6 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
         holder.donorAddress.setText(selectionDonor.getDonor().getAddress());
         holder.donorLocation.setText(selectionDonor.getDonor().getLocation());
         holder.donorPin.setText(selectionDonor.getDonor().getPincode());
-        holder.chooseThisDonor.setVisibility(View.GONE);
-
     }
 
     @Override
@@ -110,7 +109,6 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
             donorAddress = (TextView) v.findViewById(R.id.donor_address);
             donorLocation = (TextView) v.findViewById(R.id.donor_location);
             donorPin = (TextView) v.findViewById(R.id.donor_pin);
-            chooseThisDonor = (TextView) v.findViewById(R.id.donor_layout_button);
             visiblePart = (RelativeLayout) v.findViewById(R.id.visible_part);
             hiddenPart = (LinearLayout) v.findViewById(R.id.hidden_part);
 

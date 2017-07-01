@@ -272,7 +272,7 @@
                     android:id="@+id/textView18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pic Code : "
+                    android:text="Pin Code : "
                     android:textColor="#686868"
                     android:textStyle="bold" />
 
@@ -284,18 +284,21 @@
                     android:textColor="#000" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/donor_layout_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginRight="10dp"
-                android:padding="5dp"
-                android:text="Assign Donee"
-                android:textAlignment="viewEnd"
-                android:textAllCaps="true"
-                android:textColor="@color/green"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:orientation="horizontal"
+                android:paddingRight="15dp">
+
+                <ImageView
+                    android:id="@+id/call_donor_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    card_view:srcCompat="@drawable/ic_call_green_24dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -306,6 +309,7 @@
             android:layout_alignBottom="@+id/linearLayout2"
             android:layout_marginEnd="15dp"
             android:layout_toStartOf="@+id/donor_group"
+            android:padding="3dp"
             android:visibility="gone" />
 
     </RelativeLayout>

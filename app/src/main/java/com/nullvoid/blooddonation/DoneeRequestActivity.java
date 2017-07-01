@@ -6,13 +6,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,15 +42,16 @@ public class DoneeRequestActivity extends AppCompatActivity {
     //all the view elements
     private ArrayAdapter bloodGroupArray;
     private Spinner bloodGroupSpinner;
-    private TextView name, phnumber, reqDate, reqAmount, reqAttendantName, reqAttendantNumber, pName, pId, hospitalName,
+    private EditText name, phnumber, reqDate, reqAmount, reqAttendantName, reqAttendantNumber, pName, pId, hospitalName,
                     hospitalNumber, hospitalAddress, hospitalPin, reqAreaOfResidence;
     private Toolbar toolbar;
     private Button submitButton;
     private ProgressDialog progressDialog;
+    private LinearLayout parentView;
 
     //String for all the fields
-    private String dName, dNumber, dRequiredDate, dBloodGroup, dReqAmount, dRequestedDate,
-            dAttendantName, dAttendantNumber, dPatietsName, dPatientRefNumber,
+    private String dName, dNumber, dRequiredDate, dBloodGroup, dReqAmount, dRequestedDate, dRequestedTime,
+            dAttendantName, dAttendantNumber, dPatientsName, dPatientRefNumber,
             dHospitalName, dHospitalNumber, dHospitalAddress, dHospitalPincode, doneeId, dPAreaOfResidence;
 
     //Current date
@@ -74,7 +80,8 @@ public class DoneeRequestActivity extends AppCompatActivity {
         bloodGroupArray = ArrayAdapter.createFromResource(DoneeRequestActivity.this,
                 R.array.blood_group, android.R.layout.simple_spinner_item);
         submitButton = (Button)findViewById(R.id.reqSubmit);
-        reqDate = (TextView)findViewById(R.id.reqNeededDate);
+        reqDate = (EditText) findViewById(R.id.reqNeededDate);
+        parentView = (LinearLayout) findViewById(R.id.donee_req_parent_view);
 
         //getting ready
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
@@ -87,14 +94,9 @@ public class DoneeRequestActivity extends AppCompatActivity {
         bloodGroupArray.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         bloodGroupSpinner.setAdapter(bloodGroupArray);
         submitButton.setOnClickListener(getInfo);
-        reqDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog datePicker = new DatePickerDialog(DoneeRequestActivity.this
-                        ,datePickerListener, cYear, cMonth, cDay);
-                datePicker.show();
-            }
-        });
+
+        reqDate = (EditText) findViewById(R.id.reqNeededDate);
+        reqDate.addTextChangedListener(dateWatcher);
 
     }
 
@@ -106,18 +108,18 @@ public class DoneeRequestActivity extends AppCompatActivity {
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
 
-            name = (TextView)findViewById(R.id.reqName);
-            phnumber = (TextView)findViewById(R.id.reqPhoneNumber);
-            reqAttendantNumber = (TextView)findViewById(R.id.reqPatAttendantNumber);
-            pName  = (TextView)findViewById(R.id.reqPName);
-            reqAmount = (TextView) findViewById(R.id.requiredAmount);
-            pId  = (TextView)findViewById(R.id.reqPId);
-            hospitalName = (TextView)findViewById(R.id.reqHospitalName);
-            hospitalNumber = (TextView)findViewById(R.id.reqHospitalAddress);
-            hospitalAddress = (TextView)findViewById(R.id.reqHospitalAddress);
-            hospitalPin = (TextView)findViewById(R.id.reqHospitalPin);
-            reqAttendantName = (TextView)findViewById(R.id.reqPatAttendantName);
-            reqAreaOfResidence = (TextView)findViewById(R.id.reqPAreaOfResidence);
+            name = (EditText)findViewById(R.id.reqName);
+            phnumber = (EditText)findViewById(R.id.reqPhoneNumber);
+            reqAttendantNumber = (EditText)findViewById(R.id.reqPatAttendantNumber);
+            pName  = (EditText)findViewById(R.id.reqPName);
+            reqAmount = (EditText) findViewById(R.id.requiredAmount);
+            pId  = (EditText)findViewById(R.id.reqPId);
+            hospitalName = (EditText)findViewById(R.id.reqHospitalName);
+            hospitalNumber = (EditText)findViewById(R.id.reqHospitalAddress);
+            hospitalAddress = (EditText)findViewById(R.id.reqHospitalAddress);
+            hospitalPin = (EditText)findViewById(R.id.reqHospitalPin);
+            reqAttendantName = (EditText)findViewById(R.id.reqPatAttendantName);
+            reqAreaOfResidence = (EditText)findViewById(R.id.reqPAreaOfResidence);
             donee = new Donee();
 
             dName = name.getText().toString().toString();
@@ -127,7 +129,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
             dReqAmount = reqAmount.getText().toString().trim();
             dAttendantName = reqAttendantName.getText().toString().trim();
             dAttendantNumber = reqAttendantNumber.getText().toString().trim();
-            dPatietsName = pName.getText().toString().trim();
+            dPatientsName = pName.getText().toString().trim();
             dPatientRefNumber = pId.getText().toString().trim();
             dHospitalName = hospitalName.getText().toString().trim();
             dHospitalNumber = hospitalNumber.getText().toString().trim();
@@ -140,8 +142,10 @@ public class DoneeRequestActivity extends AppCompatActivity {
                 return;
             }
 
-            SimpleDateFormat myDate = new SimpleDateFormat("dd/MM/yyyy/HH:mm");
-            dRequestedDate = myDate.format(new Timestamp(System.currentTimeMillis()));
+            SimpleDateFormat thisDate = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat thisTime = new SimpleDateFormat("HH:mm");
+            dRequestedDate = thisDate.format(new Timestamp(System.currentTimeMillis()));
+            dRequestedTime = thisTime.format(new Timestamp(System.currentTimeMillis()));
 
             donee.setRequesterName(toCamelCase(dName));
             donee.setRequesterPhoneNumber(dNumber);
@@ -150,7 +154,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
             donee.setRequiredDate(dRequiredDate);
             donee.setPatientAttendantName(dAttendantName);
             donee.setPatientAttendantNumber(dAttendantNumber);
-            donee.setPatientName(toCamelCase(dPatietsName));
+            donee.setPatientName(toCamelCase(dPatientsName));
             donee.setPatientID(dPatientRefNumber);
             donee.setHospitalName(toCamelCase(dHospitalName));
             donee.setHospitalNumber(dHospitalNumber);
@@ -158,6 +162,8 @@ public class DoneeRequestActivity extends AppCompatActivity {
             donee.setHospitalPin(dHospitalPincode);
             donee.setPatientAreaofResidence(dPAreaOfResidence);
             donee.setRequestedDate(dRequestedDate);
+            donee.setRequestedTime(dRequestedTime);
+            donee.setStatus(AppConstants.statusNotComplete());
 
             registerDonee(donee);
         }
@@ -181,7 +187,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
                     startActivity(new Intent(DoneeRequestActivity.this, MainActivity.class));
                 } else {
                     //if it fails
-                    showToast("Something went wrong :(");
+                    showSnackBar("Something went wrong\nPlease try again later");
                 }
             }
         });
@@ -204,12 +210,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
             phnumber.requestFocus();
             return false;
         }
-        if(sDay < cDay || sMonth < cMonth || sYear < cYear){
-            reqDate.setError("Select a valid date");
-            reqDate.requestFocus();
-            return false;
-        }
-        if (dPatietsName.length() < 3) {
+        if (dPatientsName.length() < 3) {
             pName.setError("Enter a valid name");
             pName.requestFocus();
             return false;
@@ -220,15 +221,15 @@ public class DoneeRequestActivity extends AppCompatActivity {
             return false;
         }
         if (TextUtils.isEmpty(dPatientRefNumber)) {
-            dPatientRefNumber = "Not Provided";
-            pId.requestFocus();
+            dPatientRefNumber = AppConstants.notProvided();
         }
-        if (dAttendantName.length() < 3) {
-            reqAttendantName.setError("Not Valid");
-            reqAttendantName.requestFocus();
-            return false;
+        if (TextUtils.isEmpty(dAttendantName)) {
+            dAttendantName = AppConstants.notProvided();
         }
-        if (dAttendantNumber.length() != 10) {
+        if (TextUtils.isEmpty(dAttendantNumber)){
+            dAttendantNumber = AppConstants.notProvided();
+        }
+        else if (dAttendantNumber.length() != 10) {
             reqAttendantNumber.setError("Not Valid");
             reqAttendantNumber.requestFocus();
             return false;
@@ -265,6 +266,67 @@ public class DoneeRequestActivity extends AppCompatActivity {
         return true;
     }
 
+    TextWatcher dateWatcher = new TextWatcher() {
+
+        private String current = "";
+        private String ddmmyyyy = "DDMMYYYY";
+        private Calendar cal = Calendar.getInstance();
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (!s.toString().equals(current)) {
+                String clean = s.toString().replaceAll("[^\\d.]", "");
+                String cleanC = current.replaceAll("[^\\d.]", "");
+
+                int cl = clean.length();
+                int sel = cl;
+                for (int i = 2; i <= cl && i < 6; i += 2) {
+                    sel++;
+                }
+                //Fix for pressing delete next to a forward slash
+                if (clean.equals(cleanC)) sel--;
+
+                if (clean.length() < 8) {
+                    clean = clean + ddmmyyyy.substring(clean.length());
+                } else {
+                    //This part makes sure that when we finish entering numbers
+                    //the date is correct, fixing it otherwise
+                    int day = Integer.parseInt(clean.substring(0, 2));
+                    int mon = Integer.parseInt(clean.substring(2, 4));
+                    int year = Integer.parseInt(clean.substring(4, 8));
+
+                    if (mon > 12) mon = 12;
+                    cal.set(Calendar.MONTH, mon - 1);
+                    year = (year < 1900) ? 1900 : (year > cYear) ? cYear : year;
+                    cal.set(Calendar.YEAR, year);
+                    // ^ first set year for the line below to work correctly
+                    //with leap years - otherwise, date e.g. 29/02/2012
+                    //would be automatically corrected to 28/02/2012
+
+                    day = (day > cal.getActualMaximum(Calendar.DATE)) ? cal.getActualMaximum(Calendar.DATE) : day;
+                    clean = String.format("%02d%02d%02d", day, mon, year);
+                }
+
+                clean = String.format("%s/%s/%s", clean.substring(0, 2),
+                        clean.substring(2, 4),
+                        clean.substring(4, 8));
+
+                sel = sel < 0 ? 0 : sel;
+                current = clean;
+                reqDate.setText(current);
+                reqDate.setSelection(sel < current.length() ? sel : current.length());
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
+
     public String toCamelCase(final String init) {
         if (init==null)
             return null;
@@ -281,6 +343,10 @@ public class DoneeRequestActivity extends AppCompatActivity {
         }
 
         return ret.toString();
+    }
+
+    public void showSnackBar(String text){
+        Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
     }
 
     private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {

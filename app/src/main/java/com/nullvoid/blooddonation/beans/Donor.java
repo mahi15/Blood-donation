@@ -9,7 +9,7 @@ import org.parceler.Parcel;
 public class Donor {
 
     private String donorId, name, gender, bloodGroup, dateOfBirth, age,
-            phoneNumber, email, address, location, pincode, registeredDate;
+            phoneNumber, email, address, location, pincode, registeredDate, registeredTime;
     boolean isAvailable = true, donationInLastSixMonths, admin = false;
 
     public Donor() {
@@ -109,6 +109,14 @@ public class Donor {
 
     public void setRegisteredDate(String registeredDate) {
         this.registeredDate = registeredDate;
+    }
+
+    public String getRegisteredTime() {
+        return registeredTime;
+    }
+
+    public void setRegisteredTime(String registeredTime) {
+        this.registeredTime = registeredTime;
     }
 
     public boolean isAvailable() {

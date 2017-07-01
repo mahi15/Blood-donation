@@ -1,6 +1,5 @@
 package com.nullvoid.blooddonation;
 
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,17 +10,23 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -49,6 +54,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by sanath on 10/06/17.
@@ -61,8 +68,11 @@ import java.util.concurrent.TimeUnit;
 public class DonorRegistrationActivity extends AppCompatActivity {
 
     ArrayAdapter bloodGroupAdapter;
+    LinearLayout parentView;
     Button submitButton;
     EditText name, email, age, phoneNumber, dateOfBirth, address, location, pincode;
+    CheckBox tncCheckBox;
+    TextView tncText;
     Spinner bloodGroupSpinner;
     RadioGroup Gender, DonatedBefore;
     RadioButton gender, donatedBefore;
@@ -78,29 +88,19 @@ public class DonorRegistrationActivity extends AppCompatActivity {
 
     Donor donor;
     private String dName, dGender, dBloodGroup, dAge, dDOB, dNumber, dEmail, dAddress, dLocation,
-            dPincode, dRegisteredDate, enteredCode;
+            dPincode, dRegisteredDate, dRegisteredTime, enteredCode;
     private boolean dDonationInLastSixMonths;
-
-    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
-        // when dialog box is closed, below method will be called.
-        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
-            sYear = selectedYear;
-            sMonth = selectedMonth + 1;
-            sDay = selectedDay;
-            dDOB = String.valueOf(sDay) + "/" + String.valueOf(sMonth) + "/" + String.valueOf(sYear);
-            dateOfBirth.setText(dDOB);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_donor_registration);
 
+        parentView = (LinearLayout) findViewById(R.id.donor_reg_parent_view);
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,12 +113,26 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         dbRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
-        //Add the blood groups to the bloodGroupSpinner (drop down list) in the donorDetails page
+        //get all the necessary view elements ready
+        dateOfBirth = (EditText) findViewById(R.id.regDateOfBirth);
+        dateOfBirth.addTextChangedListener(dateWatcher);
+
+        //TnC text and checkbox
+        tncCheckBox = (CheckBox) findViewById(R.id.tnc_checkbox);
+        tncText = (TextView) findViewById(R.id.tnc_text);
+        tncText.setClickable(true);
+        tncText.setMovementMethod(LinkMovementMethod.getInstance());
+        String tnc = "I Accept the <a href='http://www.google.com'>Terms and Conditions</a> " +
+                "Private Policy of RSS HSS Blood Donors Bureau";
+        tncText.setText(Html.fromHtml(tnc));
+
+        //blood groups drop down list
         bloodGroupSpinner = (Spinner) findViewById(R.id.regBloodGroup);
         bloodGroupAdapter = ArrayAdapter.createFromResource(this, R.array.blood_group, android.R.layout.simple_spinner_item);
         bloodGroupAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         bloodGroupSpinner.setAdapter(bloodGroupAdapter);
 
+        //donated before radio buttons
         DonatedBefore = (RadioGroup) findViewById(R.id.regDonatedBeforeOption);
         DonatedBefore.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -132,27 +146,16 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             }
         });
 
-        dateOfBirth = (EditText) findViewById(R.id.regDateOfBirth);
-        dateOfBirth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog datePicker = new DatePickerDialog(DonorRegistrationActivity.this
-                        , datePickerListener, cYear, cMonth, cDay);
-                datePicker.show();
-            }
-        });
-
         submitButton = (Button) findViewById(R.id.regSubmit);
         submitButton.setOnClickListener(registerDonor);
     }
 
     //Registration logic
     View.OnClickListener registerDonor = new View.OnClickListener() {
-
         public void onClick(View v) {
 
             if(!isNetworkAvailable()){
-                showToast(getString(R.string.no_internet_message));
+                showSnackBar(getString(R.string.no_internet_message));
                 return;
             }
 
@@ -188,8 +191,10 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             }
 
             donor = new Donor();
-            SimpleDateFormat myDate = new SimpleDateFormat("dd/MM/yyyy/HH:mm");
-            dRegisteredDate = myDate.format(new Timestamp(System.currentTimeMillis()));
+            SimpleDateFormat thisDate = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat thisTime = new SimpleDateFormat("HH:mm");
+            dRegisteredDate = thisDate.format(new Timestamp(System.currentTimeMillis()));
+            dRegisteredTime = thisTime.format(new Timestamp(System.currentTimeMillis()));
 
             donor.setName(toCamelCase(dName));
             donor.setGender(dGender);
@@ -203,16 +208,91 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             donor.setLocation(toCamelCase(dLocation));
             donor.setPincode(dPincode);
             donor.setRegisteredDate(dRegisteredDate);
+            donor.setRegisteredTime(dRegisteredTime);
             donor.setAdmin(false);
 
             checkIfDonorAlreadyExist();
         }
     };
-    public boolean validateForm() {
+
+    TextWatcher dateWatcher = new TextWatcher() {
+
+        private String current = "";
+        private String ddmmyyyy = "DDMMYYYY";
+        private Calendar cal = Calendar.getInstance();
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (!s.toString().equals(current)) {
+                String clean = s.toString().replaceAll("[^\\d.]", "");
+                String cleanC = current.replaceAll("[^\\d.]", "");
+
+                int cl = clean.length();
+                int sel = cl;
+                for (int i = 2; i <= cl && i < 6; i += 2) {
+                    sel++;
+                }
+                //Fix for pressing delete next to a forward slash
+                if (clean.equals(cleanC)) sel--;
+
+                if (clean.length() < 8) {
+                    clean = clean + ddmmyyyy.substring(clean.length());
+                } else {
+                    //This part makes sure that when we finish entering numbers
+                    //the date is correct, fixing it otherwise
+                    int day = Integer.parseInt(clean.substring(0, 2));
+                    int mon = Integer.parseInt(clean.substring(2, 4));
+                    int year = Integer.parseInt(clean.substring(4, 8));
+
+                    if (mon > 12) mon = 12;
+                    cal.set(Calendar.MONTH, mon - 1);
+                    year = (year < 1900) ? 1900 : (year > cYear) ? cYear : year;
+                    cal.set(Calendar.YEAR, year);
+                    // ^ first set year for the line below to work correctly
+                    //with leap years - otherwise, date e.g. 29/02/2012
+                    //would be automatically corrected to 28/02/2012
+
+                    day = (day > cal.getActualMaximum(Calendar.DATE)) ? cal.getActualMaximum(Calendar.DATE) : day;
+                    clean = String.format("%02d%02d%02d", day, mon, year);
+                }
+
+                clean = String.format("%s/%s/%s", clean.substring(0, 2),
+                        clean.substring(2, 4),
+                        clean.substring(4, 8));
+
+                sel = sel < 0 ? 0 : sel;
+                current = clean;
+                dateOfBirth.setText(current);
+                dateOfBirth.setSelection(sel < current.length() ? sel : current.length());
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
+
+        public boolean validateForm() {
         //validate if the data entered by user is valid nor not
+        final Pattern VALID_EMAIL_ADDRESS_REGEX =
+                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
         if (TextUtils.isEmpty(dName)) {
             name.setError("Required");
             name.requestFocus();
+            return false;
+        }
+        if (dBloodGroup.equals("Choose blood group")) {
+            TextView errorText = (TextView) bloodGroupSpinner.getSelectedView();
+            errorText.setError("");
+            errorText.setTextColor(Color.RED);
+            errorText.setText("Please select the blood group!");
+            errorText.requestFocus();
+            showToast("Please select the blood group");
             return false;
         }
         if (TextUtils.isEmpty(dAge)) {
@@ -220,20 +300,30 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             age.requestFocus();
             return false;
         }
-        if (TextUtils.isEmpty(dDOB)) {
-            dateOfBirth.setError("Required");
+        if(Integer.parseInt(dAge) > 110 || Integer.parseInt(dAge) < 16){
+            age.setError("Not a valid age");
+            age.requestFocus();
             return false;
         }
-        if (TextUtils.isEmpty(dNumber)) {
-            phoneNumber.setError("Required");
+        if(TextUtils.isEmpty(dDOB)) {
+            dateOfBirth.setError("Required");
+            dateOfBirth.requestFocus();
+            return false;
+        }
+        String[] dob = dDOB.split("/");
+        if (Integer.parseInt(dob[2]) > cYear || Integer.parseInt(dob[2]) < (cYear-100)){
+            dateOfBirth.setError("Not Valid");
+            dateOfBirth.requestFocus();
+            return false;
+        }
+        if (dNumber.length() != 10) {
+            phoneNumber.setError("Not a Valid Number");
             phoneNumber.requestFocus();
             return false;
         }
-        if (TextUtils.isEmpty(dEmail)) {
-            email.setError("Required");
-            return false;
-        } else if (!dEmail.contains("@") && dEmail.contains(".")) {
-            email.setError("Enter a valid email");
+        Matcher emailMatcher = VALID_EMAIL_ADDRESS_REGEX .matcher(dEmail);
+        if(!emailMatcher.find()){
+            email.setError("Not Valid");
             email.requestFocus();
             return false;
         }
@@ -252,14 +342,11 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             pincode.requestFocus();
             return false;
         }
-        if (dBloodGroup.equals("Choose blood group")) {
-            TextView errorText = (TextView) bloodGroupSpinner.getSelectedView();
-            errorText.setError("");
-            errorText.setTextColor(Color.RED);
-            errorText.setText("Please select the blood group!");
-            errorText.requestFocus();
+        if(!tncCheckBox.isChecked()){
+            showToast("You must accept to our Terms and Conditions to continue");
             return false;
         }
+
         return true;
     }
 
@@ -299,7 +386,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
-                        showToast(getString(R.string.registration_unsuccessful));
+                        showSnackBar(getString(R.string.registration_unsuccessful));
                         progressDialog.dismiss();
                     }
 
@@ -364,7 +451,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                         } else {
                             //if it fails
                             progressDialog.dismiss();
-                            showToast(getString(R.string.registration_unsuccessful));
+                            showSnackBar(getString(R.string.registration_unsuccessful));
                         }
                     }
                 });
@@ -382,6 +469,10 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     public void showToast(String text) {
         Toast toast = new Toast(DonorRegistrationActivity.this);
         toast.makeText(DonorRegistrationActivity.this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    public void showSnackBar(String text){
+        Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
     }
 
     public String toCamelCase(final String init) {

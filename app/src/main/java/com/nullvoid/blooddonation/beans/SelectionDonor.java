@@ -14,11 +14,6 @@ public class SelectionDonor extends Donor {
     public SelectionDonor() {
     }
 
-    public SelectionDonor(boolean isSelected, Donor donor){
-        this.isSelected = isSelected;
-        this.donor = donor;
-    }
-
     public SelectionDonor(Donor donor) {
         this.donor = donor;
     }

@@ -1,6 +1,5 @@
 package com.nullvoid.blooddonation.adapters;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -8,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.nullvoid.blooddonation.AdminConsoleActivity;
 import com.nullvoid.blooddonation.DoneeListFragment;
 import com.nullvoid.blooddonation.DonorListFragment;
 import com.nullvoid.blooddonation.R;
@@ -17,11 +17,11 @@ import com.nullvoid.blooddonation.R;
  */
 
 public class AdminPagerAdapter extends FragmentPagerAdapter {
-    Context context;
+    AdminConsoleActivity parentActivity;
 
-    public AdminPagerAdapter(FragmentManager fm, Context context) {
+    public AdminPagerAdapter(FragmentManager fm, AdminConsoleActivity parentActivity) {
         super(fm);
-        this.context = context;
+        this.parentActivity = parentActivity;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class AdminPagerAdapter extends FragmentPagerAdapter {
     }
 
     public View getTabView(int position) {
-        View tab = LayoutInflater.from(context).inflate(R.layout.view_console_tab, null);
+        View tab = LayoutInflater.from(parentActivity).inflate(R.layout.view_console_tab, null);
         TextView tv = (TextView) tab.findViewById(R.id.custom_text);
         tv.setText(getPageTitle(position));
         return tab;

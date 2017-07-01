@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/donor_reg_parent_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -130,8 +132,6 @@
                     android:id="@+id/regDateOfBirth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:focusable="false"
                     android:hint="Date Of Birth"
                     android:inputType="date"
                     android:paddingBottom="10dp"
@@ -254,7 +254,6 @@
                     android:id="@+id/regPinCode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="25dp"
                     android:ems="10"
                     android:hint="Pincode"
                     android:inputType="number"
@@ -262,6 +261,29 @@
                     android:paddingTop="10dp"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp">
+
+                <TextView
+                    android:id="@+id/tnc_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="I accept the termas andconditins"
+                    android:textColor="#000"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/tnc_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/regSubmit"

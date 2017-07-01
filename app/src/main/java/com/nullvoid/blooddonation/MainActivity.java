@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -164,8 +165,7 @@ public class MainActivity extends AppCompatActivity {
     public void checkIfDonorAlreadyExists() {
 
         if(!isNetworkAvailable()){
-            Toast.makeText(MainActivity.this, getString(R.string.no_internet_message),
-                    Toast.LENGTH_SHORT).show();
+            showSnackBar(getString(R.string.no_internet_message));
             return;
         }
 
@@ -313,6 +313,10 @@ public class MainActivity extends AppCompatActivity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void showSnackBar(String text){
+        Snackbar.make(drawerLayout, text, Snackbar.LENGTH_SHORT).show();
     }
 }
 

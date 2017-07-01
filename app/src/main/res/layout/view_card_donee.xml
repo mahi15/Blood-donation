@@ -285,18 +285,34 @@
                     android:textColor="#000" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/donee_layout_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginRight="10dp"
-                android:padding="5dp"
-                android:text="Select Donor"
-                android:textAlignment="viewEnd"
-                android:textAllCaps="true"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:orientation="horizontal"
+                android:paddingRight="15dp">
+
+                <ImageView
+                    android:id="@+id/call_donee_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    card_view:srcCompat="@drawable/ic_call_red_24dp" />
+
+                <ImageView
+                    android:id="@+id/select_donors_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="5dp"
+                    card_view:srcCompat="@drawable/ic_group_add_red_24dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

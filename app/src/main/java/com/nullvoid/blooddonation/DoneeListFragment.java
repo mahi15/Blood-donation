@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,23 +50,30 @@ public class DoneeListFragment extends Fragment {
         progressDialog.show();
 
         donees = new ArrayList<Donee>();
-
         dbRef = FirebaseDatabase.getInstance().getReference();
-        dbRef.child(AppConstants.donees()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Donee donee = postSnapshot.getValue(Donee.class);
-                    donees.add(donee);
-                }
-                setView();
-                progressDialog.dismiss();
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                progressDialog.dismiss();
-            }
-        });
+
+        getData();
+    }
+
+    public void getData(){
+
+        dbRef.child(AppConstants.donees()).orderByChild(AppConstants.status())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            Donee donee = postSnapshot.getValue(Donee.class);
+                            donees.add(donee);
+                            setView();
+                            progressDialog.dismiss();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        progressDialog.dismiss();
+                    }
+                });
+
     }
 
     @Override
@@ -79,13 +87,16 @@ public class DoneeListFragment extends Fragment {
         llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-
         return rootView;
     }
 
     public void setView(){
-        DoneeAdapter doneeAdapter = new DoneeAdapter(donees, getActivity());
+        DoneeAdapter doneeAdapter = new DoneeAdapter(donees, (AdminConsoleActivity) getActivity());
         recyclerView.setAdapter(doneeAdapter);
+    }
+
+    public void log(String text){
+        Log.d("CHECK",text);
     }
 
 }
