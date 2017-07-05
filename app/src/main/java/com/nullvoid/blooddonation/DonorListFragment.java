@@ -34,6 +34,7 @@ import java.util.ArrayList;
 public class DonorListFragment extends Fragment {
 
     RecyclerView recyclerView;
+    View rootView;
     LinearLayoutManager llm;
     ProgressDialog progressDialog;
     Toolbar toolbar;
@@ -73,7 +74,7 @@ public class DonorListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.layout_list_view, container, false);
+        rootView = inflater.inflate(R.layout.layout_list_view, container, false);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
         recyclerView.setHasFixedSize(true);
@@ -81,11 +82,14 @@ public class DonorListFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        loadAdditionals(rootView);
-
         return rootView;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadAdditionals(rootView);
+    }
 
     public void loadAdditionals(View rootView){
 
@@ -131,7 +135,7 @@ public class DonorListFragment extends Fragment {
                         resultDonors.add(donor);
                     }
                 }
-//                donorAdapter.loadData(resultDonors);
+                donorAdapter.loadData(resultDonors);
             }
         });
 

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 public class DoneeListFragment extends Fragment {
 
     RecyclerView recyclerView;
+    View rootView;
     LinearLayoutManager llm;
     ProgressDialog progressDialog;
 
@@ -59,11 +60,39 @@ public class DoneeListFragment extends Fragment {
         progressDialog.setMessage("Retriving Data");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        rootView = inflater.inflate(R.layout.layout_list_view, container, false);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
+        llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(llm);
+
+        return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadAdditionals(rootView);
+    }
+
+    //ive added data retriva from db in onresume
+    //cos when returning from donorselection activity we need to refresh the data
+    @Override
+    public void onResume() {
+        super.onResume();
 
         dbRef.child(AppConstants.donees()).orderByChild(AppConstants.status())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        doneesList.clear();
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             Donee donee = postSnapshot.getValue(Donee.class);
                             doneesList.add(donee);
@@ -71,29 +100,13 @@ public class DoneeListFragment extends Fragment {
                         doneeAdapter = new DoneeAdapter(doneesList, getActivity());
                         recyclerView.setAdapter(doneeAdapter);
                         progressDialog.dismiss();
+                        doneeAdapter.notifyDataSetChanged();
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         progressDialog.dismiss();
                     }
                 });
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(R.layout.layout_list_view, container, false);
-
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
-        llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(llm);
-
-        loadAdditionals(rootView);
-
-        return rootView;
     }
 
     public void loadAdditionals(View rootView){

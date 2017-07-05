@@ -7,9 +7,25 @@ import java.util.ArrayList;
  */
 
 public class Match {
-    private String matchId, doneeId, matchedDate, matchedTime, completedDate;
+    private String matchId, doneeId, matchedDate, matchedTime, completedDate, doneeName, doneeBloodGroup;
     private ArrayList<String> contactedDonors, helpedDonors;
     private boolean completed;
+
+    public String getDoneeName() {
+        return doneeName;
+    }
+
+    public void setDoneeName(String doneeName) {
+        this.doneeName = doneeName;
+    }
+
+    public String getDoneeBloodGroup() {
+        return doneeBloodGroup;
+    }
+
+    public void setDoneeBloodGroup(String doneeBloodGroup) {
+        this.doneeBloodGroup = doneeBloodGroup;
+    }
 
     public String getMatchId() {
         return matchId;

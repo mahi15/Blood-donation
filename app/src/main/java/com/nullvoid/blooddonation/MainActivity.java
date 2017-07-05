@@ -1,10 +1,9 @@
 package com.nullvoid.blooddonation;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -13,17 +12,17 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     Button donateBlood, reqBlood, admin;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
-    ProgressDialog verifying;
+    MaterialDialog loadingDialog;
 
     FirebaseAuth mAuth;
     DatabaseReference dbRef;
@@ -105,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
                         drawerLayout.closeDrawers();
+                        drawerLayout.clearFocus();
                         break;
                     case R.id.nav_req_from:
                         drawerLayout.closeDrawers();
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_profile:
                         drawerLayout.closeDrawers();
-                        if(currentUser == null){
+                        if (currentUser == null) {
                             checkIfDonorAlreadyExists();
                         } else {
                             startActivity(new Intent(getApplicationContext(), DonorProfileActivity.class));
@@ -155,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
         String json = mPref.getString(AppConstants.currentUser(), null);
         currentUser = gson.fromJson(json, Donor.class);
 
-        if(currentUser != null){
-            if(currentUser.isAdmin()){
+        if (currentUser != null) {
+            if (currentUser.isAdmin()) {
                 admin.setVisibility(View.VISIBLE);
             }
         }
@@ -164,64 +164,65 @@ public class MainActivity extends AppCompatActivity {
 
     public void checkIfDonorAlreadyExists() {
 
-        if(!isNetworkAvailable()){
+        if (!isNetworkAvailable()) {
             showSnackBar(getString(R.string.no_internet_message));
             return;
         }
 
-        //show a dialog box for the user to enter the phone number
-        AlertDialog.Builder phoneDialog = new AlertDialog.Builder(MainActivity.this);
-        phoneDialog.setTitle("Enter your Phone Number");
-        final EditText phoneText = new EditText(MainActivity.this);
-        phoneText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        phoneText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        phoneDialog.setView(phoneText);
-        phoneDialog.setPositiveButton("VERIFY", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-                //show a loader while verfying the number
-                verifying = new ProgressDialog(MainActivity.this);
-                verifying.setTitle("Loading");
-                verifying.setMessage("Verifying your phone number");
-                verifying.setCanceledOnTouchOutside(false);
-                verifying.show();
+        new MaterialDialog.Builder(this)
+                .title(R.string.enter_number_title)
+                .content(R.string.enter_number_message)
+                .contentColor(Color.BLACK)
+                .cancelable(false)
+                .negativeText(R.string.cancel)
+                .inputType(InputType.TYPE_CLASS_NUMBER)
+                .inputRange(10,10, Color.RED)
+                .input(getString(R.string.enter_here), "", false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
 
-                String phoneNumber = phoneText.getText().toString().trim();
-                dbRef.child(AppConstants.donors()).orderByChild("phoneNumber").equalTo(phoneNumber).limitToFirst(1)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for(DataSnapshot d : dataSnapshot.getChildren()){
-                                    tempDonor = d.getValue(Donor.class);
-                                }
-                                if(tempDonor.getPhoneNumber() == null){
-                                    verifying.dismiss();
-                                    showFailedDialog("There is no donor with the given phone number");
-                                    return;
-                                }
-                                verifyPhoneNumber(tempDonor.getPhoneNumber());
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                verifying.dismiss();
-                                showFailedDialog("Something went wrong\nPlease try again later.");
-                            }
-                        });
-            }
-        });
+                        loadingDialog = new MaterialDialog.Builder(MainActivity.this)
+                                .title(R.string.loading)
+                                .content(R.string.please_wait_message)
+                                .progress(true, 0)
+                                .cancelable(false)
+                                .show();
 
-        phoneDialog.setNegativeButton("CANCEL", null);
-        phoneDialog.show();
+                        String number = input.toString().trim();
+                        dbRef.child(AppConstants.donors()).orderByChild(AppConstants.phoneNumber())
+                                .equalTo(number).limitToFirst(1)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot d : dataSnapshot.getChildren()) {
+                                            tempDonor = d.getValue(Donor.class);
+                                        }
+                                        if (tempDonor == null) {
+                                            loadingDialog.dismiss();
+                                            showFailedDialog(getString(R.string.no_donor_message));
+                                            return;
+                                        }
+                                        verifyPhoneNumber(tempDonor.getPhoneNumber());
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        loadingDialog.dismiss();
+                                        showFailedDialog(getString(R.string.on_cancelled_message));
+                                    }
+                                });
+                    }
+                }).show();
     }
 
-    public void showFailedDialog(String message){
-        AlertDialog.Builder failedDialog = new AlertDialog.Builder(MainActivity.this);
-        failedDialog.setTitle("Verification Failed");
-        failedDialog.setMessage(message);
-        failedDialog.setCancelable(false);
-        failedDialog.setPositiveButton("OK", null);
-        failedDialog.show();
+    public void showFailedDialog(String message) {
+
+        new MaterialDialog.Builder(MainActivity.this)
+                .neutralText(R.string.ok)
+                .title(R.string.failed)
+                .content(message)
+                .show();
     }
 
     public void verifyPhoneNumber(final String phoneNumber) {
@@ -232,53 +233,47 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
                         signInUser(phoneAuthCredential);
-                        verifying.dismiss();
                     }
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
-                        verifying.dismiss();
-                        showFailedDialog(getString(R.string.verification_unsuccessful));
+                        loadingDialog.dismiss();
+                        showFailedDialog(getString(R.string.verification_failed));
                     }
 
                     @Override
                     public void onCodeSent(final String verificationId, final PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                         super.onCodeSent(verificationId, forceResendingToken);
-                        verifying.dismiss();
                         showOtpPrompt(verificationId);
                     }
                 });
     }
 
-    private void showOtpPrompt(final String verificationId){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        final EditText otpText = new EditText(MainActivity.this);
+    private void showOtpPrompt(final String verificationId) {
 
-        otpText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        otpText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        builder.setTitle(getString(R.string.enter_otp_title));
-        builder.setMessage(getString(R.string.enter_otp_message));
-        builder.setView(otpText);
-        builder.setCancelable(false);
-
-        builder.setPositiveButton("VERIFY", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String enteredCode = otpText.getText().toString().trim();
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, enteredCode);
-                signInUser(credential);
-            }
-        });
-        builder.setNegativeButton("CANCEL", null);
-        builder.show();
+        new MaterialDialog.Builder(MainActivity.this)
+                .cancelable(false)
+                .positiveText(R.string.submit)
+                .negativeText(R.string.cancel)
+                .title(R.string.enter_otp_title)
+                .content(R.string.enter_otp_message)
+                .input(R.string.enter_here, R.string.blank, false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        String enteredCode = input.toString().trim();
+                        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, enteredCode);
+                        signInUser(credential);
+                    }
+                })
+                .show();
     }
 
-    public void signInUser(PhoneAuthCredential credential){
+    public void signInUser(PhoneAuthCredential credential) {
 
         mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     writeToSharedPreference(tempDonor);
                 } else {
                     showFailedDialog("Unable to verify\nPlease try again later");
@@ -299,13 +294,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logoutUser() {
+        if (currentUser == null) {
+            new MaterialDialog.Builder(MainActivity.this)
+                    .title(R.string.error)
+                    .content(R.string.logout_error_message)
+                    .positiveText(R.string.ok)
+                    .show();
+        } else {
 
-        mAuth.signOut();
-        SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.clear().apply();
-        finish();
-        startActivity(new Intent(MainActivity.this, MainActivity.class));
+            final SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
+            new MaterialDialog.Builder(MainActivity.this)
+                    .title(R.string.confirm)
+                    .content(R.string.logout_confirm_message)
+                    .positiveText(R.string.yes)
+                    .negativeText(R.string.no)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mAuth.signOut();
+                            SharedPreferences.Editor editor = mPrefs.edit();
+                            editor.clear().apply();
+                            finish();
+                            startActivity(new Intent(MainActivity.this, MainActivity.class));
+                        }
+                    })
+                    .show();
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -315,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void showSnackBar(String text){
+    public void showSnackBar(String text) {
         Snackbar.make(drawerLayout, text, Snackbar.LENGTH_SHORT).show();
     }
 }

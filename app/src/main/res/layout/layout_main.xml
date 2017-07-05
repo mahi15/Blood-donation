@@ -96,6 +96,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/view_header_nav_drawer"
-        app:menu="@menu/menu_nav_drawer" />
+        app:menu="@menu/menu_nav_drawer"
+        android:choiceMode="none"/>
 
 </android.support.v4.widget.DrawerLayout>

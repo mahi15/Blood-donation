@@ -47,15 +47,26 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
     public void onBindViewHolder(final DonorSelectionViewHolder holder, int position) {
         final SelectionDonor selectionDonor = selectionDonors.get(position);
 
+        if (selectionDonor.isSelected()){
+            holder.view.setBackgroundColor(Color.parseColor("#b3ffb6"));
+            holder.checkBox.setChecked(true);
+        } else {
+            holder.view.setBackgroundColor(Color.WHITE);
+            holder.checkBox.setChecked(false);
+        }
+
         holder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(! selectionDonor.isSelected()){
-                    sendSelectionChange(AppConstants.select(), selectionDonor);
-                }else{
+
+                if(selectionDonor.isSelected()){
                     sendSelectionChange(AppConstants.remove(), selectionDonor);
+                }else{
+                    sendSelectionChange(AppConstants.select(), selectionDonor);
                 }
                 selectionDonor.setSelected(!selectionDonor.isSelected());
+
+                notifyDataSetChanged();
                 holder.view.setBackgroundColor(selectionDonor.isSelected() ? Color.parseColor("#b3ffb6") : Color.WHITE);
             }
         });

@@ -43,5 +43,8 @@ dependencies {
 
     //easy permission requester
     compile 'com.karumi:dexter:4.1.0'
+
+    //Material Dialogs
+    compile 'com.afollestad.material-dialogs:core:0.9.4.5'
 }
 apply plugin: 'com.google.gms.google-services'

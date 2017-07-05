@@ -23,7 +23,7 @@
     <ImageView
         android:id="@+id/splash_image"
         android:layout_width="match_parent"
-        android:layout_height="193dp"
+        android:layout_height="200dp"
         android:layout_weight="0.14"
         android:padding="15dp"
         app:srcCompat="@drawable/bd_logo" />

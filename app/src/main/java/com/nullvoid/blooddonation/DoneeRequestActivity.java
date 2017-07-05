@@ -1,8 +1,5 @@
 package com.nullvoid.blooddonation;
 
-import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,15 +10,13 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -40,13 +35,11 @@ import java.util.Calendar;
 public class DoneeRequestActivity extends AppCompatActivity {
 
     //all the view elements
-    private ArrayAdapter bloodGroupArray;
-    private Spinner bloodGroupSpinner;
     private EditText name, phnumber, reqDate, reqAmount, reqAttendantName, reqAttendantNumber, pName, pId, hospitalName,
-                    hospitalNumber, hospitalAddress, hospitalPin, reqAreaOfResidence;
+                    hospitalNumber, hospitalAddress, hospitalPin, reqAreaOfResidence, bloodGroup;
     private Toolbar toolbar;
     private Button submitButton;
-    private ProgressDialog progressDialog;
+    private MaterialDialog progressDialog;
     private LinearLayout parentView;
 
     //String for all the fields
@@ -76,9 +69,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
         dbRef = FirebaseDatabase.getInstance().getReference();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        bloodGroupSpinner = (Spinner)findViewById(R.id.reqBloodGroup);
-        bloodGroupArray = ArrayAdapter.createFromResource(DoneeRequestActivity.this,
-                R.array.blood_group, android.R.layout.simple_spinner_item);
+        bloodGroup = (EditText)findViewById(R.id.reqBloodGroup);
         submitButton = (Button)findViewById(R.id.reqSubmit);
         reqDate = (EditText) findViewById(R.id.reqNeededDate);
         parentView = (LinearLayout) findViewById(R.id.donee_req_parent_view);
@@ -91,10 +82,27 @@ public class DoneeRequestActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        bloodGroupArray.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-        bloodGroupSpinner.setAdapter(bloodGroupArray);
+        bloodGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(DoneeRequestActivity.this)
+                        .title(R.string.choose_req_group)
+                        .items(R.array.blood_group)
+                        .itemsColor(Color.BLACK)
+                        .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                if(text != null)
+                                    bloodGroup.setText(text.toString());
+                                return true;
+                            }
+                        })
+                        .positiveText(R.string.select)
+                        .negativeText(R.string.cancel)
+                        .show();
+            }
+        });
         submitButton.setOnClickListener(getInfo);
-
         reqDate = (EditText) findViewById(R.id.reqNeededDate);
         reqDate.addTextChangedListener(dateWatcher);
 
@@ -102,11 +110,11 @@ public class DoneeRequestActivity extends AppCompatActivity {
 
     View.OnClickListener getInfo = new View.OnClickListener() {
         public void onClick(View v) {
-            progressDialog = new ProgressDialog(DoneeRequestActivity.this);
-            progressDialog.setTitle("Registering");
-            progressDialog.setMessage("Sending your Information");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
+            progressDialog = new MaterialDialog.Builder(DoneeRequestActivity.this)
+                    .title(R.string.loading)
+                    .content(R.string.registering_request_message)
+                    .progress(true, 0).cancelable(false)
+                    .show();
 
             name = (EditText)findViewById(R.id.reqName);
             phnumber = (EditText)findViewById(R.id.reqPhoneNumber);
@@ -124,7 +132,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
 
             dName = name.getText().toString().toString();
             dNumber = phnumber.getText().toString().trim();
-            dBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
+            dBloodGroup = bloodGroup.getText().toString();
             dRequiredDate = reqDate.getText().toString().trim();
             dReqAmount = reqAmount.getText().toString().trim();
             dAttendantName = reqAttendantName.getText().toString().trim();
@@ -179,15 +187,28 @@ public class DoneeRequestActivity extends AppCompatActivity {
         addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                progressDialog.cancel();
+                progressDialog.dismiss();
                 if (task.isSuccessful()) {
                     //If user is added to database
-                    showToast("Request Successfully Sent!");
-                    finish();
-                    startActivity(new Intent(DoneeRequestActivity.this, MainActivity.class));
+                    new MaterialDialog.Builder(DoneeRequestActivity.this)
+                            .title(R.string.success)
+                            .content(R.string.req_submitted_message)
+                            .positiveText(R.string.ok)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    finish();
+                                }
+                            })
+                    .show();
+
                 } else {
                     //if it fails
-                    showSnackBar("Something went wrong\nPlease try again later");
+                    new MaterialDialog.Builder(DoneeRequestActivity.this)
+                            .title(R.string.failed)
+                            .content(R.string.on_cancelled_message)
+                            .positiveText(R.string.ok)
+                            .show();
                 }
             }
         });
@@ -199,24 +220,48 @@ public class DoneeRequestActivity extends AppCompatActivity {
     }
 
     public boolean validateForm() {
-        //validate if the data entered by user is valid nor not
+
+        final String required = getString(R.string.required_error);
+        final String notValid = getString(R.string.not_valid_error);
+        final String leaveBlank = getString(R.string.leave_blank);
+
+        //validate the data entered by user
         if (dName.length() < 3) {
-            name.setError("Enter a valid name");
+            name.setError(notValid);
             name.requestFocus();
             return false;
         }
         if (dNumber.length() != 10) {
-            phnumber.setError("Not Valid");
+            phnumber.setError(notValid);
             phnumber.requestFocus();
             return false;
         }
+        if (TextUtils.isEmpty(dBloodGroup)) {
+            bloodGroup.callOnClick();
+            return false;
+        }
         if (dPatientsName.length() < 3) {
-            pName.setError("Enter a valid name");
+            pName.setError(notValid);
             pName.requestFocus();
             return false;
         }
+        if (TextUtils.isEmpty(dReqAmount)){
+            reqAmount.setText(AppConstants.notProvided());
+            dReqAmount = AppConstants.notProvided();
+        }
+        if(TextUtils.isEmpty(dRequiredDate)) {
+            reqDate.setError(required);
+            reqDate.requestFocus();
+            return false;
+        }
+//        String[] rDate = dRequiredDate.split("/");
+//        if (Integer.parseInt(rDate[2]) < cYear || Integer.parseInt(rDate[2]) < (cYear-100)){
+//            reqDate.setError(notValid);
+//            reqDate.requestFocus();
+//            return false;
+//        }
         if (dPAreaOfResidence.length() < 4) {
-            reqAreaOfResidence.setError("Not Valid");
+            reqAreaOfResidence.setError(notValid);
             reqAreaOfResidence.requestFocus();
             return false;
         }
@@ -226,41 +271,40 @@ public class DoneeRequestActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(dAttendantName)) {
             dAttendantName = AppConstants.notProvided();
         }
+        else if (dAttendantName.length() < 3){
+            reqAttendantName.setError(leaveBlank);
+        }
         if (TextUtils.isEmpty(dAttendantNumber)){
             dAttendantNumber = AppConstants.notProvided();
         }
         else if (dAttendantNumber.length() != 10) {
-            reqAttendantNumber.setError("Not Valid");
+            reqAttendantNumber.setError(leaveBlank);
             reqAttendantNumber.requestFocus();
             return false;
         }
         if (TextUtils.isEmpty(dHospitalName)) {
-            hospitalName.setError("Required");
+            hospitalName.setError(required);
+            hospitalName.requestFocus();
+            return false;
+        }
+        else if (dHospitalName.length() < 3){
+            hospitalName.setError(notValid);
             hospitalName.requestFocus();
             return false;
         }
         if (TextUtils.isEmpty(dHospitalNumber)) {
-            hospitalNumber.setError("Required");
+            hospitalNumber.setError(required);
             hospitalNumber.requestFocus();
             return false;
         }
         if (TextUtils.isEmpty(dHospitalAddress)) {
-            hospitalAddress.setError("Required");
+            hospitalAddress.setError(required);
             hospitalAddress.requestFocus();
             return false;
         }
         if (dHospitalPincode.length() != 6) {
-            hospitalPin.setError("Not Valid");
+            hospitalPin.setError(notValid);
             hospitalPin.requestFocus();
-            return false;
-        }
-        if(dBloodGroup.equals("Choose blood group")){
-            TextView errorText = (TextView)bloodGroupSpinner.getSelectedView();
-            errorText.setError("Please select the blood group!");
-            errorText.setTextColor(Color.RED);
-            errorText.requestFocus();
-            errorText.setText("Please select the blood group!");
-            bloodGroupSpinner.requestFocus();
             return false;
         }
         return true;
@@ -349,14 +393,4 @@ public class DoneeRequestActivity extends AppCompatActivity {
         Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
     }
 
-    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
-        // when dialog box is closed, below method will be called.
-        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
-            sYear = selectedYear;
-            sMonth = selectedMonth + 1;
-            sDay = selectedDay;
-            dRequiredDate = String.valueOf(sDay) + "/" + String.valueOf(sMonth) + "/" + String.valueOf(sYear);
-            reqDate.setText(dRequiredDate);
-        }
-    };
 }

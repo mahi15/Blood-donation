@@ -1,8 +1,6 @@
 package com.nullvoid.blooddonation;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,27 +10,24 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -67,16 +62,14 @@ import java.util.regex.Pattern;
 
 public class DonorRegistrationActivity extends AppCompatActivity {
 
-    ArrayAdapter bloodGroupAdapter;
     LinearLayout parentView;
     Button submitButton;
-    EditText name, email, age, phoneNumber, dateOfBirth, address, location, pincode;
+    EditText name, email, age, phoneNumber, dateOfBirth, address, location, pincode, bloodGroup;
     CheckBox tncCheckBox;
     TextView tncText;
-    Spinner bloodGroupSpinner;
     RadioGroup Gender, DonatedBefore;
     RadioButton gender, donatedBefore;
-    ProgressDialog progressDialog;
+    MaterialDialog progressDialog;
     Calendar c = Calendar.getInstance();
     int cDay = c.get(Calendar.DAY_OF_MONTH), cMonth = c.get(Calendar.MONTH), cYear = c.get(Calendar.YEAR),
             sDay, sMonth, sYear;
@@ -127,10 +120,27 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         tncText.setText(Html.fromHtml(tnc));
 
         //blood groups drop down list
-        bloodGroupSpinner = (Spinner) findViewById(R.id.regBloodGroup);
-        bloodGroupAdapter = ArrayAdapter.createFromResource(this, R.array.blood_group, android.R.layout.simple_spinner_item);
-        bloodGroupAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-        bloodGroupSpinner.setAdapter(bloodGroupAdapter);
+        bloodGroup = (EditText) findViewById(R.id.regBloodGroup);
+        bloodGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(DonorRegistrationActivity.this)
+                        .title(R.string.choose_your_group)
+                        .items(R.array.blood_group)
+                        .itemsColor(Color.BLACK)
+                        .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                if(text != null)
+                                bloodGroup.setText(text.toString());
+                                return true;
+                            }
+                        })
+                        .positiveText(R.string.select)
+                        .negativeText(R.string.cancel)
+                        .show();
+            }
+        });
 
         //donated before radio buttons
         DonatedBefore = (RadioGroup) findViewById(R.id.regDonatedBeforeOption);
@@ -159,10 +169,11 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                 return;
             }
 
-            progressDialog = new ProgressDialog(DonorRegistrationActivity.this);
-            progressDialog.setMessage("Registering Donor");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
+            progressDialog = new MaterialDialog.Builder(DonorRegistrationActivity.this)
+                    .title(R.string.loading)
+                    .content(R.string.registering_request_message)
+                    .progress(true, 0).cancelable(false)
+                    .show();
 
             name = (EditText) findViewById(R.id.regName);
             Gender = (RadioGroup) findViewById(R.id.regGender);
@@ -176,7 +187,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             dName = name.getText().toString().trim();
             gender = (RadioButton) findViewById(Gender.getCheckedRadioButtonId());
             dGender = gender.getText().toString();
-            dBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
+            dBloodGroup = bloodGroup.getText().toString();
             dAge = age.getText().toString().trim();
             dDOB = dateOfBirth.getText().toString();
             dNumber = phoneNumber.getText().toString();
@@ -276,77 +287,74 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         }
     };
 
-        public boolean validateForm() {
-        //validate if the data entered by user is valid nor not
-        final Pattern VALID_EMAIL_ADDRESS_REGEX =
+    public boolean validateForm() {
+        //validate the data entered by user
+            final String required = getString(R.string.required_error);
+            final String notValid = getString(R.string.not_valid_error);
+
+            final Pattern VALID_EMAIL_ADDRESS_REGEX =
                 Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
         if (TextUtils.isEmpty(dName)) {
-            name.setError("Required");
+            name.setError(required);
             name.requestFocus();
             return false;
         }
-        if (dBloodGroup.equals("Choose blood group")) {
-            TextView errorText = (TextView) bloodGroupSpinner.getSelectedView();
-            errorText.setError("");
-            errorText.setTextColor(Color.RED);
-            errorText.setText("Please select the blood group!");
-            errorText.requestFocus();
-            showToast("Please select the blood group");
+        if (TextUtils.isEmpty(dBloodGroup)) {
+            bloodGroup.callOnClick();
             return false;
         }
         if (TextUtils.isEmpty(dAge)) {
-            age.setError("Required");
+            age.setError(required);
             age.requestFocus();
             return false;
         }
         if(Integer.parseInt(dAge) > 110 || Integer.parseInt(dAge) < 16){
-            age.setError("Not a valid age");
+            age.setError(notValid);
             age.requestFocus();
             return false;
         }
         if(TextUtils.isEmpty(dDOB)) {
-            dateOfBirth.setError("Required");
+            dateOfBirth.setError(required);
             dateOfBirth.requestFocus();
             return false;
         }
         String[] dob = dDOB.split("/");
         if (Integer.parseInt(dob[2]) > cYear || Integer.parseInt(dob[2]) < (cYear-100)){
-            dateOfBirth.setError("Not Valid");
+            dateOfBirth.setError(notValid);
             dateOfBirth.requestFocus();
             return false;
         }
         if (dNumber.length() != 10) {
-            phoneNumber.setError("Not a Valid Number");
+            phoneNumber.setError(notValid);
             phoneNumber.requestFocus();
             return false;
         }
         Matcher emailMatcher = VALID_EMAIL_ADDRESS_REGEX .matcher(dEmail);
         if(!emailMatcher.find()){
-            email.setError("Not Valid");
+            email.setError(notValid);
             email.requestFocus();
             return false;
         }
         if (TextUtils.isEmpty(dAddress)) {
-            address.setError("Required");
+            address.setError(required);
             address.requestFocus();
             return false;
         }
         if (TextUtils.isEmpty(dLocation)) {
-            location.setError("Required");
+            location.setError(required);
             location.requestFocus();
             return false;
         }
         if (TextUtils.isEmpty(dPincode)) {
-            pincode.setError("Required");
+            pincode.setError(required);
             pincode.requestFocus();
             return false;
         }
         if(!tncCheckBox.isChecked()){
-            showToast("You must accept to our Terms and Conditions to continue");
+            showToast(getString(R.string.tnc_error));
             return false;
         }
-
         return true;
     }
 
@@ -358,19 +366,26 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(dataSnapshot.getChildrenCount() == 1){
                             //if there is already a user with the phone nubmer then show an error alert
-                            AlertDialog.Builder alreadyExistPrompt = new AlertDialog.Builder(DonorRegistrationActivity.this);
-                            alreadyExistPrompt.setTitle("Cannot Register");
-                            alreadyExistPrompt.setMessage(getString(R.string.already_exist_error));
-                            alreadyExistPrompt.setPositiveButton("OK", null);
                             progressDialog.dismiss();
-                            alreadyExistPrompt.show();
+
+                            new MaterialDialog.Builder(DonorRegistrationActivity.this)
+                                    .title(R.string.failed)
+                                    .content(R.string.already_exist_error)
+                                    .positiveText(R.string.ok)
+                                    .show();
                         }
                         else{
                             verifyPhoneNumber();
                         }
                     }
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {}
+                    public void onCancelled(DatabaseError databaseError) {
+                        new MaterialDialog.Builder(DonorRegistrationActivity.this)
+                                .title(R.string.failed)
+                                .content(R.string.on_cancelled_message)
+                                .positiveText(R.string.ok)
+                                .show();
+                    }
                 });
     }
 
@@ -386,8 +401,12 @@ public class DonorRegistrationActivity extends AppCompatActivity {
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
-                        showSnackBar(getString(R.string.registration_unsuccessful));
                         progressDialog.dismiss();
+                        new MaterialDialog.Builder(DonorRegistrationActivity.this)
+                                .title(R.string.failed)
+                                .content(R.string.verification_failed)
+                                .positiveText(R.string.ok)
+                                .show();
                     }
 
                     @Override
@@ -399,25 +418,22 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     }
 
     private void showOtpPrompt(final String verificationId){
-        AlertDialog.Builder builder = new AlertDialog.Builder(DonorRegistrationActivity.this);
-        final EditText otpText = new EditText(DonorRegistrationActivity.this);
 
-        otpText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        builder.setTitle(getString(R.string.enter_otp_title));
-        builder.setMessage(getString(R.string.enter_otp_message));
-        builder.setView(otpText);
-        builder.setCancelable(false);
-
-        builder.setPositiveButton("VERIFY", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                enteredCode = otpText.getText().toString().trim();
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, enteredCode);
-                signInUser(credential);
-            }
-        });
-        builder.setNegativeButton("CANCEL", null);
-        builder.show();
+        new MaterialDialog.Builder(DonorRegistrationActivity.this)
+                .cancelable(false)
+                .positiveText(R.string.submit)
+                .negativeText(R.string.cancel)
+                .title(R.string.enter_otp_title)
+                .content(R.string.enter_otp_message)
+                .input(R.string.enter_here, R.string.blank, false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        String enteredCode = input.toString().trim();
+                        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, enteredCode);
+                        signInUser(credential);
+                    }
+                })
+                .show();
     }
 
     public void signInUser(PhoneAuthCredential credential){

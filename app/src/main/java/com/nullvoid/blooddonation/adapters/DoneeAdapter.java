@@ -78,9 +78,30 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         holder.selectDonorImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(adminConsoleActivity, DonorSelectionActivity.class);
-                intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
-                adminConsoleActivity.startActivity(intent);
+                if(donee.getStatus().equals(AppConstants.statusPending())) {
+
+                    //if the donne has already been assigned show this
+                    AlertDialog.Builder registerAgainDialog = new AlertDialog.Builder(adminConsoleActivity);
+                    registerAgainDialog.setTitle("Confirm?");
+                    registerAgainDialog.setMessage("This donne has already been assigned few donors\n" +
+                            "Are you sure you want to notify few other donors?");
+                    registerAgainDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(adminConsoleActivity, DonorSelectionActivity.class);
+                            intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
+                            adminConsoleActivity.startActivity(intent);
+                        }
+                    });
+                    registerAgainDialog.setNegativeButton("NO", null);
+                    registerAgainDialog.show();
+                }
+
+                else {
+                    Intent intent = new Intent(adminConsoleActivity, DonorSelectionActivity.class);
+                    intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
+                    adminConsoleActivity.startActivity(intent);
+                }
             }
         });
 

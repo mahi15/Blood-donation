@@ -66,17 +66,35 @@
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
 
-            <Spinner
-                android:id="@+id/reqBloodGroup"
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/reqBloodGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Required Blood Group"
+                    android:inputType="date"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:textAlignment="center"
+                    android:focusable="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/reqPName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/spinner_background"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:spinnerMode="dialog"
+                android:layout_weight="0.03"
+                android:ems="10"
+                android:hint="Patient's Name"
+                android:inputType="textPersonName"
                 android:textAlignment="center" />
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -107,20 +125,6 @@
             </android.support.design.widget.TextInputLayout>
 
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/reqPName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.03"
-                    android:ems="10"
-                    android:hint="Patient's Name"
-                    android:inputType="textPersonName"
-                    android:textAlignment="center" />
-            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
