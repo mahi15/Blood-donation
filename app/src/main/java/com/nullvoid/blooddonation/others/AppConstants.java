@@ -35,6 +35,9 @@ public class AppConstants {
     public static final String phoneNumber(){
         return "phoneNumber";
     }
+    public static final String registeredDate(){
+        return "registeredDate";
+    }
 
     //donee stuff
     public static final String donee(){
@@ -51,6 +54,9 @@ public class AppConstants {
     }
     public static final String  contactedDonors(){
         return "contactedDonors";
+    }
+    public static final String requestedDate(){
+        return "requestedDate";
     }
 
 }

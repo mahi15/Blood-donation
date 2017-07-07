@@ -25,7 +25,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.single.PermissionListener;
-import com.nullvoid.blooddonation.AdminConsoleActivity;
+import com.nullvoid.blooddonation.admin.AdminDonneActivity;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.Donor;
 
@@ -93,7 +93,7 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 
-            Dexter.withActivity((AdminConsoleActivity)context).withPermission(Manifest.permission.CALL_PHONE).
+            Dexter.withActivity((AdminDonneActivity)context).withPermission(Manifest.permission.CALL_PHONE).
                     withListener(new PermissionListener() {
                         @Override
                         public void onPermissionGranted(PermissionGrantedResponse response) {

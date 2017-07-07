@@ -7,19 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.nullvoid.blooddonation.AdminConsoleActivity;
-import com.nullvoid.blooddonation.DoneeListFragment;
-import com.nullvoid.blooddonation.DonorListFragment;
+import com.nullvoid.blooddonation.admin.AdminDonneActivity;
+import com.nullvoid.blooddonation.admin.DoneeListFragment;
 import com.nullvoid.blooddonation.R;
+import com.nullvoid.blooddonation.others.AppConstants;
 
 /**
  * Created by sanath on 15/06/17.
  */
 
 public class AdminPagerAdapter extends FragmentPagerAdapter {
-    AdminConsoleActivity parentActivity;
+    AdminDonneActivity parentActivity;
 
-    public AdminPagerAdapter(FragmentManager fm, AdminConsoleActivity parentActivity) {
+    public AdminPagerAdapter(FragmentManager fm, AdminDonneActivity parentActivity) {
         super(fm);
         this.parentActivity = parentActivity;
     }
@@ -28,9 +28,9 @@ public class AdminPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new DoneeListFragment();
+                return DoneeListFragment.newInstance(AppConstants.statusNotComplete());
             case 1:
-                return new DonorListFragment();
+                return DoneeListFragment.newInstance(AppConstants.statusPending());
         }
         return null;
     }
@@ -52,9 +52,9 @@ public class AdminPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "DONEES";
+                return "NEW REQUESTS";
             case 1:
-                return "DONORS";
+                return "PENDING REQUESTS";
         }
         return null;
     }

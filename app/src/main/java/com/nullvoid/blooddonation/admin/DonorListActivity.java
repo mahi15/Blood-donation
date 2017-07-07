@@ -1,26 +1,25 @@
-package com.nullvoid.blooddonation;
+package com.nullvoid.blooddonation.admin;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.adapters.DonorAdapter;
 import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.others.AppConstants;
@@ -31,14 +30,14 @@ import java.util.ArrayList;
  * Created by sanath on 13/06/17.
  */
 
-public class DonorListFragment extends Fragment {
+public class DonorListActivity extends AppCompatActivity {
+
+    Context context = DonorListActivity.this;
 
     RecyclerView recyclerView;
-    View rootView;
     LinearLayoutManager llm;
     ProgressDialog progressDialog;
-    Toolbar toolbar;
-    LinearLayout searchLayout;
+    Toolbar searchbar, toolbar;
 
     DatabaseReference db;
 
@@ -49,6 +48,8 @@ public class DonorListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_list_view);
+        loadToolbars();
 
         donors = new ArrayList<Donor>();
 
@@ -60,7 +61,7 @@ public class DonorListFragment extends Fragment {
                     Donor donor = postSnapshot.getValue(Donor.class);
                     donors.add(donor);
                 }
-                donorAdapter = new DonorAdapter(donors, getActivity());
+                donorAdapter = new DonorAdapter(donors, context);
                 recyclerView.setAdapter(donorAdapter);
             }
 
@@ -69,38 +70,32 @@ public class DonorListFragment extends Fragment {
                 progressDialog.dismiss();
             }
         });
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        rootView = inflater.inflate(R.layout.layout_list_view, container, false);
-
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
+        recyclerView = (RecyclerView) findViewById(R.id.cardList);
         recyclerView.setHasFixedSize(true);
-        llm = new LinearLayoutManager(getActivity());
+        llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-
-        return rootView;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        loadAdditionals(rootView);
-    }
+    public void loadToolbars(){
 
-    public void loadAdditionals(View rootView){
-
-        //loading the search bar
-        toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        searchLayout = (LinearLayout) rootView.findViewById(R.id.search_layout);
-        final EditText searchField = (EditText) rootView.findViewById(R.id.search_bar_edittext);
-        ImageView clearText = (ImageView) rootView.findViewById(R.id.search_bar_close);
-
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setVisibility(View.VISIBLE);
-        searchLayout.setVisibility(View.VISIBLE);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        searchbar = (Toolbar) findViewById(R.id.searchbar);
+        searchbar.setVisibility(View.VISIBLE);
+
+        final EditText searchField = (EditText) findViewById(R.id.search_bar_edittext);
+        ImageView clearText = (ImageView) findViewById(R.id.search_bar_close);
 
         clearText.setOnClickListener(new View.OnClickListener() {
             @Override

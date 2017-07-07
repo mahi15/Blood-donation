@@ -1,8 +1,6 @@
-package com.nullvoid.blooddonation;
+package com.nullvoid.blooddonation.admin;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.adapters.DoneeAdapter;
 import com.nullvoid.blooddonation.beans.Donee;
 import com.nullvoid.blooddonation.others.AppConstants;
@@ -36,9 +35,9 @@ public class DoneeListFragment extends Fragment {
     RecyclerView recyclerView;
     View rootView;
     LinearLayoutManager llm;
-    ProgressDialog progressDialog;
-
     Toolbar toolbar;
+
+    String status;
 
     DatabaseReference dbRef;
 
@@ -48,23 +47,27 @@ public class DoneeListFragment extends Fragment {
     public DoneeListFragment() {
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public static DoneeListFragment newInstance(String status){
+        DoneeListFragment doneeFragment = new DoneeListFragment();
+        Bundle args = new Bundle();
+        args.putString(AppConstants.status(), status);
+        doneeFragment.setArguments(args);
+        return doneeFragment;
+    }
 
-        doneesList = new ArrayList<Donee>();
-        dbRef = FirebaseDatabase.getInstance().getReference();
-
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle("Loading");
-        progressDialog.setMessage("Retriving Data");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
+    public void readArguments(){
+        Bundle args = getArguments();
+        status = (String) args.get(AppConstants.status());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        readArguments();
+
+        doneesList = new ArrayList<Donee>();
+        dbRef = FirebaseDatabase.getInstance().getReference();
 
         rootView = inflater.inflate(R.layout.layout_list_view, container, false);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
@@ -73,22 +76,15 @@ public class DoneeListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(llm);
 
+        loadAdditionals(rootView);
+
         return rootView;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        loadAdditionals(rootView);
-    }
-
-    //ive added data retriva from db in onresume
-    //cos when returning from donorselection activity we need to refresh the data
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        dbRef.child(AppConstants.donees()).orderByChild(AppConstants.status())
+    public void loadData(){
+        dbRef.child(AppConstants.donees())
+                .orderByChild(AppConstants.status())
+                .equalTo(status)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -99,20 +95,26 @@ public class DoneeListFragment extends Fragment {
                         }
                         doneeAdapter = new DoneeAdapter(doneesList, getActivity());
                         recyclerView.setAdapter(doneeAdapter);
-                        progressDialog.dismiss();
                         doneeAdapter.notifyDataSetChanged();
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        progressDialog.dismiss();
                     }
                 });
+    }
+
+    //ive added data retriva from db in onresume
+    //cos when returning from donorselection activity we need to refresh the data
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
     }
 
     public void loadAdditionals(View rootView){
 
         //loading the search bar
-        toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        toolbar = (Toolbar) rootView.findViewById(R.id.searchbar);
         final EditText searchField = (EditText) rootView.findViewById(R.id.search_bar_edittext);
         ImageView clearText = (ImageView) rootView.findViewById(R.id.search_bar_close);
 

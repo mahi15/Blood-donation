@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.nullvoid.blooddonation.admin.AdminConsoleActivity;
 import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.others.AppConstants;
 
@@ -97,14 +98,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initNavigationDrawer() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
+        navigationView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
                         drawerLayout.closeDrawers();
-                        drawerLayout.clearFocus();
                         break;
                     case R.id.nav_req_from:
                         drawerLayout.closeDrawers();
@@ -274,23 +276,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    writeToSharedPreference(tempDonor);
+
+                    SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
+                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                    Gson gson = new Gson();
+                    String jsonDonor = gson.toJson(tempDonor);
+                    prefsEditor.putString(AppConstants.currentUser(), jsonDonor);
+                    prefsEditor.commit();
+                    finish();
+                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+                    showToast(getString(R.string.login_success_message));
+
                 } else {
                     showFailedDialog("Unable to verify\nPlease try again later");
                 }
             }
         });
-    }
-
-    public void writeToSharedPreference(Donor donor) {
-        SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        Gson gson = new Gson();
-        String jsonDonor = gson.toJson(donor);
-        prefsEditor.putString(AppConstants.currentUser(), jsonDonor);
-        prefsEditor.commit();
-        finish();
-        startActivity(new Intent(MainActivity.this, MainActivity.class));
     }
 
     public void logoutUser() {
@@ -316,6 +317,7 @@ public class MainActivity extends AppCompatActivity {
                             editor.clear().apply();
                             finish();
                             startActivity(new Intent(MainActivity.this, MainActivity.class));
+                            showToast(getString(R.string.logout_success_message));
                         }
                     })
                     .show();
@@ -331,6 +333,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void showSnackBar(String text) {
         Snackbar.make(drawerLayout, text, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void showToast(String text){
+        Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
     }
 }
 

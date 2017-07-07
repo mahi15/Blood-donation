@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -56,7 +59,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
     LinearLayoutManager llm;
     DatabaseReference db;
     FloatingActionButton fab;
-    Toolbar toolbar, topToolbar;
+    Toolbar searchbar, toolbar;
     LinearLayout parentView;
 
     BroadcastReceiver selectionChangeReciever;
@@ -66,20 +69,14 @@ public class DonorSelectionActivity extends AppCompatActivity {
     ArrayList<SelectionDonor> donorsList;
     ArrayList<Donor> selectedDonorsList;
     DonorSelectionAdapter donorSelectionAdapter;
+    DonorSelectionActivity context = this;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //get ready the necessary view components
         setContentView(R.layout.layout_list_view);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        topToolbar = (Toolbar) findViewById(R.id.top_toolbar);
 
-        topToolbar.setVisibility(View.VISIBLE);
-        topToolbar.setTitle("Select a Donor");
-        setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
         parentView = (LinearLayout) findViewById(R.id.list_view_parent);
@@ -90,18 +87,30 @@ public class DonorSelectionActivity extends AppCompatActivity {
         intent = getIntent();
         clickedDonee = Parcels.unwrap(intent.getParcelableExtra(AppConstants.donee()));
 
-        recyclerView = (RecyclerView) findViewById(R.id.cardList);
-        recyclerView.setHasFixedSize(true);
-        llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(llm);
         donorsList = new ArrayList<SelectionDonor>();
+
+        recyclerView = (RecyclerView) findViewById(R.id.cardList);
+        llm = new LinearLayoutManager(this);
+
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(llm);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    if (fab.isShown()) fab.hide();
+                } else {
+                    if (!fab.isShown()) fab.show();
+                }
+            }
+        });
 
         loadData();
     }
 
-    //loads stuff like search and all
-    public void loadAdditionals() {
+    public void loadAdditionalView() {
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,16 +119,48 @@ public class DonorSelectionActivity extends AppCompatActivity {
                     showSnackBar("Select at least one Donor");
                     return;
                 }
-                showConfirmationDialog();
+                String confirmMessage = String
+                        .format(getResources()
+                        .getQuantityString(
+                                R.plurals.notify_donors_confirm_message,
+                                selectedDonorsList.size()),
+                                selectedDonorsList.size());
+                new MaterialDialog.Builder(context)
+                        .title(R.string.confirm)
+                        .content(confirmMessage)
+                        .contentColor(Color.BLACK)
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .cancelable(false)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                if (clickedDonee.getStatus().equals(AppConstants.statusNotComplete())) {
+                                    assignMatch();
+                                } else if (clickedDonee.getStatus().equals(AppConstants.statusPending())) {
+                                    updateMatch();
+                                }
+                            }
+                        })
+                        .show();
             }
         });
 
-        //loading the search bar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.VISIBLE);
+        toolbar.setTitle(R.string.select_a_donor_title);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        searchbar = (Toolbar) findViewById(R.id.searchbar);
+        searchbar.setVisibility(View.VISIBLE);
         final EditText searchField = (EditText) findViewById(R.id.search_bar_edittext);
         ImageView clearText = (ImageView) findViewById(R.id.search_bar_close);
-
-        toolbar.setVisibility(View.VISIBLE);
 
         clearText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,27 +201,6 @@ public class DonorSelectionActivity extends AppCompatActivity {
         });
 
     }
-
-    public void showConfirmationDialog() {
-
-        AlertDialog.Builder confirmDialog = new AlertDialog.Builder(DonorSelectionActivity.this);
-        confirmDialog.setTitle("Confirm?");
-        confirmDialog.setMessage("Are you sure you want to notify " + selectedDonorsList.size() + " Donors?");
-        confirmDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (clickedDonee.getStatus().equals(AppConstants.statusNotComplete())){
-                    assignMatch();
-                }else if(clickedDonee.getStatus().equals(AppConstants.statusPending())){
-                    updateMatch();
-                }
-            }
-        });
-        confirmDialog.setNegativeButton("NO", null);
-        confirmDialog.setCancelable(false);
-        confirmDialog.show();
-    }
-
 
     public void updateMatch() {
 
@@ -249,11 +269,13 @@ public class DonorSelectionActivity extends AppCompatActivity {
 
     public void assignMatch() {
 
-        final ProgressDialog matchLoader = new ProgressDialog(DonorSelectionActivity.this);
-        matchLoader.setTitle("Loading");
-        matchLoader.setMessage("Adding match to database");
-        matchLoader.setCancelable(false);
-        matchLoader.show();
+        final MaterialDialog matchLoader = new MaterialDialog.Builder(context)
+                .title(R.string.loading)
+                .content(R.string.please_wait_message)
+                .progress(true, 0)
+                .cancelable(false)
+                .show();
+
 
         final Match match = new Match();
 
@@ -281,20 +303,22 @@ public class DonorSelectionActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 matchLoader.dismiss();
                 if (task.isSuccessful()) {
-                    AlertDialog.Builder addedDialog = new AlertDialog.Builder(DonorSelectionActivity.this);
-                    addedDialog.setTitle("Success");
-                    addedDialog.setMessage("The match has been added to database");
-                    addedDialog.setCancelable(false);
-                    addedDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            updateDoneeStatus();
-                            finish();
-                        }
-                    });
-                    addedDialog.show();
+
+                    new MaterialDialog.Builder(context)
+                            .cancelable(false)
+                            .title(R.string.success)
+                            .content(R.string.donor_notified_message)
+                            .contentColor(Color.BLACK)
+                            .positiveText(R.string.ok)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    updateDoneeStatus();
+                                    finish();
+                                }
+                            }).show();
                 } else {
-                    showSnackBar("There was some error communicating with the server");
+                    showSnackBar(getString(R.string.on_cancelled_message));
 
                 }
             }
@@ -319,7 +343,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
                 donorSelectionAdapter = new DonorSelectionAdapter(donorsList,
                         DonorSelectionActivity.this);
                 recyclerView.setAdapter(donorSelectionAdapter);
-                loadAdditionals();
+                loadAdditionalView();
             }
 
             @Override
@@ -351,9 +375,13 @@ public class DonorSelectionActivity extends AppCompatActivity {
                 }
                 //set the no of donors selected in title
                 if (selectedDonorsList.isEmpty()) {
-                    topToolbar.setTitle("Select a Donor");
+                    toolbar.setTitle(R.string.select_a_donor_title);
+
                 } else {
-                    topToolbar.setTitle(selectedDonorsList.size() + " Donors Selected");
+                    String title = getResources()
+                            .getQuantityString(R.plurals.selected_donors_count_title, selectedDonorsList.size());
+                    String formattedTitle = String.format(title, selectedDonorsList.size());
+                    toolbar.setTitle(formattedTitle);
                 }
             }
         };

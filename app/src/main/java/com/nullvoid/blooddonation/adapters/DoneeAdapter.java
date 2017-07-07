@@ -2,24 +2,24 @@ package com.nullvoid.blooddonation.adapters;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.DexterError;
@@ -28,7 +28,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.single.PermissionListener;
-import com.nullvoid.blooddonation.AdminConsoleActivity;
+import com.nullvoid.blooddonation.admin.AdminDonneActivity;
 import com.nullvoid.blooddonation.DonorSelectionActivity;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.Donee;
@@ -44,12 +44,12 @@ import java.util.List;
  */
 public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHolder> {
 
-    Context adminConsoleActivity;
+    Context context;
     private List<Donee> donees;
 
-    public DoneeAdapter(List<Donee> donees, Context adminConsoleActivity) {
+    public DoneeAdapter(List<Donee> donees, Context context) {
         this.donees = donees;
-        this.adminConsoleActivity = adminConsoleActivity;
+        this.context = context;
     }
 
     @Override
@@ -78,29 +78,28 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         holder.selectDonorImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(donee.getStatus().equals(AppConstants.statusPending())) {
 
-                    //if the donne has already been assigned show this
-                    AlertDialog.Builder registerAgainDialog = new AlertDialog.Builder(adminConsoleActivity);
-                    registerAgainDialog.setTitle("Confirm?");
-                    registerAgainDialog.setMessage("This donne has already been assigned few donors\n" +
-                            "Are you sure you want to notify few other donors?");
-                    registerAgainDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(adminConsoleActivity, DonorSelectionActivity.class);
-                            intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
-                            adminConsoleActivity.startActivity(intent);
-                        }
-                    });
-                    registerAgainDialog.setNegativeButton("NO", null);
-                    registerAgainDialog.show();
-                }
-
-                else {
-                    Intent intent = new Intent(adminConsoleActivity, DonorSelectionActivity.class);
-                    intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
-                    adminConsoleActivity.startActivity(intent);
+                //if the donne has already been assigned show this
+                if (donee.getStatus().equals(AppConstants.statusPending())) {
+                    new MaterialDialog.Builder(context)
+                            .title(R.string.confirm)
+                            .content(R.string.reassign_confirmation_message)
+                            .contentColor(Color.BLACK)
+                            .positiveText(R.string.yes)
+                            .negativeText(R.string.cancel)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    Intent call = new Intent(context, DonorSelectionActivity.class);
+                                    call.putExtra(AppConstants.donee(), Parcels.wrap(donee));
+                                    context.startActivity(call);
+                                }
+                            })
+                            .show();
+                } else {
+                    Intent call = new Intent(context, DonorSelectionActivity.class);
+                    call.putExtra(AppConstants.donee(), Parcels.wrap(donee));
+                    context.startActivity(call);
                 }
             }
         });
@@ -108,86 +107,64 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         holder.callDoneeImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            showNumbersToCallDialog(donee.getRequesterName(), donee.getPatientAttendantName(),
-                    donee.getRequesterPhoneNumber(), donee.getPatientAttendantNumber());
+                showNumbersToCallDialog(donee.getRequesterName(), donee.getPatientAttendantName(),
+                        donee.getRequesterPhoneNumber(), donee.getPatientAttendantNumber());
             }
         });
-
-        //set the color of the donee based on status
-        if (donee.getStatus().equals(AppConstants.statusNotComplete())) {
-            holder.view.setBackgroundColor(Color.parseColor("#ffb5b7"));
-        } else if (donee.getStatus().equals(AppConstants.statusPending())) {
-            holder.view.setBackgroundColor(Color.parseColor("#fffab5"));
-        } else if (donee.getStatus().equals(AppConstants.statusComplete())) {
-            holder.view.setBackgroundColor(Color.parseColor("#b3ffb6"));
-        }
     }
 
     public void showNumbersToCallDialog(final String requesterName, final String attenderName,
                                         final String requesterNum, final String attenderNum) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(adminConsoleActivity);
-        builder.setTitle("Choose whom to call");
+        String[] numbers;
 
-        //if attender details not provided
-        if(attenderNum.equals(AppConstants.notProvided())){
-            String[] numbers = {"Requester:\n"+requesterName};
-            builder.setItems(numbers, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case 0:
-                            call(requesterNum);
-                            break;
-                    }
-                }
-            });
+        if (attenderNum.equals(AppConstants.notProvided())) {
+            numbers = new String[]{"Requester:\n" + requesterName};
+        } else {
+            numbers = new String[]{"Requester:\n" + requesterName, "Patient's Attender:\n" + attenderName};
         }
-        //if attender details is provided
-        else {
-            final String[] numbers = {"Requester:\n"+requesterName, "Patient's Attender:\n"+attenderName};
-            builder.setItems(numbers, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case 0:
-                            call(requesterNum);
-                            break;
-                        case 1:
-                            call(attenderNum);
-                            break;
-                    }
-                }
-            });
-        }
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                return;
-            }
-        });
 
-        builder.show();
+        new MaterialDialog.Builder(context)
+                .title(R.string.call)
+                .items(numbers)
+                .itemsColor(Color.BLACK)
+                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        switch (which){
+                            case 0:
+                                call(requesterNum);
+                                break;
+                            case 1:
+                                call(attenderNum);
+                                break;
+                        }
+                        return true;
+                    }
+                })
+                .positiveText(R.string.call)
+                .negativeText(R.string.cancel)
+                .show();
     }
 
-    public void call(final String number){
+    public void call(final String number) {
 
-        if (ActivityCompat.checkSelfPermission(adminConsoleActivity,
+        if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 
-            Dexter.withActivity((AdminConsoleActivity)adminConsoleActivity).withPermission(Manifest.permission.CALL_PHONE).
+            Dexter.withActivity((AdminDonneActivity) context).withPermission(Manifest.permission.CALL_PHONE).
                     withListener(new PermissionListener() {
                         @Override
                         public void onPermissionGranted(PermissionGrantedResponse response) {
                             Intent callIntent = new Intent(Intent.ACTION_CALL);
                             callIntent.setData(Uri.parse("tel:" + number));
-                            adminConsoleActivity.startActivity(callIntent);
+                            context.startActivity(callIntent);
                         }
 
                         @Override
                         public void onPermissionDenied(PermissionDeniedResponse response) {
-                            Toast.makeText(adminConsoleActivity,
-                                    "Cannot make phone calls without granting permission", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, context.getString(R.string.call_permission_denied_message),
+                                    Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -197,19 +174,18 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
                     }).withErrorListener(new PermissionRequestErrorListener() {
                 @Override
                 public void onError(DexterError error) {
-                    Toast.makeText(adminConsoleActivity, error.name(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, error.name(), Toast.LENGTH_SHORT).show();
                 }
             }).check();
-        }
-        else {
+        } else {
             Intent callIntent = new Intent(Intent.ACTION_CALL);
             callIntent.setData(Uri.parse("tel:" + number));
-            adminConsoleActivity.startActivity(callIntent);
+            context.startActivity(callIntent);
         }
 
     }
 
-    public void loadData(ArrayList<Donee> newDoneeList){
+    public void loadData(ArrayList<Donee> newDoneeList) {
         donees = newDoneeList;
         notifyDataSetChanged();
     }

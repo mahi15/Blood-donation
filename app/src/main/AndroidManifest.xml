@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nullvoid.blooddonation">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-sdk android:minSdkVersion="11"/>
+
+    <uses-sdk android:minSdkVersion="11" />
 
 
     <application
@@ -18,31 +19,30 @@
 
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppThemeNoActionBar">
-        </activity>
+            android:theme="@style/AppThemeNoActionBar"></activity>
 
         <activity
             android:name=".DoneeRequestActivity"
-            android:theme="@style/AppThemeNoActionBar"
-            android:label="Request Blood">
-        </activity>
+            android:label="Request Blood"
+            android:theme="@style/AppThemeNoActionBar"></activity>
 
         <activity
             android:name=".DonorRegistrationActivity"
-            android:theme="@style/AppThemeNoActionBar"
-            android:label="Donate Blood" />
+            android:label="Donor Registration"
+            android:theme="@style/AppThemeNoActionBar" />
 
         <activity
-            android:name=".AdminConsoleActivity"
-            android:theme="@style/AppThemeNoActionBar"
-            android:label="Console" />
+            android:name=".admin.AdminDonneActivity"
+            android:label="Donnes"
+            android:theme="@style/AppThemeNoActionBar" />
 
         <activity
             android:name=".DonorSelectionActivity"
-            android:theme="@style/AppThemeNoActionBar"
-            android:label="Select a Donor" />
+            android:label="Select a Donor"
+            android:theme="@style/AppThemeNoActionBar" />
 
-        <activity android:name=".DonorProfileActivity"
+        <activity
+            android:name=".DonorProfileActivity"
             android:label="Profile" />
 
         <activity
@@ -53,7 +53,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".admin.AdminConsoleActivity"
+            android:label="Admin Console"
+            android:theme="@style/AppThemeNoActionBar" />
 
+        <activity android:name=".admin.DonorListActivity"
+            android:label="Donors"
+            android:theme="@style/AppThemeNoActionBar"/>
     </application>
 
 </manifest>
