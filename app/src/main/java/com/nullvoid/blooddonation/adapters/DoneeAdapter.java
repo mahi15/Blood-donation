@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.nullvoid.blooddonation.admin.AdminDonneActivity;
-import com.nullvoid.blooddonation.DonorSelectionActivity;
+import com.nullvoid.blooddonation.admin.DonorSelectionActivity;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.Donee;
 import com.nullvoid.blooddonation.others.AppConstants;
@@ -38,6 +39,8 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.nullvoid.blooddonation.R.string.call;
 
 /**
  * Created by sanath on 15/06/17.
@@ -75,6 +78,11 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         holder.hospitalName.setText(donee.getHospitalNumber());
         holder.hospitalPin.setText(donee.getHospitalPin());
 
+        loadButtons(holder, donee);
+    }
+
+    public void loadButtons(DoneeAdapter.DoneeViewHolder holder, final Donee donee){
+
         holder.selectDonorImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,16 +98,16 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    Intent call = new Intent(context, DonorSelectionActivity.class);
-                                    call.putExtra(AppConstants.donee(), Parcels.wrap(donee));
-                                    context.startActivity(call);
+                                    Intent intent = new Intent(context, DonorSelectionActivity.class);
+                                    intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
+                                    context.startActivity(intent);
                                 }
                             })
                             .show();
                 } else {
-                    Intent call = new Intent(context, DonorSelectionActivity.class);
-                    call.putExtra(AppConstants.donee(), Parcels.wrap(donee));
-                    context.startActivity(call);
+                    Intent intent = new Intent(context, DonorSelectionActivity.class);
+                    intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
+                    context.startActivity(intent);
                 }
             }
         });
@@ -111,7 +119,22 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
                         donee.getRequesterPhoneNumber(), donee.getPatientAttendantNumber());
             }
         });
+
+        if (donee.getStatus().equals(AppConstants.statusPending())){
+            holder.viewSelectedDonorsImage.setVisibility(View.VISIBLE);
+            holder.viewSelectedDonorsImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AppConstants.donneAction());
+                    intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
+                    intent.putExtra(AppConstants.action(),
+                            AppConstants.donneActionSelectedDonorsButton());
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                }
+            });
+        }
     }
+
 
     public void showNumbersToCallDialog(final String requesterName, final String attenderName,
                                         final String requesterNum, final String attenderNum) {
@@ -125,7 +148,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         }
 
         new MaterialDialog.Builder(context)
-                .title(R.string.call)
+                .title(call)
                 .items(numbers)
                 .itemsColor(Color.BLACK)
                 .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
@@ -142,7 +165,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
                         return true;
                     }
                 })
-                .positiveText(R.string.call)
+                .positiveText(call)
                 .negativeText(R.string.cancel)
                 .show();
     }
@@ -198,7 +221,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
     public static class DoneeViewHolder extends RecyclerView.ViewHolder {
         protected TextView requesterName, phoneNumber, bloodGroup, requDate, reqTime, patientName;
         protected TextView patientId, hospitalName, hospitalNumber, hospitalAddress, hospitalPin;
-        protected ImageView callDoneeImage, selectDonorImage;
+        protected ImageView callDoneeImage, selectDonorImage, viewSelectedDonorsImage;
         protected LinearLayout hiddenPart;
         protected RelativeLayout visiblePart;
         View view;
@@ -220,6 +243,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
             hospitalPin = (TextView) v.findViewById(R.id.hospital_pin);
             selectDonorImage = (ImageView) v.findViewById(R.id.select_donors_image);
             callDoneeImage = (ImageView) v.findViewById(R.id.call_donee_image);
+            viewSelectedDonorsImage = (ImageView) v.findViewById(R.id.view_selected_donors_image);
 
             hiddenPart = (LinearLayout) v.findViewById(R.id.hidden_part);
             visiblePart = (RelativeLayout) v.findViewById(R.id.visible_part);

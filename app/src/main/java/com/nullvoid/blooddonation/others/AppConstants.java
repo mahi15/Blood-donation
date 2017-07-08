@@ -12,6 +12,9 @@ public class AppConstants {
     public static final String remove(){
         return "REMOVE";
     }
+    public static final String action(){
+        return "ACTION";
+    }
     public static final String status(){
         return "status";
     }
@@ -19,6 +22,17 @@ public class AppConstants {
         return "CURRENT_USER";
     }
     public static final String notProvided(){return "Not Provided";}
+    public static final String selectionChange(){
+        return "SELECTION_CHANGE";
+    }
+
+    //donne action buttons stuff
+    public static final String donneAction(){
+        return "DONNE_ACTION";
+    }
+    public static final String donneActionSelectedDonorsButton(){
+        return "SELECTED_DONORS_BUTTON";
+    }
 
     //database node names
     public static final String donors(){

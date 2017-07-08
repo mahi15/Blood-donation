@@ -1,4 +1,4 @@
-package com.nullvoid.blooddonation;
+package com.nullvoid.blooddonation.admin;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -35,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.adapters.DonorSelectionAdapter;
 import com.nullvoid.blooddonation.beans.Donee;
 import com.nullvoid.blooddonation.beans.Donor;
@@ -367,7 +368,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 SelectionDonor selectionDonor = Parcels.unwrap(intent.getParcelableExtra("data"));
-                String action = intent.getStringExtra("action");
+                String action = intent.getStringExtra(AppConstants.action());
                 if (action.equals(AppConstants.select())) {
                     selectedDonorsList.add(selectionDonor.getDonor());
                 } else if (action.equals(AppConstants.remove())) {
@@ -388,7 +389,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
 
         //register to reciever SELECTION_CHANGE broadcast
         LocalBroadcastManager.getInstance(this).registerReceiver(selectionChangeReciever,
-                new IntentFilter(getString(R.string.selection_change)));
+                new IntentFilter(AppConstants.selectionChange()));
     }
 
     @Override

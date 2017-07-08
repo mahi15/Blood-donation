@@ -4,7 +4,7 @@
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="2dp"
     android:animateLayoutChanges="true"
     android:background="#848484"
     card_view:cardCornerRadius="4dp"
@@ -293,24 +293,26 @@
                 android:paddingRight="15dp">
 
                 <ImageView
+                    android:id="@+id/view_selected_donors_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:visibility="gone"
+                    card_view:srcCompat="@drawable/ic_people_red_30dp" />
+
+                <ImageView
                     android:id="@+id/call_donee_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="5dp"
+                    android:padding="5dp"
                     card_view:srcCompat="@drawable/ic_call_red_24dp" />
 
                 <ImageView
                     android:id="@+id/select_donors_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="5dp"
-                    android:paddingTop="5dp"
-                    card_view:srcCompat="@drawable/ic_group_add_red_24dp" />
+                    android:padding="5dp"
+                    card_view:srcCompat="@drawable/ic_group_add_red_30dp" />
 
             </LinearLayout>
 

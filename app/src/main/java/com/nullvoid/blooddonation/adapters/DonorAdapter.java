@@ -4,9 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.DexterError;
@@ -25,8 +28,8 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.single.PermissionListener;
-import com.nullvoid.blooddonation.admin.AdminDonneActivity;
 import com.nullvoid.blooddonation.R;
+import com.nullvoid.blooddonation.admin.AdminDonneActivity;
 import com.nullvoid.blooddonation.beans.Donor;
 
 import java.util.ArrayList;
@@ -37,8 +40,10 @@ import java.util.List;
  */
 public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHolder> {
 
-    final Context context;
-    private List<Donor> donors;
+    public final Context context;
+    public List<Donor> donors;
+
+
 
     public DonorAdapter(List<Donor> donors, Context context) {
         this.donors = donors;
@@ -62,9 +67,9 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         holder.bloodGroup.setText(donor.getBloodGroup());
         holder.donorAge.setText(donor.getAge());
         holder.donorDob.setText(donor.getDateOfBirth());
-        if(donor.isDonationInLastSixMonths()){
+        if (donor.isDonationInLastSixMonths()) {
             holder.donationDate.setText("Yes");
-        }else{
+        } else {
             holder.donationDate.setText("No");
         }
         holder.phoneNumber.setText(donor.getPhoneNumber());
@@ -82,7 +87,7 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
 
     }
 
-    public void loadData(ArrayList<Donor> newDonorList){
+    public void loadData(ArrayList<Donor> newDonorList) {
         donors = newDonorList;
         notifyDataSetChanged();
     }
@@ -90,41 +95,55 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
 
     public void makeCall(final String number, final String name) {
 
-        if (ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.confirm)
+                .content(context.getString(R.string.call) + " " + name + "\n" + number)
+                .autoDismiss(true)
+                .positiveText(R.string.call)
+                .negativeText(R.string.cancel)
+                .contentColor(Color.BLACK)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if (ActivityCompat.checkSelfPermission(context,
+                                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 
-            Dexter.withActivity((AdminDonneActivity)context).withPermission(Manifest.permission.CALL_PHONE).
-                    withListener(new PermissionListener() {
-                        @Override
-                        public void onPermissionGranted(PermissionGrantedResponse response) {
-                            AlertDialog.Builder callConfirmBuilder = new AlertDialog.Builder(context);
-                            callConfirmBuilder.setTitle("Call "+name+" ?");
-                            callConfirmBuilder.setMessage("Are you sure you want to call the number"
-                            +number+" ?");
-                        }
+                            Dexter.withActivity((AdminDonneActivity) context).withPermission(Manifest.permission.CALL_PHONE).
+                                    withListener(new PermissionListener() {
+                                        @Override
+                                        public void onPermissionGranted(PermissionGrantedResponse response) {
+                                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                            callIntent.setData(Uri.parse("tel:" + number));
+                                            context.startActivity(callIntent);
+                                        }
 
-                        @Override
-                        public void onPermissionDenied(PermissionDeniedResponse response) {
-                            Toast.makeText(context,
-                                    "Cannot make phone calls without granting permission", Toast.LENGTH_SHORT).show();
-                        }
+                                        @Override
+                                        public void onPermissionDenied(PermissionDeniedResponse response) {
+                                            Toast.makeText(context,
+                                                    context.getString(R.string.call_permission_denied_message),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
 
-                        @Override
-                        public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                            token.continuePermissionRequest();
+                                        @Override
+                                        public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                                            token.continuePermissionRequest();
+                                        }
+                                    }).withErrorListener(new PermissionRequestErrorListener() {
+                                @Override
+                                public void onError(DexterError error) {
+                                    Toast.makeText(context, error.name(), Toast.LENGTH_SHORT).show();
+                                }
+                            }).check();
+                        } else {
+                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                            callIntent.setData(Uri.parse("tel:" + number));
+                            context.startActivity(callIntent);
                         }
-                    }).withErrorListener(new PermissionRequestErrorListener() {
-                @Override
-                public void onError(DexterError error) {
-                    Toast.makeText(context, error.name(), Toast.LENGTH_SHORT).show();
-                }
-            }).check();
-        }
-        else {
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
-            callIntent.setData(Uri.parse("tel:" + number));
-            context.startActivity(callIntent);
-        }
+                    }
+                })
+                .autoDismiss(true)
+                .show();
+
 
     }
 
@@ -134,11 +153,11 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
     }
 
     public static class DonorViewHolder extends RecyclerView.ViewHolder {
-        protected TextView donorName, donorGender, bloodGroup, donorAge, donorDob, donationDate, phoneNumber;
-        protected TextView donorEmail, donorAddress, donorLocation, donorPin;
-        protected ImageView callDonorImage;
-        protected LinearLayout hiddenPart;
-        protected RelativeLayout visiblePart;
+        public TextView donorName, donorGender, bloodGroup, donorAge, donorDob, donationDate, phoneNumber;
+        public TextView donorEmail, donorAddress, donorLocation, donorPin;
+        public ImageView callDonorImage;
+        public LinearLayout hiddenPart;
+        public RelativeLayout visiblePart;
 
 
         public DonorViewHolder(View v) {

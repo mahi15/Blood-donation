@@ -90,8 +90,8 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
     }
 
     public void sendSelectionChange(String action, SelectionDonor data){
-        Intent intent = new Intent(context.getString(R.string.selection_change));
-        intent.putExtra("action", action);
+        Intent intent = new Intent(AppConstants.selectionChange());
+        intent.putExtra(AppConstants.action(), action);
         intent.putExtra("data", Parcels.wrap(data));
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }

@@ -8,9 +8,9 @@ import org.parceler.Parcel;
 @Parcel
 public class Donor {
 
-    private String donorId, name, gender, bloodGroup, dateOfBirth, age,
+    public String donorId, name, gender, bloodGroup, dateOfBirth, age,
             phoneNumber, email, address, location, pincode, registeredDate, registeredTime;
-    boolean isAvailable = true, donationInLastSixMonths, admin = false;
+    public boolean isAvailable = true, donationInLastSixMonths, admin = false;
 
     public Donor() {
     }
