@@ -3,6 +3,7 @@ package com.nullvoid.blooddonation.admin;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -150,10 +151,8 @@ public class AdminDonneActivity extends AppCompatActivity {
             contactedDonors.add(item);
         }
 
-        final MaterialDialog.Builder contactedDonorsDialog =
-                new MaterialDialog.Builder(context);
-
-        contactedDonorsDialog.title(R.string.contacted_donors_title)
+        final MaterialDialog contactedDonorsDialog =
+                new MaterialDialog.Builder(context).title(R.string.contacted_donors_title)
                 .contentColor(Color.BLACK)
                 .items(contactedDonors)
                 .positiveText(R.string.call)
@@ -169,13 +168,20 @@ public class AdminDonneActivity extends AppCompatActivity {
                                 for (int i : which){
                                     selectedDonorsList.add(contactedDonorsList.get(i));
                                 }
-
-                                if (which.length > 1) {
+                                if (which.length == 0) {
+                                    dialog.getActionButton(DialogAction.NEGATIVE)
+                                            .setEnabled(false);
                                     dialog.getActionButton(DialogAction.POSITIVE)
                                             .setEnabled(false);
                                 } else {
-                                    dialog.getActionButton(DialogAction.POSITIVE)
-                                            .setEnabled(true);
+                                    if (which.length > 0){
+                                        dialog.getActionButton(DialogAction.NEGATIVE).setEnabled(true);
+                                    }
+                                    if (which.length == 1){
+                                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                                    } else {
+                                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+                                    }
                                 }
                                 return true;
                             }
@@ -193,7 +199,11 @@ public class AdminDonneActivity extends AppCompatActivity {
                         sendMessage(selectedDonorsList  );
                     }
                 })
-                .show();
+                .build();
+        contactedDonorsDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
+        contactedDonorsDialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+
+        contactedDonorsDialog.show();
     }
 
     public void makeCall(final String number, final String name) {
