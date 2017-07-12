@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_main);
+        setContentView(R.layout.activity_main);
         admin = (Button) findViewById(R.id.admin);
 
         setCurrentUserFromSharedPreference();

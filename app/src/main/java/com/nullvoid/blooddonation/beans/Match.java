@@ -7,24 +7,17 @@ import java.util.ArrayList;
  */
 
 public class Match {
-    private String matchId, doneeId, matchedDate, matchedTime, completedDate, doneeName, doneeBloodGroup;
-    private ArrayList<String> contactedDonors, helpedDonors;
+    private Donee donee;
+    private String matchId, matchedDate, matchedTime, completedDate;
+    private ArrayList<Donor> contactedDonors, helpedDonors;
     private boolean completed;
 
-    public String getDoneeName() {
-        return doneeName;
+    public Donee getDonee() {
+        return donee;
     }
 
-    public void setDoneeName(String doneeName) {
-        this.doneeName = doneeName;
-    }
-
-    public String getDoneeBloodGroup() {
-        return doneeBloodGroup;
-    }
-
-    public void setDoneeBloodGroup(String doneeBloodGroup) {
-        this.doneeBloodGroup = doneeBloodGroup;
+    public void setDonee(Donee donee) {
+        this.donee = donee;
     }
 
     public String getMatchId() {
@@ -33,14 +26,6 @@ public class Match {
 
     public void setMatchId(String matchId) {
         this.matchId = matchId;
-    }
-
-    public String getDoneeId() {
-        return doneeId;
-    }
-
-    public void setDoneeId(String doneeId) {
-        this.doneeId = doneeId;
     }
 
     public String getMatchedDate() {
@@ -59,19 +44,27 @@ public class Match {
         this.matchedTime = matchedTime;
     }
 
-    public ArrayList<String> getContactedDonors() {
+    public String getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(String completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public ArrayList<Donor> getContactedDonors() {
         return contactedDonors;
     }
 
-    public void setContactedDonors(ArrayList<String> contactedDonors) {
+    public void setContactedDonors(ArrayList<Donor> contactedDonors) {
         this.contactedDonors = contactedDonors;
     }
 
-    public ArrayList<String> getHelpedDonors() {
+    public ArrayList<Donor> getHelpedDonors() {
         return helpedDonors;
     }
 
-    public void setHelpedDonors(ArrayList<String> helpedDonors) {
+    public void setHelpedDonors(ArrayList<Donor> helpedDonors) {
         this.helpedDonors = helpedDonors;
     }
 
@@ -81,13 +74,5 @@ public class Match {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
-    }
-
-    public String getCompletedDate() {
-        return completedDate;
-    }
-
-    public void setCompletedDate(String completedDate) {
-        this.completedDate = completedDate;
     }
 }

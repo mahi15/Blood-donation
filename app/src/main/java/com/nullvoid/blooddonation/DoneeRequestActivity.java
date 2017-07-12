@@ -63,7 +63,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_donee_request);
+        setContentView(R.layout.activity_donee_request);
 
         //Initilize important objects
         dbRef = FirebaseDatabase.getInstance().getReference();

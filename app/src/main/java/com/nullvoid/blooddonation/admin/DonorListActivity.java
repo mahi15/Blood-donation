@@ -48,7 +48,7 @@ public class DonorListActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_list_view);
+        setContentView(R.layout.activity_list_view);
         loadToolbars();
 
         donors = new ArrayList<Donor>();

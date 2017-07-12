@@ -1,9 +1,7 @@
 package com.nullvoid.blooddonation.admin;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -13,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -76,7 +73,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_list_view);
+        setContentView(R.layout.activity_list_view);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
@@ -122,9 +119,9 @@ public class DonorSelectionActivity extends AppCompatActivity {
                 }
                 String confirmMessage = String
                         .format(getResources()
-                        .getQuantityString(
-                                R.plurals.notify_donors_confirm_message,
-                                selectedDonorsList.size()),
+                                        .getQuantityString(
+                                                R.plurals.notify_donors_confirm_message,
+                                                selectedDonorsList.size()),
                                 selectedDonorsList.size());
                 new MaterialDialog.Builder(context)
                         .title(R.string.confirm)
@@ -189,11 +186,12 @@ public class DonorSelectionActivity extends AppCompatActivity {
                 String searchQuery = s.toString().toLowerCase();
                 ArrayList<SelectionDonor> resultDonors = new ArrayList<>();
                 for (SelectionDonor selectionDonor : donorsList) {
-                    if (selectionDonor.getDonor().getName().toLowerCase().contains(searchQuery) ||
-                            selectionDonor.getDonor().getBloodGroup().toLowerCase().contains(searchQuery) ||
-                            selectionDonor.getDonor().getLocation().toLowerCase().contains(searchQuery) ||
-                            selectionDonor.getDonor().getPincode().contains(searchQuery) ||
-                            selectionDonor.getDonor().getAddress().toLowerCase().contains(searchQuery)) {
+                    Donor tempDonor = selectionDonor.getDonor();
+                    if (tempDonor.getName().toLowerCase().contains(searchQuery) ||
+                            tempDonor.getBloodGroup().toLowerCase().contains(searchQuery) ||
+                            tempDonor.getLocation().toLowerCase().contains(searchQuery) ||
+                            tempDonor.getPincode().contains(searchQuery) ||
+                            tempDonor.getAddress().toLowerCase().contains(searchQuery)) {
                         resultDonors.add(selectionDonor);
                     }
                 }
@@ -205,31 +203,26 @@ public class DonorSelectionActivity extends AppCompatActivity {
 
     public void updateMatch() {
 
-        final ProgressDialog matchLoader = new ProgressDialog(DonorSelectionActivity.this);
-        matchLoader.setTitle("Loading");
-        matchLoader.setMessage("Updating match");
-        matchLoader.setCancelable(false);
-        matchLoader.show();
-
-        //to hold the currently selected donors
-        final ArrayList<String> selectedDonorsIdList = new ArrayList<String>();
-        for (Donor donor : selectedDonorsList) {
-            selectedDonorsIdList.add(donor.getDonorId());
-        }
+        final MaterialDialog matchLoader = new MaterialDialog.Builder(context)
+                .title(R.string.loading)
+                .content(R.string.please_wait_message)
+                .progress(true, 0)
+                .cancelable(false)
+                .show();
 
         //the ony thing we are gonna update is the donors so get the assignedDonors list from db
         db.child(AppConstants.matches()).child(clickedDonee.getDoneeId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        ArrayList<String> alreadySelectedDonorsList = new ArrayList<String>();
                         Match match = dataSnapshot.getValue(Match.class);
-                        alreadySelectedDonorsList = match.getContactedDonors();
+
+                        ArrayList<Donor> alreadySelectedDonorsList = match.getContactedDonors();
 
                         //check if any newly selected donor has been already assigned and skip him
-                        for (String donorId : selectedDonorsIdList) {
-                            if (!alreadySelectedDonorsList.contains(donorId)) {
-                                alreadySelectedDonorsList.add(donorId);
+                        for (Donor donor : selectedDonorsList) {
+                            if (!alreadySelectedDonorsList.contains(donor)) {
+                                alreadySelectedDonorsList.add(donor);
                             }
 
                             //now update the donorslist in db
@@ -240,19 +233,24 @@ public class DonorSelectionActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             matchLoader.dismiss();
                                             if (task.isSuccessful()) {
-                                                AlertDialog.Builder addedDialog = new AlertDialog.Builder(DonorSelectionActivity.this);
-                                                addedDialog.setTitle("Success");
-                                                addedDialog.setMessage("The match has been added to database");
-                                                addedDialog.setCancelable(false);
-                                                addedDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        finish();
-                                                    }
-                                                });
-                                                addedDialog.show();
+
+                                                new MaterialDialog.Builder(context)
+                                                        .title(R.string.success)
+                                                        .content(R.string.donor_notified_message)
+                                                        .contentColor(Color.BLACK)
+                                                        .autoDismiss(true)
+                                                        .cancelable(false)
+                                                        .positiveText(R.string.ok)
+                                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                                            @Override
+                                                            public void onClick(MaterialDialog dialog,
+                                                                                DialogAction which) {
+                                                                finish();
+                                                            }
+                                                        })
+                                                        .show();
                                             } else {
-                                                showSnackBar("There was some error communicating with the server");
+                                                showSnackBar(getString(R.string.on_cancelled_message));
 
                                             }
                                         }
@@ -284,21 +282,13 @@ public class DonorSelectionActivity extends AppCompatActivity {
         SimpleDateFormat thisTime = new SimpleDateFormat("HH:mm");
         String date = thisDate.format(new Timestamp(System.currentTimeMillis()));
         String time = thisTime.format(new Timestamp(System.currentTimeMillis()));
-        ArrayList<String> selectedDonorsIdList = new ArrayList<String>();
-        for (Donor donor : selectedDonorsList) {
-            selectedDonorsIdList.add(donor.getDonorId());
-        }
 
-        match.setDoneeId(clickedDonee.getDoneeId());
+        match.setMatchId(clickedDonee.getDoneeId());
+        match.setDonee(clickedDonee);
         match.setCompleted(false);
-        match.setContactedDonors(selectedDonorsIdList);
+        match.setContactedDonors(selectedDonorsList);
         match.setMatchedDate(date);
         match.setMatchedTime(time);
-        match.setHelpedDonors(new ArrayList<String>());
-        match.setMatchId(clickedDonee.getDoneeId());
-        match.setDoneeName(clickedDonee.getPatientName());
-        match.setDoneeBloodGroup(clickedDonee.getRequiredBloodGroup());
-
         db.child(AppConstants.matches()).child(clickedDonee.getDoneeId()).setValue(match).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

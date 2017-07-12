@@ -33,6 +33,9 @@ public class AppConstants {
     public static final String donneActionSelectedDonorsButton(){
         return "SELECTED_DONORS_BUTTON";
     }
+    public static final String donneActionMarkCompletedButton(){
+        return "MARK_COMPLETED_BUTTON";
+    }
 
     //database node names
     public static final String donors(){

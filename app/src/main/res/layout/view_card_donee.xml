@@ -50,7 +50,6 @@
                 android:id="@+id/req_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20/3/1967"
                 android:textColor="#000" />
         </LinearLayout>
 
@@ -76,7 +75,6 @@
                 android:id="@+id/hospital_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kanchipuram"
                 android:textColor="#000" />
         </LinearLayout>
 
@@ -89,7 +87,6 @@
             android:layout_weight="1"
             android:paddingLeft="5dp"
             android:paddingTop="5dp"
-            android:text="default name"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
@@ -125,7 +122,6 @@
                     android:id="@+id/patient_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="patient id"
                     android:textColor="#000" />
             </LinearLayout>
 
@@ -151,7 +147,6 @@
                     android:id="@+id/req_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="00:00"
                     android:textColor="#000" />
             </LinearLayout>
 
@@ -177,7 +172,6 @@
                     android:id="@+id/requester_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="good guy"
                     android:textColor="#000" />
             </LinearLayout>
 
@@ -203,7 +197,6 @@
                     android:id="@+id/phone_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0000"
                     android:textColor="#000" />
             </LinearLayout>
 
@@ -229,7 +222,6 @@
                     android:id="@+id/hospital_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="no, road"
                     android:textColor="#000" />
             </LinearLayout>
 
@@ -255,7 +247,6 @@
                     android:id="@+id/hospital_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0000"
                     android:textColor="#000" />
             </LinearLayout>
 
@@ -281,38 +272,60 @@
                     android:id="@+id/hospital_pin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kanchipuram"
                     android:textColor="#000" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="right"
                 android:orientation="horizontal"
                 android:paddingRight="15dp">
 
-                <ImageView
-                    android:id="@+id/view_selected_donors_image"
+                <LinearLayout
+                    android:id="@+id/pending_donne_actions_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:visibility="gone"
-                    card_view:srcCompat="@drawable/ic_people_red_30dp" />
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:textAlignment="gravity"
+                    android:visibility="gone">
 
-                <ImageView
-                    android:id="@+id/call_donee_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    card_view:srcCompat="@drawable/ic_call_red_24dp" />
+                    <ImageView
+                        android:id="@+id/mark_complete_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        card_view:srcCompat="@drawable/ic_done_all_red_30dp" />
 
-                <ImageView
-                    android:id="@+id/select_donors_image"
+                    <ImageView
+                        android:id="@+id/view_selected_donors_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        card_view:srcCompat="@drawable/ic_people_red_30dp" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    card_view:srcCompat="@drawable/ic_group_add_red_30dp" />
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/call_donee_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        card_view:srcCompat="@drawable/ic_call_red_24dp" />
+
+                    <ImageView
+                        android:id="@+id/select_donors_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        card_view:srcCompat="@drawable/ic_group_add_red_30dp" />
+                </LinearLayout>
 
             </LinearLayout>
 

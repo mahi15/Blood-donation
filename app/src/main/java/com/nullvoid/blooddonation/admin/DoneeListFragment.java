@@ -69,23 +69,20 @@ public class DoneeListFragment extends Fragment {
         doneesList = new ArrayList<Donee>();
         dbRef = FirebaseDatabase.getInstance().getReference();
 
-        rootView = inflater.inflate(R.layout.layout_list_view, container, false);
+        rootView = inflater.inflate(R.layout.activity_list_view, container, false);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
+        doneeAdapter = new DoneeAdapter(doneesList, getActivity());
         llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
+
+        recyclerView.setAdapter(doneeAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(llm);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
 
-        loadAdditionals(rootView);
-
-        return rootView;
-    }
-
-    public void loadData(){
         dbRef.child(AppConstants.donees())
                 .orderByChild(AppConstants.status())
                 .equalTo(status)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         doneesList.clear();
@@ -93,23 +90,18 @@ public class DoneeListFragment extends Fragment {
                             Donee donee = postSnapshot.getValue(Donee.class);
                             doneesList.add(donee);
                         }
-                        doneeAdapter = new DoneeAdapter(doneesList, getActivity());
-                        recyclerView.setAdapter(doneeAdapter);
                         doneeAdapter.notifyDataSetChanged();
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
+
+        loadAdditionals(rootView);
+
+        return rootView;
     }
 
-    //ive added data retriva from db in onresume
-    //cos when returning from donorselection activity we need to refresh the data
-    @Override
-    public void onResume() {
-        super.onResume();
-        loadData();
-    }
 
     public void loadAdditionals(View rootView){
 

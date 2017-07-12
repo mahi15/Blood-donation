@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -120,8 +121,10 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
             }
         });
 
+        //this part is for additional actions for the pending donne part
         if (donee.getStatus().equals(AppConstants.statusPending())){
-            holder.viewSelectedDonorsImage.setVisibility(View.VISIBLE);
+            holder.pendingDonneActionsLayout.setVisibility(View.VISIBLE);
+
             holder.viewSelectedDonorsImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -129,6 +132,17 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
                     intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
                     intent.putExtra(AppConstants.action(),
                             AppConstants.donneActionSelectedDonorsButton());
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                }
+            });
+
+            holder.markCompleteImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AppConstants.donneAction());
+                    intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
+                    intent.putExtra(AppConstants.action(),
+                            AppConstants.donneActionMarkCompletedButton());
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             });
@@ -221,8 +235,8 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
     public static class DoneeViewHolder extends RecyclerView.ViewHolder {
         protected TextView requesterName, phoneNumber, bloodGroup, requDate, reqTime, patientName;
         protected TextView patientId, hospitalName, hospitalNumber, hospitalAddress, hospitalPin;
-        protected ImageView callDoneeImage, selectDonorImage, viewSelectedDonorsImage;
-        protected LinearLayout hiddenPart;
+        protected ImageView callDoneeImage, selectDonorImage, viewSelectedDonorsImage, markCompleteImage;
+        protected LinearLayout hiddenPartLayout, pendingDonneActionsLayout;
         protected RelativeLayout visiblePart;
         View view;
 
@@ -244,16 +258,18 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
             selectDonorImage = (ImageView) v.findViewById(R.id.select_donors_image);
             callDoneeImage = (ImageView) v.findViewById(R.id.call_donee_image);
             viewSelectedDonorsImage = (ImageView) v.findViewById(R.id.view_selected_donors_image);
+            pendingDonneActionsLayout = (LinearLayout) v.findViewById(R.id.pending_donne_actions_layout);
+            markCompleteImage = (ImageView) v.findViewById(R.id.mark_complete_image);
 
-            hiddenPart = (LinearLayout) v.findViewById(R.id.hidden_part);
+            hiddenPartLayout = (LinearLayout) v.findViewById(R.id.hidden_part);
             visiblePart = (RelativeLayout) v.findViewById(R.id.visible_part);
             visiblePart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (hiddenPart.getVisibility() == View.VISIBLE) {
-                        hiddenPart.setVisibility(View.GONE);
+                    if (hiddenPartLayout.getVisibility() == View.VISIBLE) {
+                        hiddenPartLayout.setVisibility(View.GONE);
                     } else {
-                        hiddenPart.setVisibility(View.VISIBLE);
+                        hiddenPartLayout.setVisibility(View.VISIBLE);
                     }
                 }
             });

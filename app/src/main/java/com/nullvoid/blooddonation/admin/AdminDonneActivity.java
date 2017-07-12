@@ -3,7 +3,6 @@ package com.nullvoid.blooddonation.admin;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -15,7 +14,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -23,6 +21,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,10 +40,13 @@ import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.adapters.AdminPagerAdapter;
 import com.nullvoid.blooddonation.beans.Donee;
 import com.nullvoid.blooddonation.beans.Donor;
+import com.nullvoid.blooddonation.beans.Match;
 import com.nullvoid.blooddonation.others.AppConstants;
 
 import org.parceler.Parcels;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -56,11 +59,12 @@ public class AdminDonneActivity extends AppCompatActivity {
     Context context;
     private ViewPager viewPager;
     private AdminPagerAdapter mAdapter;
+    MaterialDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_admin_donne);
+        setContentView(R.layout.activity_admin_donne);
 
         context = AdminDonneActivity.this;
 
@@ -90,116 +94,154 @@ public class AdminDonneActivity extends AppCompatActivity {
             tab.setCustomView(mAdapter.getTabView(i));
         }
         viewPager.setAdapter(mAdapter);
-    }
 
-    public void getSelectedDonors(final String donneId) {
-
-        final MaterialDialog loadingDialog = new MaterialDialog.Builder(context)
+        //other view stuff
+        loadingDialog  = new MaterialDialog.Builder(this)
                 .title(R.string.loading)
                 .content(R.string.please_wait_message)
                 .progress(true, 0)
-                .cancelable(false)
-                .show();
+                .build();
+    }
 
-        final ArrayList<Donor> contactedDonorsList = new ArrayList<>();
+    public void getSelectedDonors(final Donee donee, final String action) {
+
+
+                loadingDialog.show();
 
         db.child(AppConstants.matches())
-                .child(donneId)
-                .child(AppConstants.contactedDonors())
+                .child(donee.getDoneeId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(final DataSnapshot dataSnapshotMain) {
+                    public void onDataChange(final DataSnapshot dataSnapshot) {
 
-                        for (DataSnapshot ds : dataSnapshotMain.getChildren()) {
-                            db.child(AppConstants.donors())
-                                    .child(ds.getValue(String.class))
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            Donor donor = dataSnapshot.getValue(Donor.class);
-                                            contactedDonorsList.add(donor);
+                        loadingDialog.dismiss();
 
-                                            if (contactedDonorsList.size() == dataSnapshotMain.getChildrenCount()) {
-                                                loadingDialog.dismiss();
-                                                showSelectedDonorsDialog(contactedDonorsList);
-                                            }
+                        Match donationMatch = dataSnapshot.getValue(Match.class);
 
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
+                        if (action.equals(AppConstants.donneActionSelectedDonorsButton())){
+                            showContactedDonorsDialog(donationMatch);
+                        }
+                        if (action.equals(AppConstants.donneActionMarkCompletedButton())){
+                            showMarkCompletedDialog(donationMatch);
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
     }
 
-    public void showSelectedDonorsDialog(final ArrayList<Donor> contactedDonorsList) {
+    public void showMarkCompletedDialog(final Match match) {
 
-        final ArrayList<String> contactedDonors = new ArrayList<>();
         final ArrayList<Donor> selectedDonorsList = new ArrayList<>();
 
-        for (Donor donor : contactedDonorsList){
+        final ArrayList<String> contactedDonors = new ArrayList<>();
+        for (Donor donor : match.getContactedDonors()) {
             String item = donor.getName() + "\n" + donor.getLocation() + " - " + donor.getPincode();
             contactedDonors.add(item);
         }
 
         final MaterialDialog contactedDonorsDialog =
-                new MaterialDialog.Builder(context).title(R.string.contacted_donors_title)
-                .contentColor(Color.BLACK)
-                .items(contactedDonors)
-                .positiveText(R.string.call)
-                .negativeText(R.string.message)
-                .neutralText(R.string.close)
-                .alwaysCallMultiChoiceCallback()
-                .itemsCallbackMultiChoice(null,
-                        new MaterialDialog.ListCallbackMultiChoice() {
+                new MaterialDialog.Builder(context)
+                        .title(R.string.mark_complete_title)
+                        .contentColor(Color.BLACK)
+                        .items(contactedDonors)
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .autoDismiss(true)
+                        .alwaysCallMultiChoiceCallback()
+                        .itemsCallbackMultiChoice(null,
+                                new MaterialDialog.ListCallbackMultiChoice() {
+                                    @Override
+                                    public boolean onSelection(MaterialDialog dialog,
+                                                               Integer[] which,
+                                                               CharSequence[] text) {
+                                        for (int i : which) {
+                                            selectedDonorsList.add(match.getContactedDonors().get(i));
+                                        }
+                                        if (which.length == 0) {
+                                            dialog.getActionButton(DialogAction.POSITIVE)
+                                                    .setEnabled(false);
+                                        } else {
+                                            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                                        }
+                                        return true;
+                                    }
+                                })
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public boolean onSelection(MaterialDialog dialog,
-                                                       Integer[] which,
-                                                       CharSequence[] text) {
-                                for (int i : which){
-                                    selectedDonorsList.add(contactedDonorsList.get(i));
-                                }
-                                if (which.length == 0) {
-                                    dialog.getActionButton(DialogAction.NEGATIVE)
-                                            .setEnabled(false);
-                                    dialog.getActionButton(DialogAction.POSITIVE)
-                                            .setEnabled(false);
-                                } else {
-                                    if (which.length > 0){
-                                        dialog.getActionButton(DialogAction.NEGATIVE).setEnabled(true);
-                                    }
-                                    if (which.length == 1){
-                                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
-                                    } else {
-                                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-                                    }
-                                }
-                                return true;
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                markAsComplete(match, selectedDonorsList);
                             }
                         })
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        makeCall(selectedDonorsList.get(0).getPhoneNumber(),
-                                selectedDonorsList.get(0).getName());
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        sendMessage(selectedDonorsList  );
-                    }
-                })
-                .build();
+                        .build();
+        contactedDonorsDialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+
+        contactedDonorsDialog.show();
+    }
+
+    public void showContactedDonorsDialog(final Match match) {
+
+        final ArrayList<String> contactedDonors = new ArrayList<>();
+        final ArrayList<Donor> selectedDonorsList = new ArrayList<>();
+
+        for (Donor donor : match.getContactedDonors()) {
+            String item = donor.getName() + "\n" + donor.getLocation() + " - " + donor.getPincode();
+            contactedDonors.add(item);
+        }
+
+        final MaterialDialog contactedDonorsDialog =
+                new MaterialDialog.Builder(context)
+                        .title(R.string.contacted_donors_title)
+                        .contentColor(Color.BLACK)
+                        .items(contactedDonors)
+                        .positiveText(R.string.call)
+                        .negativeText(R.string.message)
+                        .neutralText(R.string.close)
+                        .autoDismiss(true)
+                        .alwaysCallMultiChoiceCallback()
+                        .itemsCallbackMultiChoice(null,
+                                new MaterialDialog.ListCallbackMultiChoice() {
+                                    @Override
+                                    public boolean onSelection(MaterialDialog dialog,
+                                                               Integer[] which,
+                                                               CharSequence[] text) {
+                                        for (int i : which) {
+                                            selectedDonorsList.add(match.getContactedDonors().get(i));
+                                        }
+                                        if (which.length == 0) {
+                                            dialog.getActionButton(DialogAction.NEGATIVE)
+                                                    .setEnabled(false);
+                                            dialog.getActionButton(DialogAction.POSITIVE)
+                                                    .setEnabled(false);
+                                        } else {
+                                            if (which.length > 0) {
+                                                dialog.getActionButton(DialogAction.NEGATIVE).setEnabled(true);
+                                            }
+                                            if (which.length == 1) {
+                                                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
+                                            } else {
+                                                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+                                            }
+                                        }
+                                        return true;
+                                    }
+                                })
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                makeCall(selectedDonorsList.get(0).getPhoneNumber(),
+                                        selectedDonorsList.get(0).getName());
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                sendMessage(selectedDonorsList);
+                            }
+                        })
+                        .build();
         contactedDonorsDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
         contactedDonorsDialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
 
@@ -222,7 +264,7 @@ public class AdminDonneActivity extends AppCompatActivity {
                         if (ActivityCompat.checkSelfPermission(context,
                                 Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 
-                            Dexter.withActivity((AdminDonneActivity)context).withPermission(Manifest.permission.CALL_PHONE).
+                            Dexter.withActivity((AdminDonneActivity) context).withPermission(Manifest.permission.CALL_PHONE).
                                     withListener(new PermissionListener() {
                                         @Override
                                         public void onPermissionGranted(PermissionGrantedResponse response) {
@@ -247,8 +289,7 @@ public class AdminDonneActivity extends AppCompatActivity {
                                     Toast.makeText(context, error.name(), Toast.LENGTH_SHORT).show();
                                 }
                             }).check();
-                        }
-                        else {
+                        } else {
                             Intent callIntent = new Intent(Intent.ACTION_CALL);
                             callIntent.setData(Uri.parse("tel:" + number));
                             context.startActivity(callIntent);
@@ -258,7 +299,47 @@ public class AdminDonneActivity extends AppCompatActivity {
                 .show();
 
     }
-    public void sendMessage(ArrayList<Donor> selectedDonorsList){
+
+    public void sendMessage(ArrayList<Donor> selectedDonorsList) {
+        //TODO
+    }
+
+    public void markAsComplete(final Match match, ArrayList<Donor> helpedDonors){
+
+        loadingDialog.show();
+
+        SimpleDateFormat thisDate = new SimpleDateFormat("dd/MM/yyyy");
+        String date = thisDate.format(new Timestamp(System.currentTimeMillis()));
+
+        match.setHelpedDonors(helpedDonors);
+        match.setCompletedDate(date);
+        match.setCompleted(true);
+
+        db.child(AppConstants.matches())
+                .child(match.getMatchId())
+                .setValue(match)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        db.child(AppConstants.donees())
+                                .child(match.getMatchId())
+                                .child(AppConstants.status())
+                                .setValue(AppConstants.statusComplete())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        new MaterialDialog.Builder(context)
+                                                .title(R.string.success)
+                                                .content(R.string.donation_complete_message)
+                                                .contentColor(Color.BLACK)
+                                                .positiveText(R.string.ok)
+                                                .show();
+
+                                        loadingDialog.dismiss();
+                                    }
+                                });
+                    }
+                });
 
     }
 
@@ -273,9 +354,7 @@ public class AdminDonneActivity extends AppCompatActivity {
                 String action = intent.getStringExtra(AppConstants.action());
                 Donee donee = Parcels.unwrap(intent.getParcelableExtra(AppConstants.donee()));
 
-                if (action.equals(AppConstants.donneActionSelectedDonorsButton())) {
-                    getSelectedDonors(donee.getDoneeId());
-                }
+                getSelectedDonors(donee, action);
             }
         };
 

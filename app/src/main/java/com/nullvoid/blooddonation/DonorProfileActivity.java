@@ -15,7 +15,7 @@ public class DonorProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_donor_profile);
+        setContentView(R.layout.activity_donor_profile);
 
         final Button btn = (Button) findViewById(R.id.btnpro);
 

@@ -87,7 +87,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_donor_registration);
+        setContentView(R.layout.activity_donor_registration);
 
         parentView = (LinearLayout) findViewById(R.id.donor_reg_parent_view);
 
