@@ -40,7 +40,7 @@
     <string name="call">Call</string>
     <string name="close">Close</string>
     <string name="message">Message</string>
-<string name="s"></string>
+
     <string name="logout_error_message">You must be logged in to logout</string>
     <string name="please_wait_message">Please wait until the process is completed</string>
     <string name="logout_confirm_message">Are you sure you want to logout ?</string>

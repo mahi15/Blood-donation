@@ -55,6 +55,9 @@ public class AppConstants {
     public static final String registeredDate(){
         return "registeredDate";
     }
+    public static final String donationCount(){
+        return "donationCount";
+    }
 
     //donee stuff
     public static final String donee(){

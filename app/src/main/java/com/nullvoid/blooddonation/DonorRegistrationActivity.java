@@ -221,6 +221,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             donor.setRegisteredDate(dRegisteredDate);
             donor.setRegisteredTime(dRegisteredTime);
             donor.setAdmin(false);
+            donor.setDonationCount(0);
 
             checkIfDonorAlreadyExist();
         }

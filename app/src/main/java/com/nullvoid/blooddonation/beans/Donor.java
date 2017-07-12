@@ -8,11 +8,20 @@ import org.parceler.Parcel;
 @Parcel
 public class Donor {
 
-    public String donorId, name, gender, bloodGroup, dateOfBirth, age,
+    private String donorId, name, gender, bloodGroup, dateOfBirth, age,
             phoneNumber, email, address, location, pincode, registeredDate, registeredTime;
-    public boolean isAvailable = true, donationInLastSixMonths, admin = false;
+    private boolean isAvailable = true, donationInLastSixMonths, admin = false;
+    private int donationCount;
 
     public Donor() {
+    }
+
+    public int getDonationCount() {
+        return donationCount;
+    }
+
+    public void setDonationCount(int donationCount) {
+        this.donationCount = donationCount;
     }
 
     public String getDonorId() {

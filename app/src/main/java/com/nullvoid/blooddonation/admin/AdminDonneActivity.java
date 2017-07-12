@@ -300,11 +300,11 @@ public class AdminDonneActivity extends AppCompatActivity {
 
     }
 
-    public void sendMessage(ArrayList<Donor> selectedDonorsList) {
+    public void sendMessage( ArrayList<Donor> selectedDonorsList) {
         //TODO
     }
 
-    public void markAsComplete(final Match match, ArrayList<Donor> helpedDonors){
+    public void markAsComplete(final Match match, final ArrayList<Donor> helpedDonors){
 
         loadingDialog.show();
 
@@ -321,23 +321,30 @@ public class AdminDonneActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            new MaterialDialog.Builder(context)
+                                    .title(R.string.success)
+                                    .content(R.string.donation_complete_message)
+                                    .contentColor(Color.BLACK)
+                                    .positiveText(R.string.ok)
+                                    .show();
+
+                            loadingDialog.dismiss();
+                        }
+                        //update donne status in Database
                         db.child(AppConstants.donees())
                                 .child(match.getMatchId())
                                 .child(AppConstants.status())
-                                .setValue(AppConstants.statusComplete())
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        new MaterialDialog.Builder(context)
-                                                .title(R.string.success)
-                                                .content(R.string.donation_complete_message)
-                                                .contentColor(Color.BLACK)
-                                                .positiveText(R.string.ok)
-                                                .show();
+                                .setValue(AppConstants.statusComplete());
 
-                                        loadingDialog.dismiss();
-                                    }
-                                });
+                        //update donor's donation count in database
+                        for (Donor donor : helpedDonors){
+                            db.child(AppConstants.donors())
+                                    .child(donor.getDonorId())
+                                    .child(AppConstants.donationCount())
+                                    .setValue(donor.getDonationCount()+1);
+                        }
+
                     }
                 });
 

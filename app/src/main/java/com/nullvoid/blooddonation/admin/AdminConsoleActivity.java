@@ -24,7 +24,8 @@ import java.text.SimpleDateFormat;
  * Created by sanath on 06/07/17.
  */
 
-public class AdminConsoleActivity extends AppCompatActivity {
+public class
+AdminConsoleActivity extends AppCompatActivity {
 
     Button donneButton, donorButton, historButton;
     Toolbar toolbar;
@@ -39,6 +40,7 @@ public class AdminConsoleActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
