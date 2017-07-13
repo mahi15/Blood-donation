@@ -6,25 +6,13 @@ package com.nullvoid.blooddonation.others;
 
 public class AppConstants {
 
-    public static final String select(){
-        return "SELECT";
-    }
-    public static final String remove(){
-        return "REMOVE";
-    }
-    public static final String action(){
-        return "ACTION";
-    }
-    public static final String status(){
-        return "status";
-    }
-    public static final String currentUser() {
-        return "CURRENT_USER";
-    }
-    public static final String notProvided(){return "Not Provided";}
-    public static final String selectionChange(){
-        return "SELECTION_CHANGE";
-    }
+    public static final String select = "SELECT";
+    public static final String remove = "REMOVE";
+    public static final String action = "ACTION";
+    public static final String status = "status";
+    public static final String currentUser = "CURRENT_USER";
+    public static final String notProvided =  "Not Provided";
+    public static final String selectionChange = "SELECTION_CHANGE";
 
     //donne action buttons stuff
     public static final String donneAction(){
@@ -58,6 +46,7 @@ public class AppConstants {
     public static final String donationCount(){
         return "donationCount";
     }
+    public static final String isAvailable = "isAvailable";
 
     //donee stuff
     public static final String donee(){

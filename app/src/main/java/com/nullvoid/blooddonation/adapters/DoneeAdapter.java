@@ -130,7 +130,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
                 public void onClick(View v) {
                     Intent intent = new Intent(AppConstants.donneAction());
                     intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
-                    intent.putExtra(AppConstants.action(),
+                    intent.putExtra(AppConstants.action,
                             AppConstants.donneActionSelectedDonorsButton());
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
@@ -141,7 +141,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
                 public void onClick(View v) {
                     Intent intent = new Intent(AppConstants.donneAction());
                     intent.putExtra(AppConstants.donee(), Parcels.wrap(donee));
-                    intent.putExtra(AppConstants.action(),
+                    intent.putExtra(AppConstants.action,
                             AppConstants.donneActionMarkCompletedButton());
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
@@ -155,7 +155,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
 
         String[] numbers;
 
-        if (attenderNum.equals(AppConstants.notProvided())) {
+        if (attenderNum.equals(AppConstants.notProvided)) {
             numbers = new String[]{"Requester:\n" + requesterName};
         } else {
             numbers = new String[]{"Requester:\n" + requesterName, "Patient's Attender:\n" + attenderName};

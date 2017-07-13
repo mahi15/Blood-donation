@@ -60,9 +60,9 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
             public void onClick(View view) {
 
                 if(selectionDonor.isSelected()){
-                    sendSelectionChange(AppConstants.remove(), selectionDonor);
+                    sendSelectionChange(AppConstants.remove, selectionDonor);
                 }else{
-                    sendSelectionChange(AppConstants.select(), selectionDonor);
+                    sendSelectionChange(AppConstants.select, selectionDonor);
                 }
                 selectionDonor.setSelected(!selectionDonor.isSelected());
 
@@ -90,8 +90,8 @@ public class DonorSelectionAdapter extends RecyclerView.Adapter<DonorSelectionAd
     }
 
     public void sendSelectionChange(String action, SelectionDonor data){
-        Intent intent = new Intent(AppConstants.selectionChange());
-        intent.putExtra(AppConstants.action(), action);
+        Intent intent = new Intent(AppConstants.selectionChange);
+        intent.putExtra(AppConstants.action, action);
         intent.putExtra("data", Parcels.wrap(data));
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }

@@ -63,7 +63,7 @@
         <item quantity="other">Notify %1$d Donors ?</item>
         <item quantity="one">Notify %1$d Donor ?</item>
     </plurals>
-
+    <string name="available_toggled_message">You have been marked as %1$s</string>
     <string name="req_made_today">Requests Made Today</string>
 
     <!--MainActivity strings-->

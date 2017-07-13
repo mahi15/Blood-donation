@@ -334,7 +334,7 @@ public class AdminDonneActivity extends AppCompatActivity {
                         //update donne status in Database
                         db.child(AppConstants.donees())
                                 .child(match.getMatchId())
-                                .child(AppConstants.status())
+                                .child(AppConstants.status)
                                 .setValue(AppConstants.statusComplete());
 
                         //update donor's donation count in database
@@ -358,7 +358,7 @@ public class AdminDonneActivity extends AppCompatActivity {
         BroadcastReceiver actionInfoReciever = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String action = intent.getStringExtra(AppConstants.action());
+                String action = intent.getStringExtra(AppConstants.action);
                 Donee donee = Parcels.unwrap(intent.getParcelableExtra(AppConstants.donee()));
 
                 getSelectedDonors(donee, action);

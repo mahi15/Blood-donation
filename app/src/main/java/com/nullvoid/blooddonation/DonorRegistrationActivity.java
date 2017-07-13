@@ -475,11 +475,11 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     }
 
     public void writeToSharedPreference(Donor donor){
-        SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
+        SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         Gson gson = new Gson();
         String jsonDonor = gson.toJson(donor);
-        prefsEditor.putString(AppConstants.currentUser(), jsonDonor);
+        prefsEditor.putString(AppConstants.currentUser, jsonDonor);
         prefsEditor.commit();
     }
 

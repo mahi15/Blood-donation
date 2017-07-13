@@ -108,14 +108,14 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_home:
                         drawerLayout.closeDrawers();
                         break;
-                    case R.id.nav_req_from:
-                        drawerLayout.closeDrawers();
-                        startActivity(new Intent(getApplicationContext(), DoneeRequestActivity.class));
-                        break;
-                    case R.id.nav_don_from:
-                        drawerLayout.closeDrawers();
-                        startActivity(new Intent(getApplicationContext(), DonorRegistrationActivity.class));
-                        break;
+//                    case R.id.nav_req_from:
+//                        drawerLayout.closeDrawers();
+//                        startActivity(new Intent(getApplicationContext(), DoneeRequestActivity.class));
+//                        break;
+//                    case R.id.nav_don_from:
+//                        drawerLayout.closeDrawers();
+//                        startActivity(new Intent(getApplicationContext(), DonorRegistrationActivity.class));
+//                        break;
                     case R.id.nav_about:
                         drawerLayout.closeDrawers();
                         Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
@@ -151,11 +151,11 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    public void setCurrentUserFromSharedPreference() {
-        SharedPreferences mPref = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
+    private void setCurrentUserFromSharedPreference() {
+        SharedPreferences mPref = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = mPref.getString(AppConstants.currentUser(), null);
-        currentUser = gson.fromJson(json, Donor.class);
+        String userJson = mPref.getString(AppConstants.currentUser, null);
+        currentUser = gson.fromJson(userJson, Donor.class);
 
         if (currentUser != null) {
             if (currentUser.isAdmin()) {
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void checkIfDonorAlreadyExists() {
+    private void checkIfDonorAlreadyExists() {
 
         if (!isNetworkAvailable()) {
             showSnackBar(getString(R.string.no_internet_message));
@@ -277,11 +277,11 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
 
-                    SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
+                    SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
                     SharedPreferences.Editor prefsEditor = mPrefs.edit();
                     Gson gson = new Gson();
                     String jsonDonor = gson.toJson(tempDonor);
-                    prefsEditor.putString(AppConstants.currentUser(), jsonDonor);
+                    prefsEditor.putString(AppConstants.currentUser, jsonDonor);
                     prefsEditor.commit();
                     finish();
                     startActivity(new Intent(MainActivity.this, MainActivity.class));
@@ -303,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         } else {
 
-            final SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser(), MODE_PRIVATE);
+            final SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
             new MaterialDialog.Builder(MainActivity.this)
                     .title(R.string.confirm)
                     .content(R.string.logout_confirm_message)

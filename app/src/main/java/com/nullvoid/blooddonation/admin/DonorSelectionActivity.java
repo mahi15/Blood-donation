@@ -318,7 +318,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
     }
 
     public void updateDoneeStatus() {
-        db.child(AppConstants.donees()).child(clickedDonee.getDoneeId()).child(AppConstants.status())
+        db.child(AppConstants.donees()).child(clickedDonee.getDoneeId()).child(AppConstants.status)
                 .setValue(AppConstants.statusPending());
     }
 
@@ -358,10 +358,10 @@ public class DonorSelectionActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 SelectionDonor selectionDonor = Parcels.unwrap(intent.getParcelableExtra("data"));
-                String action = intent.getStringExtra(AppConstants.action());
-                if (action.equals(AppConstants.select())) {
+                String action = intent.getStringExtra(AppConstants.action);
+                if (action.equals(AppConstants.select)) {
                     selectedDonorsList.add(selectionDonor.getDonor());
-                } else if (action.equals(AppConstants.remove())) {
+                } else if (action.equals(AppConstants.remove)) {
                     selectedDonorsList.remove(selectionDonor.getDonor());
                 }
                 //set the no of donors selected in title
@@ -379,7 +379,7 @@ public class DonorSelectionActivity extends AppCompatActivity {
 
         //register to reciever SELECTION_CHANGE broadcast
         LocalBroadcastManager.getInstance(this).registerReceiver(selectionChangeReciever,
-                new IntentFilter(AppConstants.selectionChange()));
+                new IntentFilter(AppConstants.selectionChange));
     }
 
     @Override

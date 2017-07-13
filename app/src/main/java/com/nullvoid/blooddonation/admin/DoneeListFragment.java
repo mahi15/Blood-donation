@@ -50,14 +50,14 @@ public class DoneeListFragment extends Fragment {
     public static DoneeListFragment newInstance(String status){
         DoneeListFragment doneeFragment = new DoneeListFragment();
         Bundle args = new Bundle();
-        args.putString(AppConstants.status(), status);
+        args.putString(AppConstants.status, status);
         doneeFragment.setArguments(args);
         return doneeFragment;
     }
 
     public void readArguments(){
         Bundle args = getArguments();
-        status = (String) args.get(AppConstants.status());
+        status = (String) args.get(AppConstants.status);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class DoneeListFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
 
         dbRef.child(AppConstants.donees())
-                .orderByChild(AppConstants.status())
+                .orderByChild(AppConstants.status)
                 .equalTo(status)
                 .addValueEventListener(new ValueEventListener() {
                     @Override

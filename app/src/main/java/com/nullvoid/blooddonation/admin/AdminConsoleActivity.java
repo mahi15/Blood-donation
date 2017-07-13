@@ -24,8 +24,7 @@ import java.text.SimpleDateFormat;
  * Created by sanath on 06/07/17.
  */
 
-public class
-AdminConsoleActivity extends AppCompatActivity {
+public class AdminConsoleActivity extends AppCompatActivity {
 
     Button donneButton, donorButton, historButton;
     Toolbar toolbar;

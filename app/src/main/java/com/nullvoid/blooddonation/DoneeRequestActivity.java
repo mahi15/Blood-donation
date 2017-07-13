@@ -246,8 +246,8 @@ public class DoneeRequestActivity extends AppCompatActivity {
             return false;
         }
         if (TextUtils.isEmpty(dReqAmount)){
-            reqAmount.setText(AppConstants.notProvided());
-            dReqAmount = AppConstants.notProvided();
+            reqAmount.setText(AppConstants.notProvided);
+            dReqAmount = AppConstants.notProvided;
         }
         if(TextUtils.isEmpty(dRequiredDate)) {
             reqDate.setError(required);
@@ -266,16 +266,16 @@ public class DoneeRequestActivity extends AppCompatActivity {
             return false;
         }
         if (TextUtils.isEmpty(dPatientRefNumber)) {
-            dPatientRefNumber = AppConstants.notProvided();
+            dPatientRefNumber = AppConstants.notProvided;
         }
         if (TextUtils.isEmpty(dAttendantName)) {
-            dAttendantName = AppConstants.notProvided();
+            dAttendantName = AppConstants.notProvided;
         }
         else if (dAttendantName.length() < 3){
             reqAttendantName.setError(leaveBlank);
         }
         if (TextUtils.isEmpty(dAttendantNumber)){
-            dAttendantNumber = AppConstants.notProvided();
+            dAttendantNumber = AppConstants.notProvided;
         }
         else if (dAttendantNumber.length() != 10) {
             reqAttendantNumber.setError(leaveBlank);

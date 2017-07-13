@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="#fff">
 
     <TextView
         android:id="@+id/splash_title"
