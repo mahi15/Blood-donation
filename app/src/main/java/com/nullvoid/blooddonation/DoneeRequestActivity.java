@@ -3,7 +3,6 @@ package com.nullvoid.blooddonation;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -22,11 +20,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nullvoid.blooddonation.beans.Donee;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.Constants;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import static com.nullvoid.blooddonation.others.CommonFunctions.toCamelCase;
 
 /**
  * Created by sanath on 11/06/17.
@@ -52,7 +52,6 @@ public class DoneeRequestActivity extends AppCompatActivity {
     int cDay = calendar.get(Calendar.DAY_OF_MONTH);
     int cMonth = calendar.get(Calendar.MONTH);
     int cYear = calendar.get(Calendar.YEAR);
-    int sDay, sMonth, sYear;
 
     //object to store all the user entered data
     private Donee donee;
@@ -105,7 +104,6 @@ public class DoneeRequestActivity extends AppCompatActivity {
         submitButton.setOnClickListener(getInfo);
         reqDate = (EditText) findViewById(R.id.reqNeededDate);
         reqDate.addTextChangedListener(dateWatcher);
-
     }
 
     View.OnClickListener getInfo = new View.OnClickListener() {
@@ -171,7 +169,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
             donee.setPatientAreaofResidence(dPAreaOfResidence);
             donee.setRequestedDate(dRequestedDate);
             donee.setRequestedTime(dRequestedTime);
-            donee.setStatus(AppConstants.statusNotComplete());
+            donee.setStatus(Constants.statusNotComplete());
 
             registerDonee(donee);
         }
@@ -183,7 +181,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
         doneeId = dbRef.push().getKey();
         donee.setDoneeId(doneeId);
 
-        dbRef.child(AppConstants.donees()).child(doneeId).setValue(donee).
+        dbRef.child(Constants.donees()).child(doneeId).setValue(donee).
         addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -215,10 +213,6 @@ public class DoneeRequestActivity extends AppCompatActivity {
 
     }
 
-    public void showToast(String text){
-        Toast.makeText(DoneeRequestActivity.this, text, Toast.LENGTH_SHORT).show();
-    }
-
     public boolean validateForm() {
 
         final String required = getString(R.string.required_error);
@@ -246,36 +240,30 @@ public class DoneeRequestActivity extends AppCompatActivity {
             return false;
         }
         if (TextUtils.isEmpty(dReqAmount)){
-            reqAmount.setText(AppConstants.notProvided);
-            dReqAmount = AppConstants.notProvided;
+            reqAmount.setText(Constants.notProvided);
+            dReqAmount = Constants.notProvided;
         }
         if(TextUtils.isEmpty(dRequiredDate)) {
             reqDate.setError(required);
             reqDate.requestFocus();
             return false;
         }
-//        String[] rDate = dRequiredDate.split("/");
-//        if (Integer.parseInt(rDate[2]) < cYear || Integer.parseInt(rDate[2]) < (cYear-100)){
-//            reqDate.setError(notValid);
-//            reqDate.requestFocus();
-//            return false;
-//        }
         if (dPAreaOfResidence.length() < 4) {
             reqAreaOfResidence.setError(notValid);
             reqAreaOfResidence.requestFocus();
             return false;
         }
         if (TextUtils.isEmpty(dPatientRefNumber)) {
-            dPatientRefNumber = AppConstants.notProvided;
+            dPatientRefNumber = Constants.notProvided;
         }
         if (TextUtils.isEmpty(dAttendantName)) {
-            dAttendantName = AppConstants.notProvided;
+            dAttendantName = Constants.notProvided;
         }
         else if (dAttendantName.length() < 3){
             reqAttendantName.setError(leaveBlank);
         }
         if (TextUtils.isEmpty(dAttendantNumber)){
-            dAttendantNumber = AppConstants.notProvided;
+            dAttendantNumber = Constants.notProvided;
         }
         else if (dAttendantNumber.length() != 10) {
             reqAttendantNumber.setError(leaveBlank);
@@ -370,27 +358,5 @@ public class DoneeRequestActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
         }
     };
-
-    public String toCamelCase(final String init) {
-        if (init==null)
-            return null;
-
-        final StringBuilder ret = new StringBuilder(init.length());
-
-        for (final String word : init.split(" ")) {
-            if (!word.isEmpty()) {
-                ret.append(word.substring(0, 1).toUpperCase());
-                ret.append(word.substring(1).toLowerCase());
-            }
-            if (!(ret.length()==init.length()))
-                ret.append(" ");
-        }
-
-        return ret.toString();
-    }
-
-    public void showSnackBar(String text){
-        Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
-    }
 
 }

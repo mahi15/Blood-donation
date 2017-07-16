@@ -1,39 +1,34 @@
 package com.nullvoid.blooddonation.adapters;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.nullvoid.blooddonation.R;
-import com.nullvoid.blooddonation.admin.AdminDonneActivity;
 import com.nullvoid.blooddonation.beans.Donor;
+import com.nullvoid.blooddonation.others.Constants;
+import com.nullvoid.blooddonation.others.CommonFunctions;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by sanath on 15/06/17.
@@ -42,8 +37,6 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
 
     public final Context context;
     public List<Donor> donors;
-
-
 
     public DonorAdapter(List<Donor> donors, Context context) {
         this.donors = donors;
@@ -59,19 +52,37 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
     }
 
     @Override
-    public void onBindViewHolder(DonorAdapter.DonorViewHolder holder, int position) {
+    public void onBindViewHolder(final DonorAdapter.DonorViewHolder holder, int position) {
         final Donor donor = donors.get(position);
+
+        if (donor.isSelected()){
+            holder.view.setBackgroundColor(Color.parseColor("#b3ffb6"));
+            holder.checkBox.setChecked(true);
+        } else {
+            holder.view.setBackgroundColor(Color.WHITE);
+            holder.checkBox.setChecked(false);
+        }
+
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String action = donor.isSelected() ? Constants.remove : Constants.select;
+                sendSelectionChange(action, donor);
+                donor.setSelected(!donor.isSelected());
+
+                notifyDataSetChanged();
+                holder.view.setBackgroundColor(donor.isSelected() ? Color.parseColor("#b3ffb6") : Color.WHITE);
+            }
+        });
 
         holder.donorName.setText(donor.getName());
         holder.donorGender.setText(donor.getGender());
         holder.bloodGroup.setText(donor.getBloodGroup());
         holder.donorAge.setText(donor.getAge());
         holder.donorDob.setText(donor.getDateOfBirth());
-        if (donor.isDonationInLastSixMonths()) {
-            holder.donationDate.setText("Yes");
-        } else {
-            holder.donationDate.setText("No");
-        }
+        String lastDonated = donor.isDonationInLastSixMonths() ? "Yes" : "No";
+        holder.donationDate.setText(lastDonated);
         holder.phoneNumber.setText(donor.getPhoneNumber());
         holder.donorEmail.setText(donor.getEmail());
         holder.donorAddress.setText(donor.getAddress());
@@ -84,14 +95,12 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
                 makeCall(donor.getPhoneNumber(), donor.getName());
             }
         });
-
     }
 
     public void loadData(ArrayList<Donor> newDonorList) {
         donors = newDonorList;
         notifyDataSetChanged();
     }
-
 
     public void makeCall(final String number, final String name) {
 
@@ -105,46 +114,11 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (ActivityCompat.checkSelfPermission(context,
-                                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-
-                            Dexter.withActivity((AdminDonneActivity) context).withPermission(Manifest.permission.CALL_PHONE).
-                                    withListener(new PermissionListener() {
-                                        @Override
-                                        public void onPermissionGranted(PermissionGrantedResponse response) {
-                                            Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                            callIntent.setData(Uri.parse("tel:" + number));
-                                            context.startActivity(callIntent);
-                                        }
-
-                                        @Override
-                                        public void onPermissionDenied(PermissionDeniedResponse response) {
-                                            Toast.makeText(context,
-                                                    context.getString(R.string.call_permission_denied_message),
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-
-                                        @Override
-                                        public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                                            token.continuePermissionRequest();
-                                        }
-                                    }).withErrorListener(new PermissionRequestErrorListener() {
-                                @Override
-                                public void onError(DexterError error) {
-                                    Toast.makeText(context, error.name(), Toast.LENGTH_SHORT).show();
-                                }
-                            }).check();
-                        } else {
-                            Intent callIntent = new Intent(Intent.ACTION_CALL);
-                            callIntent.setData(Uri.parse("tel:" + number));
-                            context.startActivity(callIntent);
-                        }
+                        CommonFunctions.call(context, number);
                     }
                 })
                 .autoDismiss(true)
                 .show();
-
-
     }
 
     @Override
@@ -152,32 +126,40 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         return donors.size();
     }
 
-    public static class DonorViewHolder extends RecyclerView.ViewHolder {
-        public TextView donorName, donorGender, bloodGroup, donorAge, donorDob, donationDate, phoneNumber;
-        public TextView donorEmail, donorAddress, donorLocation, donorPin;
-        public ImageView callDonorImage;
-        public LinearLayout hiddenPart;
-        public RelativeLayout visiblePart;
+    public void sendSelectionChange(String action, Donor data){
+        Intent intent = new Intent(Constants.selectionChange);
+        intent.putExtra(Constants.action, action);
+        intent.putExtra("data", Parcels.wrap(data));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
 
+    public static class DonorViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.donor_name) TextView donorName;
+        @BindView(R.id.donor_gender) TextView donorGender;
+        @BindView(R.id.donor_group) TextView bloodGroup;
+        @BindView(R.id.donor_age) TextView donorAge;
+        @BindView(R.id.donor_dob) TextView donorDob;
+        @BindView(R.id.donation_date) TextView donationDate;
+        @BindView(R.id.phone_number) TextView phoneNumber;
+        @BindView(R.id.donor_email) TextView donorEmail;
+        @BindView(R.id.donor_address) TextView donorAddress;
+        @BindView(R.id.donor_location) TextView donorLocation;
+        @BindView(R.id.donor_pin) TextView donorPin;
+        @BindView(R.id.call_donor_image) ImageView callDonorImage;
+        @BindView(R.id.visible_part) RelativeLayout visiblePart;
+        @BindView(R.id.hidden_part) LinearLayout hiddenPart;
+        @BindView(R.id.selection_checkBox) CheckBox checkBox;
+
+        public View view;
 
         public DonorViewHolder(View v) {
             super(v);
-            donorName = (TextView) v.findViewById(R.id.donor_name);
-            donorGender = (TextView) v.findViewById(R.id.donor_gender);
-            bloodGroup = (TextView) v.findViewById(R.id.donor_group);
-            donorAge = (TextView) v.findViewById(R.id.donor_age);
-            donorDob = (TextView) v.findViewById(R.id.donor_dob);
-            donationDate = (TextView) v.findViewById(R.id.donation_date);
-            phoneNumber = (TextView) v.findViewById(R.id.phone_number);
-            donorEmail = (TextView) v.findViewById(R.id.donor_email);
-            donorAddress = (TextView) v.findViewById(R.id.donor_address);
-            donorLocation = (TextView) v.findViewById(R.id.donor_location);
-            donorPin = (TextView) v.findViewById(R.id.donor_pin);
-            callDonorImage = (ImageView) v.findViewById(R.id.call_donor_image);
+            ButterKnife.bind(this, v);
 
-            visiblePart = (RelativeLayout) v.findViewById(R.id.visible_part);
-            hiddenPart = (LinearLayout) v.findViewById(R.id.hidden_part);
+            checkBox.setVisibility(View.VISIBLE);
 
+            view = v;
             visiblePart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

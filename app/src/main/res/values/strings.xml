@@ -70,6 +70,7 @@
     <string name="no_donor_message">There is no donor with the given phone number</string>
     <string name="login_success_message">Successfully Logged In</string>
     <string name="logout_success_message">Logged out Successfully</string>
+    <string name="login_first_message">Please login first to continue</string>
 
     <!--DonorRegistrationActivity strings-->
     <string name="choose_your_group">Choose your Blood Group</string>

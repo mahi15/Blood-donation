@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,7 +42,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.nullvoid.blooddonation.beans.Donor;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.Constants;
+import com.nullvoid.blooddonation.others.CommonFunctions;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -61,6 +61,8 @@ import java.util.regex.Pattern;
  */
 
 public class DonorRegistrationActivity extends AppCompatActivity {
+
+    DonorRegistrationActivity context = this;
 
     LinearLayout parentView;
     Button submitButton;
@@ -353,7 +355,8 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             return false;
         }
         if(!tncCheckBox.isChecked()){
-            showToast(getString(R.string.tnc_error));
+            CommonFunctions.showToast(context,
+                    getString(R.string.tnc_error));
             return false;
         }
         return true;
@@ -361,7 +364,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
 
     public void checkIfDonorAlreadyExist(){
 
-        dbRef.child(AppConstants.donors()).orderByChild("phoneNumber").equalTo(donor.getPhoneNumber())
+        dbRef.child(Constants.donors()).orderByChild("phoneNumber").equalTo(donor.getPhoneNumber())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -455,14 +458,15 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         String userID = mAuth.getCurrentUser().getUid();
         donor.setDonorId(userID);
 
-        dbRef.child(AppConstants.donors()).child(donor.getDonorId()).setValue(donor).
+        dbRef.child(Constants.donors()).child(donor.getDonorId()).setValue(donor).
                 addOnCompleteListener(DonorRegistrationActivity.this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         progressDialog.cancel();
                         if (task.isSuccessful()) {
                             writeToSharedPreference(donor);
-                            showToast(getString(R.string.registration_successful_greeting));
+                            CommonFunctions.showToast(context,
+                                    getString(R.string.registration_successful_greeting));
                             finish();
                             startActivity(new Intent(DonorRegistrationActivity.this, MainActivity.class));
                         } else {
@@ -475,17 +479,12 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     }
 
     public void writeToSharedPreference(Donor donor){
-        SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
+        SharedPreferences mPrefs = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         Gson gson = new Gson();
         String jsonDonor = gson.toJson(donor);
-        prefsEditor.putString(AppConstants.currentUser, jsonDonor);
+        prefsEditor.putString(Constants.currentUser, jsonDonor);
         prefsEditor.commit();
-    }
-
-    public void showToast(String text) {
-        Toast toast = new Toast(DonorRegistrationActivity.this);
-        toast.makeText(DonorRegistrationActivity.this, text, Toast.LENGTH_SHORT).show();
     }
 
     public void showSnackBar(String text){

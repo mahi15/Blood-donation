@@ -1,11 +1,8 @@
 package com.nullvoid.blooddonation;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -38,58 +35,89 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.nullvoid.blooddonation.admin.AdminConsoleActivity;
 import com.nullvoid.blooddonation.beans.Donor;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.CommonFunctions;
+import com.nullvoid.blooddonation.others.Constants;
 
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
 
-    Button donateBlood, reqBlood, admin;
-    DrawerLayout drawerLayout;
-    Toolbar toolbar;
+    MainActivity context = this;
+
     MaterialDialog loadingDialog;
 
     FirebaseAuth mAuth;
-    DatabaseReference dbRef;
+    DatabaseReference db;
 
     Donor currentUser;
     Donor tempDonor;
+
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @BindView(R.id.admin) Button adminButton;
+    @BindView(R.id.btn_donate_today) Button donateTodayButton;
+    @BindView(R.id.btn_donate_blood) Button donateBloodButton;
+    @BindView(R.id.btn_req_blood) Button requestBloodButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        admin = (Button) findViewById(R.id.admin);
+        ButterKnife.bind(this);
 
+        //nav drawer and toolbar
         setCurrentUserFromSharedPreference();
-
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         initNavigationDrawer();
 
+        //firebase stuff
         mAuth = FirebaseAuth.getInstance();
-        dbRef = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseDatabase.getInstance().getReference();
 
-        donateBlood = (Button) findViewById(R.id.btn_donate_blood);
-        reqBlood = (Button) findViewById(R.id.btn_req_blood);
 
-        reqBlood.setOnClickListener(new View.OnClickListener() {
+        requestBloodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, DoneeRequestActivity.class));
             }
         });
 
-        donateBlood.setOnClickListener(new View.OnClickListener() {
+        donateBloodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, DonorRegistrationActivity.class));
             }
         });
 
-        admin.setOnClickListener(new View.OnClickListener() {
+        donateTodayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mAuth.getCurrentUser() == null){
+                    CommonFunctions.showToast(context,
+                            getString(R.string.login_first_message));
+                    checkIfDonorExists();
+                } else {
+                    new MaterialDialog.Builder(context)
+                            .title(R.string.confirm)
+                            .content("Opt for donating today?")
+                            .positiveText(R.string.yes)
+                            .negativeText(R.string.cancel)
+                            .cancelable(false)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog,
+                                                    @NonNull DialogAction which) {
+                                    //todo
+                                }
+                            });
+                }
+            }
+        });
+
+        adminButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, AdminConsoleActivity.class));
@@ -99,8 +127,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void initNavigationDrawer() {
         final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        navigationView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
-        navigationView.setDrawingCacheBackgroundColor(Color.TRANSPARENT);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -108,14 +134,6 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_home:
                         drawerLayout.closeDrawers();
                         break;
-//                    case R.id.nav_req_from:
-//                        drawerLayout.closeDrawers();
-//                        startActivity(new Intent(getApplicationContext(), DoneeRequestActivity.class));
-//                        break;
-//                    case R.id.nav_don_from:
-//                        drawerLayout.closeDrawers();
-//                        startActivity(new Intent(getApplicationContext(), DonorRegistrationActivity.class));
-//                        break;
                     case R.id.nav_about:
                         drawerLayout.closeDrawers();
                         Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
@@ -124,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_profile:
                         drawerLayout.closeDrawers();
                         if (currentUser == null) {
-                            checkIfDonorAlreadyExists();
+                            checkIfDonorExists();
                         } else {
                             startActivity(new Intent(getApplicationContext(), DonorProfileActivity.class));
                         }
@@ -137,40 +155,42 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         View header = navigationView.getHeaderView(0);
+
         TextView headerText = (TextView) header.findViewById(R.id.header_text);
         if (currentUser != null) {
             headerText.setText(currentUser.getName());
+        } else {
+            navigationView.getMenu().findItem(R.id.nav_profile).setTitle("Login");
         }
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 toolbar, R.string.drawer_open, R.string.drawer_close) {
-
         };
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
 
     private void setCurrentUserFromSharedPreference() {
-        SharedPreferences mPref = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
+        SharedPreferences mPref = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
         Gson gson = new Gson();
-        String userJson = mPref.getString(AppConstants.currentUser, null);
+        String userJson = mPref.getString(Constants.currentUser, null);
         currentUser = gson.fromJson(userJson, Donor.class);
 
         if (currentUser != null) {
             if (currentUser.isAdmin()) {
-                admin.setVisibility(View.VISIBLE);
+                adminButton.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    private void checkIfDonorAlreadyExists() {
+    private void checkIfDonorExists() {
 
-        if (!isNetworkAvailable()) {
+        if (!CommonFunctions.isNetworkAvailable(context)) {
             showSnackBar(getString(R.string.no_internet_message));
             return;
         }
-
 
         new MaterialDialog.Builder(this)
                 .title(R.string.enter_number_title)
@@ -192,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                                 .show();
 
                         String number = input.toString().trim();
-                        dbRef.child(AppConstants.donors()).orderByChild(AppConstants.phoneNumber())
+                        db.child(Constants.donors()).orderByChild(Constants.phoneNumber())
                                 .equalTo(number).limitToFirst(1)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -277,15 +297,16 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
 
-                    SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
+                    SharedPreferences mPrefs = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
                     SharedPreferences.Editor prefsEditor = mPrefs.edit();
                     Gson gson = new Gson();
                     String jsonDonor = gson.toJson(tempDonor);
-                    prefsEditor.putString(AppConstants.currentUser, jsonDonor);
+                    prefsEditor.putString(Constants.currentUser, jsonDonor);
                     prefsEditor.commit();
                     finish();
                     startActivity(new Intent(MainActivity.this, MainActivity.class));
-                    showToast(getString(R.string.login_success_message));
+                    CommonFunctions.showToast(context,
+                            getString(R.string.login_success_message));
 
                 } else {
                     showFailedDialog("Unable to verify\nPlease try again later");
@@ -303,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         } else {
 
-            final SharedPreferences mPrefs = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
+            final SharedPreferences mPrefs = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
             new MaterialDialog.Builder(MainActivity.this)
                     .title(R.string.confirm)
                     .content(R.string.logout_confirm_message)
@@ -317,26 +338,16 @@ public class MainActivity extends AppCompatActivity {
                             editor.clear().apply();
                             finish();
                             startActivity(new Intent(MainActivity.this, MainActivity.class));
-                            showToast(getString(R.string.logout_success_message));
+                            CommonFunctions.showToast( context,
+                                    getString(R.string.logout_success_message));
                         }
                     })
                     .show();
         }
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
     public void showSnackBar(String text) {
         Snackbar.make(drawerLayout, text, Snackbar.LENGTH_SHORT).show();
-    }
-
-    public void showToast(String text){
-        Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
     }
 }
 

@@ -1,23 +1,18 @@
 package com.nullvoid.blooddonation.admin;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -28,20 +23,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.nullvoid.blooddonation.R;
-import com.nullvoid.blooddonation.adapters.AdminPagerAdapter;
+import com.nullvoid.blooddonation.adapters.DonnePagerAdapter;
 import com.nullvoid.blooddonation.beans.Donee;
 import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.beans.Match;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.CommonFunctions;
+import com.nullvoid.blooddonation.others.Constants;
 
 import org.parceler.Parcels;
 
@@ -58,7 +46,7 @@ public class AdminDonneActivity extends AppCompatActivity {
     DatabaseReference db;
     Context context;
     private ViewPager viewPager;
-    private AdminPagerAdapter mAdapter;
+    private DonnePagerAdapter mAdapter;
     MaterialDialog loadingDialog;
 
     @Override
@@ -81,7 +69,7 @@ public class AdminDonneActivity extends AppCompatActivity {
 
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
-        mAdapter = new AdminPagerAdapter(getSupportFragmentManager(), AdminDonneActivity.this);
+        mAdapter = new DonnePagerAdapter(getSupportFragmentManager(), AdminDonneActivity.this);
         db = FirebaseDatabase.getInstance().getReference();
 
         // Give the TabLayout the ViewPager
@@ -108,7 +96,7 @@ public class AdminDonneActivity extends AppCompatActivity {
 
                 loadingDialog.show();
 
-        db.child(AppConstants.matches())
+        db.child(Constants.matches())
                 .child(donee.getDoneeId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -118,10 +106,10 @@ public class AdminDonneActivity extends AppCompatActivity {
 
                         Match donationMatch = dataSnapshot.getValue(Match.class);
 
-                        if (action.equals(AppConstants.donneActionSelectedDonorsButton())){
+                        if (action.equals(Constants.donneActionSelectedDonorsButton())){
                             showContactedDonorsDialog(donationMatch);
                         }
-                        if (action.equals(AppConstants.donneActionMarkCompletedButton())){
+                        if (action.equals(Constants.donneActionMarkCompletedButton())){
                             showMarkCompletedDialog(donationMatch);
                         }
                     }
@@ -231,7 +219,7 @@ public class AdminDonneActivity extends AppCompatActivity {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                makeCall(selectedDonorsList.get(0).getPhoneNumber(),
+                                showCallConfirmDialog(selectedDonorsList.get(0).getPhoneNumber(),
                                         selectedDonorsList.get(0).getName());
                             }
                         })
@@ -248,7 +236,7 @@ public class AdminDonneActivity extends AppCompatActivity {
         contactedDonorsDialog.show();
     }
 
-    public void makeCall(final String number, final String name) {
+    public void showCallConfirmDialog(final String number, final String name) {
 
         new MaterialDialog.Builder(context)
                 .title(R.string.confirm)
@@ -260,44 +248,10 @@ public class AdminDonneActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                        if (ActivityCompat.checkSelfPermission(context,
-                                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-
-                            Dexter.withActivity((AdminDonneActivity) context).withPermission(Manifest.permission.CALL_PHONE).
-                                    withListener(new PermissionListener() {
-                                        @Override
-                                        public void onPermissionGranted(PermissionGrantedResponse response) {
-                                            Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                            callIntent.setData(Uri.parse("tel:" + number));
-                                            context.startActivity(callIntent);
-                                        }
-
-                                        @Override
-                                        public void onPermissionDenied(PermissionDeniedResponse response) {
-                                            Toast.makeText(context,
-                                                    R.string.call_permission_denied_message, Toast.LENGTH_SHORT).show();
-                                        }
-
-                                        @Override
-                                        public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                                            token.continuePermissionRequest();
-                                        }
-                                    }).withErrorListener(new PermissionRequestErrorListener() {
-                                @Override
-                                public void onError(DexterError error) {
-                                    Toast.makeText(context, error.name(), Toast.LENGTH_SHORT).show();
-                                }
-                            }).check();
-                        } else {
-                            Intent callIntent = new Intent(Intent.ACTION_CALL);
-                            callIntent.setData(Uri.parse("tel:" + number));
-                            context.startActivity(callIntent);
-                        }
+                        CommonFunctions.call(context, number);
                     }
                 })
                 .show();
-
     }
 
     public void sendMessage( ArrayList<Donor> selectedDonorsList) {
@@ -315,7 +269,7 @@ public class AdminDonneActivity extends AppCompatActivity {
         match.setCompletedDate(date);
         match.setCompleted(true);
 
-        db.child(AppConstants.matches())
+        db.child(Constants.matches())
                 .child(match.getMatchId())
                 .setValue(match)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -328,20 +282,19 @@ public class AdminDonneActivity extends AppCompatActivity {
                                     .contentColor(Color.BLACK)
                                     .positiveText(R.string.ok)
                                     .show();
-
                             loadingDialog.dismiss();
                         }
                         //update donne status in Database
-                        db.child(AppConstants.donees())
+                        db.child(Constants.donees())
                                 .child(match.getMatchId())
-                                .child(AppConstants.status)
-                                .setValue(AppConstants.statusComplete());
+                                .child(Constants.status)
+                                .setValue(Constants.statusComplete());
 
                         //update donor's donation count in database
                         for (Donor donor : helpedDonors){
-                            db.child(AppConstants.donors())
+                            db.child(Constants.donors())
                                     .child(donor.getDonorId())
-                                    .child(AppConstants.donationCount())
+                                    .child(Constants.donationCount())
                                     .setValue(donor.getDonationCount()+1);
                         }
 
@@ -354,12 +307,12 @@ public class AdminDonneActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        IntentFilter actionIntentFilter = new IntentFilter(AppConstants.donneAction());
+        IntentFilter actionIntentFilter = new IntentFilter(Constants.donneAction());
         BroadcastReceiver actionInfoReciever = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String action = intent.getStringExtra(AppConstants.action);
-                Donee donee = Parcels.unwrap(intent.getParcelableExtra(AppConstants.donee()));
+                String action = intent.getStringExtra(Constants.action);
+                Donee donee = Parcels.unwrap(intent.getParcelableExtra(Constants.donee()));
 
                 getSelectedDonors(donee, action);
             }

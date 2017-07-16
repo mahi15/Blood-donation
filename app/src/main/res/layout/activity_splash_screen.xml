@@ -17,7 +17,7 @@
         android:padding="15dp"
         android:text="RSS HSS BLOOD DONORS BUREAU"
         android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"
         android:textSize="30sp"
         android:textStyle="bold" />
 

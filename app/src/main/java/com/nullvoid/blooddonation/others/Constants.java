@@ -4,7 +4,7 @@ package com.nullvoid.blooddonation.others;
  * Created by sanath on 27/06/17.
  */
 
-public class AppConstants {
+public class Constants {
 
     public static final String select = "SELECT";
     public static final String remove = "REMOVE";
@@ -13,6 +13,9 @@ public class AppConstants {
     public static final String currentUser = "CURRENT_USER";
     public static final String notProvided =  "Not Provided";
     public static final String selectionChange = "SELECTION_CHANGE";
+    public static final String matchCategory = "matchCategory";
+    public static final String matchCategoryNormal = "MATCH_NORMAL";
+    public static final String matchCategoryDonateToday = "MATCH_DONATE_TODAY";
 
     //donne action buttons stuff
     public static final String donneAction(){
@@ -47,6 +50,7 @@ public class AppConstants {
         return "donationCount";
     }
     public static final String isAvailable = "isAvailable";
+    public static final String donor = "donor";
 
     //donee stuff
     public static final String donee(){

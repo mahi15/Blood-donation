@@ -24,7 +24,7 @@
             android:layout_alignParentTop="true"
             android:padding="5dp"
             android:text="AB+"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
             android:textSize="36sp"
             android:textStyle="bold" />
 
@@ -87,6 +87,7 @@
             android:layout_weight="1"
             android:paddingLeft="5dp"
             android:paddingTop="5dp"
+            android:text="Sanath kumar"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
@@ -330,6 +331,18 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/pending_lable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/donee_group"
+            android:layout_below="@+id/linearLayout2"
+            android:text="PENDING"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:textColor="#383838"
+            android:textSize="10sp" />
 
     </RelativeLayout>
 

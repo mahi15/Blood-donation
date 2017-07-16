@@ -10,16 +10,16 @@ import android.widget.TextView;
 import com.nullvoid.blooddonation.admin.AdminDonneActivity;
 import com.nullvoid.blooddonation.admin.DoneeListFragment;
 import com.nullvoid.blooddonation.R;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.Constants;
 
 /**
  * Created by sanath on 15/06/17.
  */
 
-public class AdminPagerAdapter extends FragmentPagerAdapter {
+public class DonnePagerAdapter extends FragmentPagerAdapter {
     AdminDonneActivity parentActivity;
 
-    public AdminPagerAdapter(FragmentManager fm, AdminDonneActivity parentActivity) {
+    public DonnePagerAdapter(FragmentManager fm, AdminDonneActivity parentActivity) {
         super(fm);
         this.parentActivity = parentActivity;
     }
@@ -28,9 +28,9 @@ public class AdminPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return DoneeListFragment.newInstance(AppConstants.statusNotComplete());
+                return DoneeListFragment.newInstance(Constants.statusNotComplete());
             case 1:
-                return DoneeListFragment.newInstance(AppConstants.statusPending());
+                return DoneeListFragment.newInstance(Constants.statusPending());
         }
         return null;
     }

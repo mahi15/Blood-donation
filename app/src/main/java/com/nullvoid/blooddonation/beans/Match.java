@@ -8,12 +8,20 @@ import java.util.ArrayList;
 
 public class Match {
     private Donee donee;
-    private String matchId, matchedDate, matchedTime, completedDate;
+    private String matchId, matchedDate, matchedTime, completedDate, matchCategory;
     private ArrayList<Donor> contactedDonors, helpedDonors;
     private boolean completed;
 
     public Donee getDonee() {
         return donee;
+    }
+
+    public String getMatchCategory() {
+        return matchCategory;
+    }
+
+    public void setMatchCategory(String matchCategory) {
+        this.matchCategory = matchCategory;
     }
 
     public void setDonee(Donee donee) {

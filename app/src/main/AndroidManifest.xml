@@ -43,7 +43,8 @@
 
         <activity
             android:name=".DonorProfileActivity"
-            android:label="Profile" />
+            android:label="Profile"
+            android:theme="@style/AppThemeNoActionBar"/>
 
         <activity
             android:name=".SplashScreen"
@@ -58,7 +59,7 @@
             android:label="Admin Console"
             android:theme="@style/AppThemeNoActionBar" />
 
-        <activity android:name=".admin.DonorListActivity"
+        <activity android:name=".admin.AdminDonorActivity"
             android:label="Donors"
             android:theme="@style/AppThemeNoActionBar"/>
     </application>

@@ -15,10 +15,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nullvoid.blooddonation.R;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.Constants;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by sanath on 06/07/17.
@@ -26,19 +29,34 @@ import java.text.SimpleDateFormat;
 
 public class AdminConsoleActivity extends AppCompatActivity {
 
-    Button donneButton, donorButton, historButton;
-    Toolbar toolbar;
     DatabaseReference db;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.admin_donor_button)
+    Button donorButton;
+
+    @BindView(R.id.admin_donne_button)
+    Button donneButton;
+
+    @BindView(R.id.admin_history_button)
+    Button historyButton;
+
+    @BindView(R.id.donate_today_count)
+    TextView donateTodayCountView;
+
+    @BindView(R.id.req_made_today_count)
+    TextView requestsTodayCountView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_console);
+        setSupportActionBar(toolbar);
+        ButterKnife.bind(this);
 
         db = FirebaseDatabase.getInstance().getReference();
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -48,23 +66,20 @@ public class AdminConsoleActivity extends AppCompatActivity {
             }
         });
 
-        donorButton = (Button) findViewById(R.id.admin_donor_button);
         donorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AdminConsoleActivity.this, DonorListActivity.class));
+                startActivity(new Intent(AdminConsoleActivity.this, AdminDonorActivity.class));
             }
         });
 
-        historButton = (Button) findViewById(R.id.admin_history_button);
-        historButton.setOnClickListener(new View.OnClickListener() {
+        historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(AdminConsoleActivity.this, AdminDonneActivity.class));
+            //TODO
             }
         });
 
-        donneButton = (Button) findViewById(R.id.admin_donne_button);
         donneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,16 +92,11 @@ public class AdminConsoleActivity extends AppCompatActivity {
 
     public void loadStatus(){
 
-        final TextView donateTodayCountView, requestsTodayCountView;
-
         SimpleDateFormat thisDate = new SimpleDateFormat("dd/MM/yyyy");
         String todate = thisDate.format(new Timestamp(System.currentTimeMillis()));
 
-        donateTodayCountView = (TextView) findViewById(R.id.donate_today_count);
-        requestsTodayCountView = (TextView) findViewById(R.id.req_made_today_count);
-
-        db.child(AppConstants.donees())
-                .orderByChild(AppConstants.requestedDate())
+        db.child(Constants.donees())
+                .orderByChild(Constants.requestedDate())
                 .equalTo(todate)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -99,8 +109,8 @@ public class AdminConsoleActivity extends AppCompatActivity {
             }
         });
 
-        db.child(AppConstants.donors())
-                .orderByChild(AppConstants.registeredDate())
+        db.child(Constants.donors())
+                .orderByChild(Constants.registeredDate())
                 .equalTo(todate)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -108,13 +118,11 @@ public class AdminConsoleActivity extends AppCompatActivity {
                         String donorsTodayCount = String.valueOf(dataSnapshot.getChildrenCount());
                         donateTodayCountView.setText(donorsTodayCount);
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
                 });
-
     }
 
 }

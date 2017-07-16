@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,7 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.nullvoid.blooddonation.beans.Donor;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,9 +63,18 @@ public class DonorProfileActivity extends AppCompatActivity {
     @BindView(R.id.profile_available_switch)
     Switch availableSwitch;
 
+    @BindView(R.id.available_loading_progress)
+    ProgressBar availableProgress;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     DonorProfileActivity context = this;
     Donor user;
     DatabaseReference db;
+
+    SharedPreferences sp;
+    Gson gson;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,9 +82,18 @@ public class DonorProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_donor_profile);
         ButterKnife.bind(this);
 
-        SharedPreferences sp = getSharedPreferences(AppConstants.currentUser, MODE_PRIVATE);
-        String userJson = sp.getString(AppConstants.currentUser, null);
-        Gson gson = new Gson();
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        sp = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
+        String userJson = sp.getString(Constants.currentUser, null);
+        gson = new Gson();
         user = gson.fromJson(userJson, Donor.class);
 
         db = FirebaseDatabase.getInstance().getReference();
@@ -84,13 +102,25 @@ public class DonorProfileActivity extends AppCompatActivity {
     }
 
     public void toggleAvailable(final boolean available) {
-        db.child(AppConstants.donors())
+        db.child(Constants.donors())
                 .child(user.getDonorId())
-                .child(AppConstants.isAvailable)
+                .child(Constants.isAvailable)
                 .setValue(available)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+
+                        availableSwitch.setVisibility(View.VISIBLE);
+                        availableProgress.setVisibility(View.GONE);
+
+                        //save the data in the sharedpreference
+                        user.setAvailable(available);
+                        SharedPreferences.Editor editor = sp.edit();
+                        String userJson = gson.toJson(user);
+                        editor.putString(Constants.currentUser, userJson);
+                        editor.apply();
+
+                        //show completion dialog
                         String content = getString(R.string.available_toggled_message);
                         String formattedContent = String.format(content, available ? "Available" : "Not Available");
                         new MaterialDialog.Builder(context)
@@ -122,6 +152,8 @@ public class DonorProfileActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 toggleAvailable(isChecked);
+                availableSwitch.setVisibility(View.GONE);
+                availableProgress.setVisibility(View.VISIBLE);
             }
         });
     }

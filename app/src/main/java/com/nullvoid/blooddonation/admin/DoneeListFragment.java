@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.adapters.DoneeAdapter;
 import com.nullvoid.blooddonation.beans.Donee;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.Constants;
 
 import java.util.ArrayList;
 
@@ -50,14 +50,14 @@ public class DoneeListFragment extends Fragment {
     public static DoneeListFragment newInstance(String status){
         DoneeListFragment doneeFragment = new DoneeListFragment();
         Bundle args = new Bundle();
-        args.putString(AppConstants.status, status);
+        args.putString(Constants.status, status);
         doneeFragment.setArguments(args);
         return doneeFragment;
     }
 
     public void readArguments(){
         Bundle args = getArguments();
-        status = (String) args.get(AppConstants.status);
+        status = (String) args.get(Constants.status);
     }
 
     @Override
@@ -79,8 +79,8 @@ public class DoneeListFragment extends Fragment {
         recyclerView.setLayoutManager(llm);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
 
-        dbRef.child(AppConstants.donees())
-                .orderByChild(AppConstants.status)
+        dbRef.child(Constants.donees())
+                .orderByChild(Constants.status)
                 .equalTo(status)
                 .addValueEventListener(new ValueEventListener() {
                     @Override

@@ -22,39 +22,42 @@ import com.google.firebase.database.ValueEventListener;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.adapters.DonorAdapter;
 import com.nullvoid.blooddonation.beans.Donor;
-import com.nullvoid.blooddonation.others.AppConstants;
+import com.nullvoid.blooddonation.others.Constants;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by sanath on 13/06/17.
  */
 
-public class DonorListActivity extends AppCompatActivity {
+public class AdminDonorActivity extends AppCompatActivity {
 
-    Context context = DonorListActivity.this;
+    Context context = this;
 
-    RecyclerView recyclerView;
     LinearLayoutManager llm;
     ProgressDialog progressDialog;
-    Toolbar searchbar, toolbar;
+
+    public @BindView(R.id.cardList) RecyclerView recyclerView;
+    public @BindView(R.id.toolbar) Toolbar toolbar;
+    public @BindView(R.id.searchbar) Toolbar searchbar;
 
     DatabaseReference db;
 
-    ArrayList<Donor> donors;
-
+    ArrayList<Donor> donors = new ArrayList<>();
     DonorAdapter donorAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
+        ButterKnife.bind(this);
         loadToolbars();
 
-        donors = new ArrayList<Donor>();
-
-        db = FirebaseDatabase.getInstance().getReference(AppConstants.donors());
-        db.addListenerForSingleValueEvent(new ValueEventListener() {
+        db = FirebaseDatabase.getInstance().getReference();
+        db.child(Constants.donors()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
@@ -71,7 +74,6 @@ public class DonorListActivity extends AppCompatActivity {
             }
         });
 
-        recyclerView = (RecyclerView) findViewById(R.id.cardList);
         recyclerView.setHasFixedSize(true);
         llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -80,7 +82,6 @@ public class DonorListActivity extends AppCompatActivity {
 
     public void loadToolbars(){
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setVisibility(View.VISIBLE);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
@@ -91,7 +92,6 @@ public class DonorListActivity extends AppCompatActivity {
             }
         });
 
-        searchbar = (Toolbar) findViewById(R.id.searchbar);
         searchbar.setVisibility(View.VISIBLE);
 
         final EditText searchField = (EditText) findViewById(R.id.search_bar_edittext);
@@ -120,7 +120,7 @@ public class DonorListActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String searchQuery = s.toString().toLowerCase();
-                ArrayList<Donor> resultDonors = new ArrayList<Donor>();
+                ArrayList<Donor> resultDonors = new ArrayList<>();
                 for(Donor donor : donors){
                     if(donor.getName().toLowerCase().contains(searchQuery) ||
                             donor.getBloodGroup().toLowerCase().contains(searchQuery) ||
