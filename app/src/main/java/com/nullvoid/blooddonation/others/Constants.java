@@ -32,9 +32,7 @@ public class Constants {
     public static final String donors(){
         return "donors";
     }
-    public static final String matches(){
-        return "matches";
-    }
+    public static final String matches = "matches";
     public static final String donees(){
         return "donees";
     }

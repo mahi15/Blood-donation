@@ -1,6 +1,7 @@
 package com.nullvoid.blooddonation.others;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,7 +22,6 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.nullvoid.blooddonation.R;
-import com.nullvoid.blooddonation.admin.AdminDonneActivity;
 
 /**
  * Created by sanath on 15/07/17.
@@ -34,7 +34,7 @@ public class CommonFunctions {
         if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 
-            Dexter.withActivity((AdminDonneActivity) context).withPermission(Manifest.permission.CALL_PHONE).
+            Dexter.withActivity((Activity) context).withPermission(Manifest.permission.CALL_PHONE).
                     withListener(new PermissionListener() {
                         @Override
                         public void onPermissionGranted(PermissionGrantedResponse response) {
@@ -81,7 +81,6 @@ public class CommonFunctions {
     public static void showSnackBar(View view, String text) {
         Snackbar.make(view, text, Snackbar.LENGTH_SHORT).show();
     }
-
 
     public static String toCamelCase(final String init) {
         if (init==null)

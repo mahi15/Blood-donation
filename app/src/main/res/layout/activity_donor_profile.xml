@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    android:scrollbars="none">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,396 +23,392 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:textAlignment="gravity"
-                app:popupTheme="@style/AppTheme.PopupOverlay"></android.support.v7.widget.Toolbar>
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:scrollbars="none">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:text="Status"
-                android:textAlignment="center"
-                android:textSize="30sp" />
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:clipToPadding="false">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Status"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:clipToPadding="false">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="15dp">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Donations Made"
+                                android:textColor="#484848"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:id="@+id/profile_donation_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#000"
+                                android:textSize="18sp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Available for Donations"
+                                android:textColor="#484848"
+                                android:textSize="18sp" />
+
+                            <Switch
+                                android:id="@+id/profile_available_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
+
+                            <ProgressBar
+                                android:id="@+id/available_loading_progress"
+                                style="@style/Widget.AppCompat.ProgressBar"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:visibility="gone" />
+
+                        </TableRow>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+                <TextView
+                    android:id="@+id/profile_info_lable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Information"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="15dp">
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
 
-                    <TableRow
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Personal Information"
+                        android:textSize="20sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
+                        android:background="#535353"
+                        android:orientation="horizontal" />
+
+                    <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="5dp">
+                        android:layout_weight="1">
 
-                        <TextView
-                            android:id="@+id/textView8"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Donations Made"
-                            android:textColor="#484848"
-                            android:textSize="18sp" />
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
 
-                        <TextView
-                            android:id="@+id/profile_donation_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#000"
-                            android:textSize="18sp" />
-                    </TableRow>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Name"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="5dp">
+                            <TextView
+                                android:id="@+id/profile_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
 
-                        <TextView
-                            android:id="@+id/textView8"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Available for Donations"
-                            android:textColor="#484848"
-                            android:textSize="18sp" />
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
 
-                        <Switch
-                            android:id="@+id/profile_available_switch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Date of Birth"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                        <ProgressBar
-                            android:id="@+id/available_loading_progress"
-                            style="@style/Widget.AppCompat.ProgressBar"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:visibility="gone" />
+                            <TextView
+                                android:id="@+id/profile_dob"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
 
-                    </TableRow>
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Blood Group"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/profile_blood_group"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Gender"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/profile_gender"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
+
+                    </TableLayout>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:text="Your Information"
-                android:textAlignment="center"
-                android:textSize="30sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="15dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Personal Information"
-                    android:textSize="20sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:background="#535353"
-                    android:orientation="horizontal" />
-
-                <TableLayout
-                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
 
-                    <TableRow
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Contact Information"
+                        android:textSize="20sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
+                        android:background="#313131"
+                        android:orientation="horizontal" />
+
+                    <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
+                        android:layout_weight="1">
 
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Name"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
 
-                        <TextView
-                            android:id="@+id/profile_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Phone Number"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
+                            <TextView
+                                android:id="@+id/profile_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
 
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Date of Birth"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
 
-                        <TextView
-                            android:id="@+id/profile_dob"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Email Id"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
+                            <TextView
+                                android:id="@+id/profile_email"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
 
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Blood Group"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
 
-                        <TextView
-                            android:id="@+id/profile_blood_group"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Address"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
+                            <TextView
+                                android:id="@+id/profile_address"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
 
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Gender"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
 
-                        <TextView
-                            android:id="@+id/profile_gender"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Location"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                </TableLayout>
+                            <TextView
+                                android:id="@+id/profile_location"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="8dp"
+                            android:paddingTop="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Pin Code"
+                                android:textColor="#383838"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/profile_pincode"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading.."
+                                android:textColor="#3d3d3d"
+                                android:textSize="18sp" />
+                        </TableRow>
+
+                    </TableLayout>
+                </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="15dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Contact Information"
-                    android:textSize="20sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:background="#313131"
-                    android:orientation="horizontal"></LinearLayout>
-
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
-
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Phone Number"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/profile_number"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
-
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Email Id"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/profile_email"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
-
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Address"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/profile_address"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
-
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Location"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/profile_location"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
-
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Pin Code"
-                            android:textColor="#383838"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/profile_pincode"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Loading.."
-                            android:textColor="#3d3d3d"
-                            android:textSize="18sp" />
-                    </TableRow>
-
-                </TableLayout>
-            </LinearLayout>
-
-        </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>

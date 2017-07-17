@@ -10,7 +10,7 @@ public class Donor {
 
     private String donorId, name, gender, bloodGroup, dateOfBirth, age,
             phoneNumber, email, address, location, pincode, registeredDate, registeredTime;
-    private boolean isAvailable = true, donationInLastSixMonths, admin = false, selected;
+    private boolean isAvailable = true, donationInLastSixMonths, admin = false, selected=false;
     private int donationCount;
 
     public Donor() {

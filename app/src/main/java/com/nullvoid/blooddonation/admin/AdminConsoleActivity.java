@@ -1,5 +1,6 @@
 package com.nullvoid.blooddonation.admin;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,6 +29,8 @@ import butterknife.ButterKnife;
  */
 
 public class AdminConsoleActivity extends AppCompatActivity {
+
+    Activity context = this;
 
     DatabaseReference db;
 
@@ -76,7 +79,7 @@ public class AdminConsoleActivity extends AppCompatActivity {
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            //TODO
+                startActivity(new Intent(context, DonationHistoryActivity.class));
             }
         });
 

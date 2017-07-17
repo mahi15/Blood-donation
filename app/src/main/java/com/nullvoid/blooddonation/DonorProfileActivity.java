@@ -21,6 +21,8 @@ import com.google.gson.Gson;
 import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.others.Constants;
 
+import org.parceler.Parcels;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -30,49 +32,26 @@ import butterknife.ButterKnife;
 
 public class DonorProfileActivity extends AppCompatActivity {
 
-    @BindView(R.id.profile_name)
-    TextView profileName;
-
-    @BindView(R.id.profile_dob)
-    TextView profileDob;
-
-    @BindView(R.id.profile_blood_group)
-    TextView profileBloodGroup;
-
-    @BindView(R.id.profile_gender)
-    TextView profileGender;
-
-    @BindView(R.id.profile_number)
-    TextView profileNumber;
-
-    @BindView(R.id.profile_email)
-    TextView profileEmail;
-
-    @BindView(R.id.profile_address)
-    TextView profileAddress;
-
-    @BindView(R.id.profile_location)
-    TextView profileLocation;
-
-    @BindView(R.id.profile_pincode)
-    TextView profilePincode;
-
-    @BindView(R.id.profile_donation_count)
-    TextView profileDonationCount;
-
-    @BindView(R.id.profile_available_switch)
-    Switch availableSwitch;
-
-    @BindView(R.id.available_loading_progress)
-    ProgressBar availableProgress;
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    @BindView(R.id.profile_name) TextView profileName;
+    @BindView(R.id.profile_dob) TextView profileDob;
+    @BindView(R.id.profile_blood_group) TextView profileBloodGroup;
+    @BindView(R.id.profile_gender) TextView profileGender;
+    @BindView(R.id.profile_number) TextView profileNumber;
+    @BindView(R.id.profile_email) TextView profileEmail;
+    @BindView(R.id.profile_address) TextView profileAddress;
+    @BindView(R.id.profile_location) TextView profileLocation;
+    @BindView(R.id.profile_pincode) TextView profilePincode;
+    @BindView(R.id.profile_donation_count) TextView profileDonationCount;
+    @BindView(R.id.profile_available_switch) Switch availableSwitch;
+    @BindView(R.id.available_loading_progress) ProgressBar availableProgress;
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     DonorProfileActivity context = this;
-    Donor user;
+
     DatabaseReference db;
 
+    Donor user;
+    boolean adminMode;
     SharedPreferences sp;
     Gson gson;
 
@@ -81,6 +60,7 @@ public class DonorProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donor_profile);
         ButterKnife.bind(this);
+        db = FirebaseDatabase.getInstance().getReference();
 
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
@@ -91,17 +71,25 @@ public class DonorProfileActivity extends AppCompatActivity {
             }
         });
 
-        sp = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
-        String userJson = sp.getString(Constants.currentUser, null);
-        gson = new Gson();
-        user = gson.fromJson(userJson, Donor.class);
+        Donor otherUser = Parcels.unwrap(getIntent().getParcelableExtra(Constants.donor));
 
-        db = FirebaseDatabase.getInstance().getReference();
+        adminMode = otherUser != null;
 
-        setProfileContent();
+        if (adminMode) {
+            user = otherUser;
+            getSupportActionBar().setTitle(user.getName());
+        } else {
+            sp = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
+            String userJson = sp.getString(Constants.currentUser, null);
+            gson = new Gson();
+            user = gson.fromJson(userJson, Donor.class);
+        }
+        setProfileContent(user);
     }
 
-    public void toggleAvailable(final boolean available) {
+
+
+    public void toggleAvailable(final Donor user, final boolean available) {
         db.child(Constants.donors())
                 .child(user.getDonorId())
                 .child(Constants.isAvailable)
@@ -113,12 +101,13 @@ public class DonorProfileActivity extends AppCompatActivity {
                         availableSwitch.setVisibility(View.VISIBLE);
                         availableProgress.setVisibility(View.GONE);
 
-                        //save the data in the sharedpreference
-                        user.setAvailable(available);
-                        SharedPreferences.Editor editor = sp.edit();
-                        String userJson = gson.toJson(user);
-                        editor.putString(Constants.currentUser, userJson);
-                        editor.apply();
+                        if (!adminMode) {
+                            user.setAvailable(available);
+                            SharedPreferences.Editor editor = sp.edit();
+                            String userJson = gson.toJson(user);
+                            editor.putString(Constants.currentUser, userJson);
+                            editor.apply();
+                        }
 
                         //show completion dialog
                         String content = getString(R.string.available_toggled_message);
@@ -132,7 +121,7 @@ public class DonorProfileActivity extends AppCompatActivity {
                 });
     }
 
-    private void setProfileContent() {
+    private void setProfileContent(final Donor user) {
         profileDonationCount.setText(String.valueOf(user.getDonationCount()));
         profileName.setText(user.getName());
         profileDob.setText(user.getDateOfBirth());
@@ -151,7 +140,7 @@ public class DonorProfileActivity extends AppCompatActivity {
         availableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                toggleAvailable(isChecked);
+                toggleAvailable(user, isChecked);
                 availableSwitch.setVisibility(View.GONE);
                 availableProgress.setVisibility(View.VISIBLE);
             }

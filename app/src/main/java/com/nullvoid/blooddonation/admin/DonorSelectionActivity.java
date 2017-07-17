@@ -48,8 +48,6 @@ public class DonorSelectionActivity extends AdminDonorActivity {
     BroadcastReceiver selectionChangeReciever;
     Intent intent;
 
-//    DatabaseReference db;
-
     Donee clickedDonee;
     ArrayList<Donor> selectedDonorsList;
 
@@ -61,9 +59,6 @@ public class DonorSelectionActivity extends AdminDonorActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
 
-        fab.setVisibility(View.VISIBLE);
-//        db = FirebaseDatabase.getInstance().getReference();
-
         //get the started intent
         intent = getIntent();
         clickedDonee = Parcels.unwrap(intent.getParcelableExtra(Constants.donee()));
@@ -73,11 +68,12 @@ public class DonorSelectionActivity extends AdminDonorActivity {
 
     public void loadAdditionalView() {
 
+        fab.setVisibility(View.VISIBLE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (selectedDonorsList.isEmpty()) {
-                    CommonFunctions.showSnackBar(parentView, "Select at least one Donor");
+                    CommonFunctions.showSnackBar(parentView, "No donors selected!");
                     return;
                 }
                 String confirmMessage = String
@@ -130,8 +126,12 @@ public class DonorSelectionActivity extends AdminDonorActivity {
                 .cancelable(false)
                 .show();
 
+        for (int i=0; i<selectedDonorsList.size(); i++){
+            selectedDonorsList.get(i).setSelected(false);
+        }
+
         //the ony thing we are gonna update is the donors so get the assignedDonors list from db
-        db.child(Constants.matches()).child(clickedDonee.getDoneeId())
+        db.child(Constants.matches).child(clickedDonee.getDoneeId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -146,7 +146,7 @@ public class DonorSelectionActivity extends AdminDonorActivity {
                             }
 
                             //now update the donorslist in db
-                            db.child(Constants.matches()).child(clickedDonee.getDoneeId())
+                            db.child(Constants.matches).child(clickedDonee.getDoneeId())
                                     .child(Constants.contactedDonors()).setValue(alreadySelectedDonorsList)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -191,6 +191,9 @@ public class DonorSelectionActivity extends AdminDonorActivity {
                 .content(R.string.please_wait_message).progress(true, 0)
                 .cancelable(false).show();
 
+        for (int i=0; i<selectedDonorsList.size(); i++){
+            selectedDonorsList.get(i).setSelected(false);
+        }
 
         final Match match = new Match();
 
@@ -205,8 +208,7 @@ public class DonorSelectionActivity extends AdminDonorActivity {
         match.setContactedDonors(selectedDonorsList);
         match.setMatchedDate(date);
         match.setMatchedTime(time);
-        match.setMatchCategory(Constants.matchCategoryNormal);
-        db.child(Constants.matches())
+        db.child(Constants.matches)
                 .child(clickedDonee.getDoneeId())
                 .setValue(match).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

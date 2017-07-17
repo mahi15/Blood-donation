@@ -96,7 +96,7 @@ public class AdminDonneActivity extends AppCompatActivity {
 
                 loadingDialog.show();
 
-        db.child(Constants.matches())
+        db.child(Constants.matches)
                 .child(donee.getDoneeId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -269,7 +269,7 @@ public class AdminDonneActivity extends AppCompatActivity {
         match.setCompletedDate(date);
         match.setCompleted(true);
 
-        db.child(Constants.matches())
+        db.child(Constants.matches)
                 .child(match.getMatchId())
                 .setValue(match)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

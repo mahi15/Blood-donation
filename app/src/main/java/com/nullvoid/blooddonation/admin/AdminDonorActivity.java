@@ -36,8 +36,6 @@ import butterknife.ButterKnife;
 public class AdminDonorActivity extends AppCompatActivity {
 
     Context context = this;
-
-    LinearLayoutManager llm;
     ProgressDialog progressDialog;
 
     public @BindView(R.id.cardList) RecyclerView recyclerView;
@@ -64,7 +62,8 @@ public class AdminDonorActivity extends AppCompatActivity {
                     Donor donor = postSnapshot.getValue(Donor.class);
                     donors.add(donor);
                 }
-                donorAdapter = new DonorAdapter(donors, context);
+
+                donorAdapter = new DonorAdapter(donors, context, context.getClass().equals(DonorSelectionActivity.class));
                 recyclerView.setAdapter(donorAdapter);
             }
 
@@ -75,7 +74,7 @@ public class AdminDonorActivity extends AppCompatActivity {
         });
 
         recyclerView.setHasFixedSize(true);
-        llm = new LinearLayoutManager(context);
+        LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
     }

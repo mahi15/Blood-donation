@@ -4,17 +4,13 @@
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="2dp"
-    android:animateLayoutChanges="true"
-    android:background="#848484"
-    card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="5dp"
-    card_view:contentPadding="10dp">
+    android:layout_margin="3dp">
 
     <RelativeLayout
         android:id="@+id/visible_part"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="15dp">
 
         <TextView
             android:id="@+id/donee_group"
@@ -43,14 +39,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Required on : "
-                android:textColor="#686868"
-                android:textStyle="bold" />
+                android:textColor="#585858" />
 
             <TextView
                 android:id="@+id/req_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#000" />
+                android:textColor="#414141"
+                android:textStyle="bold"
+                android:text="Required Date"/>
         </LinearLayout>
 
         <LinearLayout
@@ -68,14 +65,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hospital Name : "
-                android:textColor="#686868"
-                android:textStyle="bold" />
+                android:textColor="#585858" />
 
             <TextView
                 android:id="@+id/hospital_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#000" />
+                android:textColor="#414141"
+                android:textStyle="bold"
+                android:text="Hospital Name"/>
         </LinearLayout>
 
         <TextView
@@ -87,7 +85,7 @@
             android:layout_weight="1"
             android:paddingLeft="5dp"
             android:paddingTop="5dp"
-            android:text="Sanath kumar"
+            android:text="Patient's Name"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
@@ -116,14 +114,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Patient Reference ID : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/patient_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000" />
+                    android:text="Reference Id"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -141,14 +140,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Patients attender's number : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/req_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000" />
+                    android:text="Attender's Number"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -166,14 +166,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Requester Name : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/requester_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000" />
+                    android:text="Requester Name"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -191,14 +192,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phone Number : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/phone_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000" />
+                    android:text="Phone Number"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -216,14 +218,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hospital Address : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/hospital_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000" />
+                    android:text="Hospital Address"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -241,14 +244,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hospital Ph Number : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/hospital_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000" />
+                    android:text="Hospital Number"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -266,14 +270,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hospital PIN : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/hospital_pin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000" />
+                    android:text="Hospital Pin"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout

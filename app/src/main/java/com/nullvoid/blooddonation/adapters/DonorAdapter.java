@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.nullvoid.blooddonation.DonorProfileActivity;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.others.Constants;
@@ -37,10 +38,12 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
 
     public final Context context;
     public List<Donor> donors;
+    boolean selectionMode;
 
-    public DonorAdapter(List<Donor> donors, Context context) {
+    public DonorAdapter(List<Donor> donors, Context context, boolean selectionMode) {
         this.donors = donors;
         this.context = context;
+        this.selectionMode = selectionMode;
     }
 
     @Override
@@ -55,44 +58,56 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
     public void onBindViewHolder(final DonorAdapter.DonorViewHolder holder, int position) {
         final Donor donor = donors.get(position);
 
-        if (donor.isSelected()){
-            holder.view.setBackgroundColor(Color.parseColor("#b3ffb6"));
-            holder.checkBox.setChecked(true);
-        } else {
-            holder.view.setBackgroundColor(Color.WHITE);
-            holder.checkBox.setChecked(false);
-        }
-
-        holder.checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String action = donor.isSelected() ? Constants.remove : Constants.select;
-                sendSelectionChange(action, donor);
-                donor.setSelected(!donor.isSelected());
-
-                notifyDataSetChanged();
-                holder.view.setBackgroundColor(donor.isSelected() ? Color.parseColor("#b3ffb6") : Color.WHITE);
-            }
-        });
-
         holder.donorName.setText(donor.getName());
         holder.donorGender.setText(donor.getGender());
         holder.bloodGroup.setText(donor.getBloodGroup());
         holder.donorAge.setText(donor.getAge());
         holder.donorDob.setText(donor.getDateOfBirth());
-        String lastDonated = donor.isDonationInLastSixMonths() ? "Yes" : "No";
-        holder.donationDate.setText(lastDonated);
+        holder.donationDate.setText(donor.isDonationInLastSixMonths() ? "Yes" : "No");
         holder.phoneNumber.setText(donor.getPhoneNumber());
         holder.donorEmail.setText(donor.getEmail());
         holder.donorAddress.setText(donor.getAddress());
         holder.donorLocation.setText(donor.getLocation());
         holder.donorPin.setText(donor.getPincode());
 
+        //For donor selection activity
+        if (selectionMode){
+            holder.checkBox.setVisibility(View.VISIBLE);
+
+            if (donor.isSelected()){
+                holder.view.setBackgroundColor(Color.parseColor("#b3ffb6"));
+                holder.checkBox.setChecked(true);
+            } else {
+                holder.view.setBackgroundColor(Color.WHITE);
+                holder.checkBox.setChecked(false);
+            }
+
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String action = donor.isSelected() ? Constants.remove : Constants.select;
+                    sendSelectionChange(action, donor);
+                    donor.setSelected(!donor.isSelected());
+
+                    notifyDataSetChanged();
+                    holder.view.setBackgroundColor(donor.isSelected() ? Color.parseColor("#b3ffb6") : Color.WHITE);
+                }
+            });
+        }
+
         holder.callDonorImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 makeCall(donor.getPhoneNumber(), donor.getName());
+            }
+        });
+
+        holder.donorProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DonorProfileActivity.class);
+                intent.putExtra(Constants.donor, Parcels.wrap(donor));
+                context.startActivity(intent);
             }
         });
     }
@@ -146,18 +161,17 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         @BindView(R.id.donor_address) TextView donorAddress;
         @BindView(R.id.donor_location) TextView donorLocation;
         @BindView(R.id.donor_pin) TextView donorPin;
-        @BindView(R.id.call_donor_image) ImageView callDonorImage;
         @BindView(R.id.visible_part) RelativeLayout visiblePart;
         @BindView(R.id.hidden_part) LinearLayout hiddenPart;
         @BindView(R.id.selection_checkBox) CheckBox checkBox;
+        @BindView(R.id.call_donor_image) ImageView callDonorImage;
+        @BindView(R.id.donor_profile_image) ImageView donorProfileButton;
 
         public View view;
 
         public DonorViewHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
-
-            checkBox.setVisibility(View.VISIBLE);
 
             view = v;
             visiblePart.setOnClickListener(new View.OnClickListener() {

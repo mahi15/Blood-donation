@@ -18,13 +18,22 @@
         android:theme="@style/AppTheme">
 
         <activity
+            android:name=".SplashScreen"
+            android:theme="@style/AppThemeNoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".MainActivity"
-            android:theme="@style/AppThemeNoActionBar"></activity>
+            android:theme="@style/AppThemeNoActionBar" />
 
         <activity
             android:name=".DoneeRequestActivity"
             android:label="Request Blood"
-            android:theme="@style/AppThemeNoActionBar"></activity>
+            android:theme="@style/AppThemeNoActionBar" />
 
         <activity
             android:name=".DonorRegistrationActivity"
@@ -43,17 +52,9 @@
 
         <activity
             android:name=".DonorProfileActivity"
-            android:label="Profile"
+            android:label="Your Profile"
             android:theme="@style/AppThemeNoActionBar"/>
 
-        <activity
-            android:name=".SplashScreen"
-            android:theme="@style/AppThemeNoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".admin.AdminConsoleActivity"
             android:label="Admin Console"
@@ -62,6 +63,14 @@
         <activity android:name=".admin.AdminDonorActivity"
             android:label="Donors"
             android:theme="@style/AppThemeNoActionBar"/>
+
+        <activity android:name=".admin.DonationHistoryActivity"
+            android:theme="@style/AppThemeNoActionBar"
+            android:label="History of Donations" />
+
+        <activity android:name=".admin.MatchDetailActivity"
+            android:label="Donation Details"
+            android:theme="@style/AppThemeNoActionBar" />
     </application>
 
 </manifest>

@@ -1,27 +1,22 @@
 package com.nullvoid.blooddonation.beans;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 
 /**
  * Created by sanath on 28/06/17.
  */
 
+@Parcel
 public class Match {
     private Donee donee;
-    private String matchId, matchedDate, matchedTime, completedDate, matchCategory;
+    private String matchId, matchedDate, matchedTime, completedDate;
     private ArrayList<Donor> contactedDonors, helpedDonors;
     private boolean completed;
 
     public Donee getDonee() {
         return donee;
-    }
-
-    public String getMatchCategory() {
-        return matchCategory;
-    }
-
-    public void setMatchCategory(String matchCategory) {
-        this.matchCategory = matchCategory;
     }
 
     public void setDonee(Donee donee) {

@@ -2,20 +2,17 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="2dp"
-    android:animateLayoutChanges="true"
-    android:background="#848484"
-    card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="5dp"
-    card_view:contentPadding="10dp">
+    android:layout_margin="2dp">
 
     <RelativeLayout
         android:id="@+id/visible_part"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="15dp">
 
         <TextView
             android:id="@+id/donor_group"
@@ -44,15 +41,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Age : "
-                android:textColor="#686868"
-                android:textStyle="bold" />
+                android:textColor="#585858"
+                 />
 
             <TextView
                 android:id="@+id/donor_age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="19"
-                android:textColor="#000" />
+                android:text="Age"
+                android:textColor="#414141"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -70,15 +68,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Location : "
-                android:textColor="#686868"
-                android:textStyle="bold" />
+                android:textColor="#585858" />
 
             <TextView
                 android:id="@+id/donor_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kanchipuram"
-                android:textColor="#000" />
+                android:text="Location"
+                android:textColor="#414141"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
@@ -90,7 +88,7 @@
             android:layout_weight="1"
             android:paddingLeft="5dp"
             android:paddingTop="5dp"
-            android:text="default name"
+            android:text="Donor's Name"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
@@ -119,14 +117,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Gender : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/donor_gender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000" />
+                    android:textColor="#414141"
+                    android:textStyle="bold"
+                    tools:text="Gender" />
             </LinearLayout>
 
             <LinearLayout
@@ -144,15 +143,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Date of Birth : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/donor_dob"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="patient id"
-                    android:textColor="#000" />
+                    android:text="Date Of Birth"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -170,15 +169,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Donation in last 6 months : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/donation_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="good guy"
-                    android:textColor="#000" />
+                    android:text="No"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -196,15 +195,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phone Number : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/phone_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0000"
-                    android:textColor="#000" />
+                    android:text="Phone Number"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -222,15 +221,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Email : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/donor_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="no, road"
-                    android:textColor="#000" />
+                    android:text="Email Id"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -248,15 +247,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Address : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/donor_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0000"
-                    android:textColor="#000" />
+                    android:text="Address"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -274,15 +273,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Pin Code : "
-                    android:textColor="#686868"
-                    android:textStyle="bold" />
+                    android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/donor_pin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kanchipuram"
-                    android:textColor="#000" />
+                    android:text="Pin Code"
+                    android:textColor="#414141"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -293,10 +292,17 @@
                 android:paddingRight="15dp">
 
                 <ImageView
+                    android:id="@+id/donor_profile_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    card_view:srcCompat="@drawable/ic_person_green_30dp" />
+
+                <ImageView
                     android:id="@+id/call_donor_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     card_view:srcCompat="@drawable/ic_call_green_24dp" />
 
             </LinearLayout>

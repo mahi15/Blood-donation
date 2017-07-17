@@ -65,7 +65,6 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         holder.patientId.setText(donee.getPatientID());
         holder.hospitalName.setText(donee.getHospitalName());
         holder.hospitalAddress.setText(donee.getHospitalAddress());
-        holder.hospitalName.setText(donee.getHospitalNumber());
         holder.hospitalNumber.setText(donee.getHospitalNumber());
         holder.hospitalPin.setText(donee.getHospitalPin());
 

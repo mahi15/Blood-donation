@@ -8,9 +8,9 @@ import org.parceler.Parcel;
 
 @Parcel
 public class Donee {
-    private String doneeId, requesterName, requesterPhoneNumber, requiredBloodGroup, requiredAmount, requiredDate, patientAttendantName,
-            patientAttendantNumber, patientName, patientAreaofResidence, patientID, hospitalName,
-            hospitalNumber, hospitalAddress, hospitalPin, requestedDate, requestedTime, status;
+    private String doneeId, requesterName, requesterPhoneNumber, requiredBloodGroup, requiredAmount, requiredDate,
+            patientAttendantName, patientAttendantNumber, patientName, patientAreaofResidence, patientID,
+            hospitalName, hospitalNumber, hospitalAddress, hospitalPin, requestedDate, requestedTime, status;
 
     public Donee() {
     }
