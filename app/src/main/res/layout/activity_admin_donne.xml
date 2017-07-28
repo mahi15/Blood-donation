@@ -15,11 +15,12 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/searchbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
         </android.support.v7.widget.Toolbar>
 

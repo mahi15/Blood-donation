@@ -1,5 +1,6 @@
 package com.nullvoid.blooddonation.admin;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -37,43 +38,47 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by sanath on 13/06/17.
  */
 
 public class AdminDonneActivity extends AppCompatActivity {
+    Activity context = this;
 
     DatabaseReference db;
-    Context context;
-    private ViewPager viewPager;
     private DonnePagerAdapter mAdapter;
     MaterialDialog loadingDialog;
+
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.pager) ViewPager viewPager;
+    @BindView(R.id.tab_layout) TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_donne);
-
-        context = AdminDonneActivity.this;
-
-        //adding the toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.searchbar);
+        ButterKnife.bind(context);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-
-        // Initilization
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        mAdapter = new DonnePagerAdapter(getSupportFragmentManager(), AdminDonneActivity.this);
         db = FirebaseDatabase.getInstance().getReference();
 
+        loadingDialog = new MaterialDialog.Builder(context)
+                .title(R.string.loading)
+                .content(R.string.please_wait_message)
+                .progress(true, 0)
+                .build();
+
+        mAdapter = new DonnePagerAdapter(getSupportFragmentManager(), AdminDonneActivity.this);
+
         // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
         // Iterate over all tabs and set the custom view
@@ -83,18 +88,12 @@ public class AdminDonneActivity extends AppCompatActivity {
         }
         viewPager.setAdapter(mAdapter);
 
-        //other view stuff
-        loadingDialog  = new MaterialDialog.Builder(this)
-                .title(R.string.loading)
-                .content(R.string.please_wait_message)
-                .progress(true, 0)
-                .build();
     }
 
     public void getSelectedDonors(final Donee donee, final String action) {
 
 
-                loadingDialog.show();
+        loadingDialog.show();
 
         db.child(Constants.matches)
                 .child(donee.getDoneeId())
@@ -106,10 +105,10 @@ public class AdminDonneActivity extends AppCompatActivity {
 
                         Match donationMatch = dataSnapshot.getValue(Match.class);
 
-                        if (action.equals(Constants.donneActionSelectedDonorsButton())){
+                        if (action.equals(Constants.donneActionSelectedDonorsButton())) {
                             showContactedDonorsDialog(donationMatch);
                         }
-                        if (action.equals(Constants.donneActionMarkCompletedButton())){
+                        if (action.equals(Constants.donneActionMarkCompletedButton())) {
                             showMarkCompletedDialog(donationMatch);
                         }
                     }
@@ -254,11 +253,11 @@ public class AdminDonneActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void sendMessage( ArrayList<Donor> selectedDonorsList) {
+    public void sendMessage(ArrayList<Donor> selectedDonorsList) {
         //TODO
     }
 
-    public void markAsComplete(final Match match, final ArrayList<Donor> helpedDonors){
+    public void markAsComplete(final Match match, final ArrayList<Donor> helpedDonors) {
 
         loadingDialog.show();
 
@@ -275,7 +274,7 @@ public class AdminDonneActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             new MaterialDialog.Builder(context)
                                     .title(R.string.success)
                                     .content(R.string.donation_complete_message)
@@ -291,11 +290,11 @@ public class AdminDonneActivity extends AppCompatActivity {
                                 .setValue(Constants.statusComplete());
 
                         //update donor's donation count in database
-                        for (Donor donor : helpedDonors){
+                        for (Donor donor : helpedDonors) {
                             db.child(Constants.donors())
                                     .child(donor.getDonorId())
                                     .child(Constants.donationCount())
-                                    .setValue(donor.getDonationCount()+1);
+                                    .setValue(donor.getDonationCount() + 1);
                         }
 
                     }

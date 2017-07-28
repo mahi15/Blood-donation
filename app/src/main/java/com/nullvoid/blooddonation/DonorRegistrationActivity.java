@@ -1,15 +1,11 @@
 package com.nullvoid.blooddonation;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -42,8 +38,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.nullvoid.blooddonation.beans.Donor;
-import com.nullvoid.blooddonation.others.Constants;
 import com.nullvoid.blooddonation.others.CommonFunctions;
+import com.nullvoid.blooddonation.others.Constants;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -51,6 +47,9 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by sanath on 10/06/17.
@@ -61,60 +60,54 @@ import java.util.regex.Pattern;
  */
 
 public class DonorRegistrationActivity extends AppCompatActivity {
+    Activity context = this;
 
-    DonorRegistrationActivity context = this;
-
-    LinearLayout parentView;
-    Button submitButton;
-    EditText name, email, age, phoneNumber, dateOfBirth, address, location, pincode, bloodGroup;
-    CheckBox tncCheckBox;
-    TextView tncText;
-    RadioGroup Gender, DonatedBefore;
-    RadioButton gender, donatedBefore;
+    int  cYear = Calendar.getInstance().get(Calendar.YEAR);
     MaterialDialog progressDialog;
-    Calendar c = Calendar.getInstance();
-    int cDay = c.get(Calendar.DAY_OF_MONTH), cMonth = c.get(Calendar.MONTH), cYear = c.get(Calendar.YEAR),
-            sDay, sMonth, sYear;
     FirebaseAuth mAuth;
     FirebaseUser fbUser;
     DatabaseReference dbRef;
-    DrawerLayout drawerLayout;
-    Toolbar toolbar;
+
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.regDateOfBirth) EditText dateOfBirth;
+    @BindView(R.id.regGender) EditText gender;
+    @BindView(R.id.tnc_text) TextView tncText;
+    @BindView(R.id.donor_reg_parent_view) LinearLayout parentView;
+    @BindView(R.id.regBloodGroup) EditText bloodGroup;
+    @BindView(R.id.tnc_checkbox) CheckBox tncCheckBox;
+    @BindView(R.id.regName) EditText name;
+    @BindView(R.id.regAge) EditText age;
+    @BindView(R.id.regEmail) EditText email;
+    @BindView(R.id.regPhoneNumber) EditText phoneNumber;
+    @BindView(R.id.regAddress) EditText address;
+    @BindView(R.id.regLocation) EditText location;
+    @BindView(R.id.regPinCode) EditText pincode;
+    @BindView(R.id.regDonatedBeforeOption) RadioGroup DonatedBefore;
+    @BindView(R.id.regSubmit) Button submitButton;
 
     Donor donor;
     private String dName, dGender, dBloodGroup, dAge, dDOB, dNumber, dEmail, dAddress, dLocation,
-            dPincode, dRegisteredDate, dRegisteredTime, enteredCode;
+            dPincode, dRegisteredDate, dRegisteredTime;
     private boolean dDonationInLastSixMonths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donor_registration);
-
-        parentView = (LinearLayout) findViewById(R.id.donor_reg_parent_view);
-
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(context);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
+        dateOfBirth.addTextChangedListener(dateWatcher);
 
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
-        //get all the necessary view elements ready
-        dateOfBirth = (EditText) findViewById(R.id.regDateOfBirth);
-        dateOfBirth.addTextChangedListener(dateWatcher);
-
-        //TnC text and checkbox
-        tncCheckBox = (CheckBox) findViewById(R.id.tnc_checkbox);
-        tncText = (TextView) findViewById(R.id.tnc_text);
         tncText.setClickable(true);
         tncText.setMovementMethod(LinkMovementMethod.getInstance());
         String tnc = "I Accept the <a href='http://www.google.com'>Terms and Conditions</a> " +
@@ -122,11 +115,10 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         tncText.setText(Html.fromHtml(tnc));
 
         //blood groups drop down list
-        bloodGroup = (EditText) findViewById(R.id.regBloodGroup);
         bloodGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MaterialDialog.Builder(DonorRegistrationActivity.this)
+                new MaterialDialog.Builder(context)
                         .title(R.string.choose_your_group)
                         .items(R.array.blood_group)
                         .itemsColor(Color.BLACK)
@@ -143,13 +135,33 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                         .show();
             }
         });
+        gender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(context)
+                        .title(R.string.choose_gender_title)
+                        .items(R.array.gender_array)
+                        .contentColor(Color.BLACK)
+                        .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog,
+                                                       View itemView, int which,
+                                                       CharSequence text) {
+                                if (text != null) gender.setText(text.toString());
+                                return true;
+                            }
+                        })
+                        .positiveText(R.string.select)
+                        .negativeText(R.string.cancel)
+                        .show();
+            }
+        });
 
         //donated before radio buttons
-        DonatedBefore = (RadioGroup) findViewById(R.id.regDonatedBeforeOption);
         DonatedBefore.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                donatedBefore = (RadioButton) findViewById(DonatedBefore.getCheckedRadioButtonId());
+                RadioButton donatedBefore = (RadioButton) findViewById(DonatedBefore.getCheckedRadioButtonId());
                 if (donatedBefore.getText().toString().equals("Yes")) {
                     dDonationInLastSixMonths = true;
                 } else {
@@ -158,7 +170,6 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             }
         });
 
-        submitButton = (Button) findViewById(R.id.regSubmit);
         submitButton.setOnClickListener(registerDonor);
     }
 
@@ -166,8 +177,8 @@ public class DonorRegistrationActivity extends AppCompatActivity {
     View.OnClickListener registerDonor = new View.OnClickListener() {
         public void onClick(View v) {
 
-            if(!isNetworkAvailable()){
-                showSnackBar(getString(R.string.no_internet_message));
+            if(!CommonFunctions.isNetworkAvailable(context)){
+                CommonFunctions.showSnackBar(parentView, getString(R.string.no_internet_message));
                 return;
             }
 
@@ -177,17 +188,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                     .progress(true, 0).cancelable(false)
                     .show();
 
-            name = (EditText) findViewById(R.id.regName);
-            Gender = (RadioGroup) findViewById(R.id.regGender);
-            age = (EditText) findViewById(R.id.regAge);
-            email = (EditText) findViewById(R.id.regEmail);
-            phoneNumber = (EditText) findViewById(R.id.regPhoneNumber);
-            address = (EditText) findViewById(R.id.regAddress);
-            location = (EditText) findViewById(R.id.regLocation);
-            pincode = (EditText) findViewById(R.id.regPinCode);
-
             dName = name.getText().toString().trim();
-            gender = (RadioButton) findViewById(Gender.getCheckedRadioButtonId());
             dGender = gender.getText().toString();
             dBloodGroup = bloodGroup.getText().toString();
             dAge = age.getText().toString().trim();
@@ -209,7 +210,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             dRegisteredDate = thisDate.format(new Timestamp(System.currentTimeMillis()));
             dRegisteredTime = thisTime.format(new Timestamp(System.currentTimeMillis()));
 
-            donor.setName(toCamelCase(dName));
+            donor.setName(CommonFunctions.toCamelCase(dName));
             donor.setGender(dGender);
             donor.setBloodGroup(dBloodGroup);
             donor.setDateOfBirth(dDOB);
@@ -218,7 +219,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
             donor.setPhoneNumber(dNumber);
             donor.setEmail(dEmail);
             donor.setAddress(dAddress);
-            donor.setLocation(toCamelCase(dLocation));
+            donor.setLocation(CommonFunctions.toCamelCase(dLocation));
             donor.setPincode(dPincode);
             donor.setRegisteredDate(dRegisteredDate);
             donor.setRegisteredTime(dRegisteredTime);
@@ -301,6 +302,10 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(dName)) {
             name.setError(required);
             name.requestFocus();
+            return false;
+        }
+        if (TextUtils.isEmpty(dGender)) {
+            gender.callOnClick();
             return false;
         }
         if (TextUtils.isEmpty(dBloodGroup)) {
@@ -472,7 +477,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                         } else {
                             //if it fails
                             progressDialog.dismiss();
-                            showSnackBar(getString(R.string.registration_unsuccessful));
+                            CommonFunctions.showSnackBar(parentView, getString(R.string.registration_unsuccessful));
                         }
                     }
                 });
@@ -487,32 +492,4 @@ public class DonorRegistrationActivity extends AppCompatActivity {
         prefsEditor.commit();
     }
 
-    public void showSnackBar(String text){
-        Snackbar.make(parentView, text, Snackbar.LENGTH_SHORT).show();
-    }
-
-    public String toCamelCase(final String init) {
-        if (init == null)
-            return null;
-
-        final StringBuilder ret = new StringBuilder(init.length());
-
-        for (final String word : init.split(" ")) {
-            if (!word.isEmpty()) {
-                ret.append(word.substring(0, 1).toUpperCase());
-                ret.append(word.substring(1).toLowerCase());
-            }
-            if (!(ret.length() == init.length()))
-                ret.append(" ");
-        }
-
-        return ret.toString();
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 }

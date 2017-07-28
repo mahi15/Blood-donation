@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,14 +37,24 @@ public class DonationHistoryActivity extends AppCompatActivity {
 
     @BindView(R.id.cardList) RecyclerView recyclerView;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.searchbar) Toolbar searchBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
         ButterKnife.bind(this);
-
         setSupportActionBar(toolbar);
+
+        searchBar.setVisibility(View.GONE);
+        toolbar.setVisibility(View.VISIBLE);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         db = FirebaseDatabase.getInstance().getReference();
 

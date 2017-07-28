@@ -1,5 +1,6 @@
 package com.nullvoid.blooddonation;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,23 +9,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.nullvoid.blooddonation.beans.Donor;
+import com.nullvoid.blooddonation.others.CommonFunctions;
 import com.nullvoid.blooddonation.others.Constants;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.nullvoid.blooddonation.others.Constants.currentUser;
 
 /**
  * Created by sanath on 27/06/17.
@@ -42,13 +49,16 @@ public class DonorProfileActivity extends AppCompatActivity {
     @BindView(R.id.profile_location) TextView profileLocation;
     @BindView(R.id.profile_pincode) TextView profilePincode;
     @BindView(R.id.profile_donation_count) TextView profileDonationCount;
+    @BindView(R.id.logout_button) TextView logoutText;
     @BindView(R.id.profile_available_switch) Switch availableSwitch;
     @BindView(R.id.available_loading_progress) ProgressBar availableProgress;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.call_donor_image) ImageView callDonorImage;
 
     DonorProfileActivity context = this;
 
     DatabaseReference db;
+    FirebaseAuth mAuth;
 
     Donor user;
     boolean adminMode;
@@ -61,9 +71,10 @@ public class DonorProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_donor_profile);
         ButterKnife.bind(this);
         db = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
 
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,16 +89,61 @@ public class DonorProfileActivity extends AppCompatActivity {
         if (adminMode) {
             user = otherUser;
             getSupportActionBar().setTitle(user.getName());
+
+            callDonorImage.setVisibility(View.VISIBLE);
+            callDonorImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CommonFunctions.call(context, user.getPhoneNumber());
+                }
+            });
+            logoutText.setVisibility(View.GONE);
         } else {
-            sp = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
-            String userJson = sp.getString(Constants.currentUser, null);
+            sp = getSharedPreferences(currentUser, MODE_PRIVATE);
+            String userJson = sp.getString(currentUser, null);
             gson = new Gson();
             user = gson.fromJson(userJson, Donor.class);
+
+            logoutText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    logoutUser();
+                }
+            });
         }
         setProfileContent(user);
     }
 
+    public void logoutUser() {
+        if (currentUser == null) {
+            new MaterialDialog.Builder(context)
+                    .title(R.string.error)
+                    .content(R.string.logout_error_message)
+                    .positiveText(R.string.ok)
+                    .show();
+        } else {
 
+            final SharedPreferences mPrefs = getSharedPreferences(currentUser, MODE_PRIVATE);
+            new MaterialDialog.Builder(context)
+                    .title(R.string.confirm)
+                    .content(R.string.logout_confirm_message)
+                    .positiveText(R.string.yes)
+                    .negativeText(R.string.no)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mAuth.signOut();
+                            SharedPreferences.Editor editor = mPrefs.edit();
+                            editor.clear().apply();
+                            finish();
+                            startActivity(new Intent(context, MainActivity.class));
+                            CommonFunctions.showToast( context,
+                                    getString(R.string.logout_success_message));
+                        }
+                    })
+                    .show();
+        }
+    }
 
     public void toggleAvailable(final Donor user, final boolean available) {
         db.child(Constants.donors())
@@ -105,7 +161,7 @@ public class DonorProfileActivity extends AppCompatActivity {
                             user.setAvailable(available);
                             SharedPreferences.Editor editor = sp.edit();
                             String userJson = gson.toJson(user);
-                            editor.putString(Constants.currentUser, userJson);
+                            editor.putString(currentUser, userJson);
                             editor.apply();
                         }
 

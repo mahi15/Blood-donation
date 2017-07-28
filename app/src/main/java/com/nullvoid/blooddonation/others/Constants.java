@@ -6,6 +6,8 @@ package com.nullvoid.blooddonation.others;
 
 public class Constants {
 
+    public static final String smsApiKey = "pXeD2smsTCo-kcltBRDTn63S7Ej1jQ4YVP204G0OIh";
+
     public static final String select = "SELECT";
     public static final String remove = "REMOVE";
     public static final String action = "ACTION";

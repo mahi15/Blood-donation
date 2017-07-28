@@ -5,18 +5,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -55,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
     Donor currentUser;
     Donor tempDonor;
 
+    @BindView(R.id.parent_view) LinearLayout parentView;
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
     @BindView(R.id.admin) Button adminButton;
     @BindView(R.id.btn_donate_today) Button donateTodayButton;
     @BindView(R.id.btn_donate_blood) Button donateBloodButton;
@@ -71,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         //nav drawer and toolbar
         setCurrentUserFromSharedPreference();
         setSupportActionBar(toolbar);
-        initNavigationDrawer();
 
         //firebase stuff
         mAuth = FirebaseAuth.getInstance();
@@ -125,51 +120,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void initNavigationDrawer() {
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_home:
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.nav_about:
-                        drawerLayout.closeDrawers();
-                        Toast.makeText(getApplicationContext(), "Have to implement", Toast.LENGTH_SHORT).show();
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.nav_profile:
-                        drawerLayout.closeDrawers();
-                        if (currentUser == null) {
-                            checkIfDonorExists();
-                        } else {
-                            startActivity(new Intent(getApplicationContext(), DonorProfileActivity.class));
-                        }
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.nav_logout:
-                        logoutUser();
-                        break;
-                }
-                return true;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_toolbar_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.profile_toolbar_icon) {
+            if (currentUser == null) {
+                checkIfDonorExists();
+            } else {
+                startActivity(new Intent(context, DonorProfileActivity.class));
             }
-        });
-
-        View header = navigationView.getHeaderView(0);
-
-        TextView headerText = (TextView) header.findViewById(R.id.header_text);
-        if (currentUser != null) {
-            headerText.setText(currentUser.getName());
-        } else {
-            navigationView.getMenu().findItem(R.id.nav_profile).setTitle("Login");
         }
-
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                toolbar, R.string.drawer_open, R.string.drawer_close) {
-        };
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
+        return super.onOptionsItemSelected(item);
     }
 
     private void setCurrentUserFromSharedPreference() {
@@ -188,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkIfDonorExists() {
 
         if (!CommonFunctions.isNetworkAvailable(context)) {
-            showSnackBar(getString(R.string.no_internet_message));
+            CommonFunctions.showSnackBar(parentView, getString(R.string.no_internet_message));
             return;
         }
 
@@ -315,39 +281,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void logoutUser() {
-        if (currentUser == null) {
-            new MaterialDialog.Builder(MainActivity.this)
-                    .title(R.string.error)
-                    .content(R.string.logout_error_message)
-                    .positiveText(R.string.ok)
-                    .show();
-        } else {
-
-            final SharedPreferences mPrefs = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
-            new MaterialDialog.Builder(MainActivity.this)
-                    .title(R.string.confirm)
-                    .content(R.string.logout_confirm_message)
-                    .positiveText(R.string.yes)
-                    .negativeText(R.string.no)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mAuth.signOut();
-                            SharedPreferences.Editor editor = mPrefs.edit();
-                            editor.clear().apply();
-                            finish();
-                            startActivity(new Intent(MainActivity.this, MainActivity.class));
-                            CommonFunctions.showToast( context,
-                                    getString(R.string.logout_success_message));
-                        }
-                    })
-                    .show();
-        }
-    }
-
-    public void showSnackBar(String text) {
-        Snackbar.make(drawerLayout, text, Snackbar.LENGTH_SHORT).show();
-    }
 }
 

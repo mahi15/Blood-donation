@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/donor_reg_parent_view"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/donor_reg_parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -19,13 +18,14 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:textAlignment="gravity"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbarStyle="insideOverlay">
@@ -33,13 +33,36 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#fff"
             android:orientation="vertical"
             android:padding="20dp"
             android:weightSum="1">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Basic Details"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#000"
+                    android:orientation="horizontal" />
+            </LinearLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regName"
@@ -50,71 +73,39 @@
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                android:id="@+id/gender_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="Gender"
-                android:textAlignment="textStart"
-                android:textColorLink="@android:color/black"
-                android:textSize="18sp" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-
-            <RadioGroup
-                android:id="@+id/regGender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:baselineAligned="true"
-                android:gravity="center_horizontal|center"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/regGenderMale"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/regGender"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:paddingRight="10dp"
-                    android:text="Male"
-                    android:textStyle="bold" />
-
-                <RadioButton
-                    android:id="@+id/regGenderFemale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="15dp"
-                    android:text="Female"
-                    android:textStyle="bold" />
-
-                <RadioButton
-                    android:id="@+id/regGenderTrans"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingRight="15dp"
-                    android:text="Other"
-                    android:textStyle="bold" />
-            </RadioGroup>
+                    android:focusable="false"
+                    android:hint="Gender"
+                    android:inputType="textPersonName"
+                    android:textAlignment="center" />
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regBloodGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="false"
                     android:hint="Blood Group"
                     android:inputType="date"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
-                    android:textAlignment="center"
-                    android:focusable="false"/>
+                    android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regAge"
@@ -130,7 +121,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regDateOfBirth"
@@ -144,51 +135,29 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="5dp"
-                android:paddingTop="10dp">
+                android:padding="15dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Have you donated in the last six months?"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp" />
+                    android:text="Contact Details"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="24sp" />
 
-                <RadioGroup
-                    android:id="@+id/regDonatedBeforeOption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/regDonatedYes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
-                        android:text="Yes"
-                        android:textStyle="bold" />
-
-                    <RadioButton
-                        android:id="@+id/regDonatedNo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
-                        android:text="No"
-                        android:textStyle="bold" />
-                </RadioGroup>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#000"
+                    android:orientation="horizontal" />
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regPhoneNumber"
@@ -204,7 +173,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regEmail"
@@ -220,7 +189,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regAddress"
@@ -236,7 +205,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regLocation"
@@ -252,7 +221,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/regPinCode"
@@ -265,6 +234,47 @@
                     android:paddingTop="10dp"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="5dp"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Have you donated in the last six months?"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+
+                <RadioGroup
+                    android:id="@+id/regDonatedBeforeOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/regDonatedYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:text="Yes" />
+
+                    <RadioButton
+                        android:id="@+id/regDonatedNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:text="No" />
+                </RadioGroup>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -281,7 +291,7 @@
                     android:layout_weight="1"
                     android:text="I accept the termas andconditins"
                     android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <CheckBox
                     android:id="@+id/tnc_checkbox"

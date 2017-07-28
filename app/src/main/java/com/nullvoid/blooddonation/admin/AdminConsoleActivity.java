@@ -34,40 +34,28 @@ public class AdminConsoleActivity extends AppCompatActivity {
 
     DatabaseReference db;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-    @BindView(R.id.admin_donor_button)
-    Button donorButton;
-
-    @BindView(R.id.admin_donne_button)
-    Button donneButton;
-
-    @BindView(R.id.admin_history_button)
-    Button historyButton;
-
-    @BindView(R.id.donate_today_count)
-    TextView donateTodayCountView;
-
-    @BindView(R.id.req_made_today_count)
-    TextView requestsTodayCountView;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.admin_donor_button) Button donorButton;
+    @BindView(R.id.admin_donne_button) Button donneButton;
+    @BindView(R.id.admin_history_button) Button historyButton;
+    @BindView(R.id.donate_today_count) TextView donateTodayCountView;
+    @BindView(R.id.req_made_today_count) TextView requestsTodayCountView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_console);
-        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
-
-        db = FirebaseDatabase.getInstance().getReference();
-
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
+
+        db = FirebaseDatabase.getInstance().getReference();
+
 
         donorButton.setOnClickListener(new View.OnClickListener() {
             @Override

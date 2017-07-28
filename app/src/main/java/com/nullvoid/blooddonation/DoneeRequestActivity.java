@@ -1,5 +1,6 @@
 package com.nullvoid.blooddonation;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +27,9 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.nullvoid.blooddonation.others.CommonFunctions.toCamelCase;
 
 /**
@@ -33,14 +37,8 @@ import static com.nullvoid.blooddonation.others.CommonFunctions.toCamelCase;
  */
 
 public class DoneeRequestActivity extends AppCompatActivity {
-
-    //all the view elements
-    private EditText name, phnumber, reqDate, reqAmount, reqAttendantName, reqAttendantNumber, pName, pId, hospitalName,
-                    hospitalNumber, hospitalAddress, hospitalPin, reqAreaOfResidence, bloodGroup;
-    private Toolbar toolbar;
-    private Button submitButton;
+    Activity context = this;
     private MaterialDialog progressDialog;
-    private LinearLayout parentView;
 
     //String for all the fields
     private String dName, dNumber, dRequiredDate, dBloodGroup, dReqAmount, dRequestedDate, dRequestedTime,
@@ -49,38 +47,46 @@ public class DoneeRequestActivity extends AppCompatActivity {
 
     //Current date
     Calendar calendar = Calendar.getInstance();
-    int cDay = calendar.get(Calendar.DAY_OF_MONTH);
-    int cMonth = calendar.get(Calendar.MONTH);
     int cYear = calendar.get(Calendar.YEAR);
 
-    //object to store all the user entered data
     private Donee donee;
 
-    //firebase database stuff
     private DatabaseReference dbRef;
+
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.reqBloodGroup) EditText bloodGroup;
+    @BindView(R.id.reqName) EditText name;
+    @BindView(R.id.reqPhoneNumber) EditText phnumber;
+    @BindView(R.id.reqPatAttendantNumber) EditText reqAttendantNumber;
+    @BindView(R.id.reqPName) EditText pName;
+    @BindView(R.id.requiredAmount) EditText reqAmount;
+    @BindView(R.id.reqPId) EditText pId;
+    @BindView(R.id.reqHospitalName) EditText hospitalName;
+    @BindView(R.id.reqHospitalPhone) EditText hospitalNumber;
+    @BindView(R.id.reqHospitalAddress) EditText hospitalAddress;
+    @BindView(R.id.reqHospitalPin) EditText hospitalPin;
+    @BindView(R.id.reqPatAttendantName) EditText reqAttendantName;
+    @BindView(R.id.reqPAreaOfResidence) EditText reqAreaOfResidence;
+    @BindView(R.id.reqNeededDate) EditText reqDate;
+    @BindView(R.id.reqSubmit) Button submitButton;
+    @BindView(R.id.donee_req_parent_view) LinearLayout parentView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donee_request);
-
-        //Initilize important objects
-        dbRef = FirebaseDatabase.getInstance().getReference();
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(context);
         setSupportActionBar(toolbar);
-        bloodGroup = (EditText)findViewById(R.id.reqBloodGroup);
-        submitButton = (Button)findViewById(R.id.reqSubmit);
-        reqDate = (EditText) findViewById(R.id.reqNeededDate);
-        parentView = (LinearLayout) findViewById(R.id.donee_req_parent_view);
 
-        //getting ready
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        dbRef = FirebaseDatabase.getInstance().getReference();
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
+
         bloodGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,79 +107,70 @@ public class DoneeRequestActivity extends AppCompatActivity {
                         .show();
             }
         });
-        submitButton.setOnClickListener(getInfo);
-        reqDate = (EditText) findViewById(R.id.reqNeededDate);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getInfoFromView();
+            }
+        });
+
         reqDate.addTextChangedListener(dateWatcher);
     }
 
-    View.OnClickListener getInfo = new View.OnClickListener() {
-        public void onClick(View v) {
-            progressDialog = new MaterialDialog.Builder(DoneeRequestActivity.this)
-                    .title(R.string.loading)
-                    .content(R.string.registering_request_message)
-                    .progress(true, 0).cancelable(false)
-                    .show();
+    public void getInfoFromView() {
+        progressDialog = new MaterialDialog.Builder(DoneeRequestActivity.this)
+                .title(R.string.loading)
+                .content(R.string.registering_request_message)
+                .progress(true, 0).cancelable(false)
+                .show();
 
-            name = (EditText)findViewById(R.id.reqName);
-            phnumber = (EditText)findViewById(R.id.reqPhoneNumber);
-            reqAttendantNumber = (EditText)findViewById(R.id.reqPatAttendantNumber);
-            pName  = (EditText)findViewById(R.id.reqPName);
-            reqAmount = (EditText) findViewById(R.id.requiredAmount);
-            pId  = (EditText)findViewById(R.id.reqPId);
-            hospitalName = (EditText)findViewById(R.id.reqHospitalName);
-            hospitalNumber = (EditText)findViewById(R.id.reqHospitalAddress);
-            hospitalAddress = (EditText)findViewById(R.id.reqHospitalAddress);
-            hospitalPin = (EditText)findViewById(R.id.reqHospitalPin);
-            reqAttendantName = (EditText)findViewById(R.id.reqPatAttendantName);
-            reqAreaOfResidence = (EditText)findViewById(R.id.reqPAreaOfResidence);
-            donee = new Donee();
+        donee = new Donee();
 
-            dName = name.getText().toString().toString();
-            dNumber = phnumber.getText().toString().trim();
-            dBloodGroup = bloodGroup.getText().toString();
-            dRequiredDate = reqDate.getText().toString().trim();
-            dReqAmount = reqAmount.getText().toString().trim();
-            dAttendantName = reqAttendantName.getText().toString().trim();
-            dAttendantNumber = reqAttendantNumber.getText().toString().trim();
-            dPatientsName = pName.getText().toString().trim();
-            dPatientRefNumber = pId.getText().toString().trim();
-            dHospitalName = hospitalName.getText().toString().trim();
-            dHospitalNumber = hospitalNumber.getText().toString().trim();
-            dHospitalAddress = hospitalAddress.getText().toString().trim();
-            dHospitalPincode = hospitalPin.getText().toString().trim();
-            dPAreaOfResidence = reqAreaOfResidence.getText().toString().trim();
+        dName = name.getText().toString().toString();
+        dNumber = phnumber.getText().toString().trim();
+        dBloodGroup = bloodGroup.getText().toString();
+        dRequiredDate = reqDate.getText().toString().trim();
+        dReqAmount = reqAmount.getText().toString().trim();
+        dAttendantName = reqAttendantName.getText().toString().trim();
+        dAttendantNumber = reqAttendantNumber.getText().toString().trim();
+        dPatientsName = pName.getText().toString().trim();
+        dPatientRefNumber = pId.getText().toString().trim();
+        dHospitalName = hospitalName.getText().toString().trim();
+        dHospitalNumber = hospitalNumber.getText().toString().trim();
+        dHospitalAddress = hospitalAddress.getText().toString().trim();
+        dHospitalPincode = hospitalPin.getText().toString().trim();
+        dPAreaOfResidence = reqAreaOfResidence.getText().toString().trim();
 
-            if(!validateForm()){
-                progressDialog.dismiss();
-                return;
-            }
-
-            SimpleDateFormat thisDate = new SimpleDateFormat("dd/MM/yyyy");
-            SimpleDateFormat thisTime = new SimpleDateFormat("HH:mm");
-            dRequestedDate = thisDate.format(new Timestamp(System.currentTimeMillis()));
-            dRequestedTime = thisTime.format(new Timestamp(System.currentTimeMillis()));
-
-            donee.setRequesterName(toCamelCase(dName));
-            donee.setRequesterPhoneNumber(dNumber);
-            donee.setRequiredBloodGroup(dBloodGroup);
-            donee.setRequiredAmount(dReqAmount);
-            donee.setRequiredDate(dRequiredDate);
-            donee.setPatientAttendantName(dAttendantName);
-            donee.setPatientAttendantNumber(dAttendantNumber);
-            donee.setPatientName(toCamelCase(dPatientsName));
-            donee.setPatientID(dPatientRefNumber);
-            donee.setHospitalName(toCamelCase(dHospitalName));
-            donee.setHospitalNumber(dHospitalNumber);
-            donee.setHospitalAddress(dHospitalAddress);
-            donee.setHospitalPin(dHospitalPincode);
-            donee.setPatientAreaofResidence(dPAreaOfResidence);
-            donee.setRequestedDate(dRequestedDate);
-            donee.setRequestedTime(dRequestedTime);
-            donee.setStatus(Constants.statusNotComplete());
-
-            registerDonee(donee);
+        if(!validateForm()){
+            progressDialog.dismiss();
+            return;
         }
-    };
+
+        SimpleDateFormat thisDate = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat thisTime = new SimpleDateFormat("HH:mm");
+        dRequestedDate = thisDate.format(new Timestamp(System.currentTimeMillis()));
+        dRequestedTime = thisTime.format(new Timestamp(System.currentTimeMillis()));
+
+        donee.setRequesterName(toCamelCase(dName));
+        donee.setRequesterPhoneNumber(dNumber);
+        donee.setRequiredBloodGroup(dBloodGroup);
+        donee.setRequiredAmount(dReqAmount);
+        donee.setRequiredDate(dRequiredDate);
+        donee.setPatientAttendantName(dAttendantName);
+        donee.setPatientAttendantNumber(dAttendantNumber);
+        donee.setPatientName(toCamelCase(dPatientsName));
+        donee.setPatientID(dPatientRefNumber);
+        donee.setHospitalName(toCamelCase(dHospitalName));
+        donee.setHospitalNumber(dHospitalNumber);
+        donee.setHospitalAddress(dHospitalAddress);
+        donee.setHospitalPin(dHospitalPincode);
+        donee.setPatientAreaofResidence(dPAreaOfResidence);
+        donee.setRequestedDate(dRequestedDate);
+        donee.setRequestedTime(dRequestedTime);
+        donee.setStatus(Constants.statusNotComplete());
+
+        registerDonee(donee);
+    }
 
     public void registerDonee(Donee donee){
 

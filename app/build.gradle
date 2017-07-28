@@ -50,5 +50,8 @@ dependencies {
 
     //Material Dialogs
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
+
+    //ExpandableHeightListView
+    compile 'com.github.paolorotolo:expandableheightlistview:1.0.0'
 }
 apply plugin: 'com.google.gms.google-services'

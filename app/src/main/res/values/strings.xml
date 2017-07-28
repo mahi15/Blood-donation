@@ -9,6 +9,14 @@
         <item>AB-</item>
         <item>O-</item>
     </string-array>
+
+    <string name="choose_gender_title">Choose Your Gender</string>
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
+
     <string name="app_name">RSS HSS Blood Donors Bureau</string>
     <string name="select">select</string>
     <string name="remove">remove</string>
@@ -87,5 +95,9 @@
 
     <!--DonorSelectionActivity strings-->
     <string name="donor_notified_message">The selected donors have been notified</string>
+
+    <!--sms templates-->
+    <string name="need_help_message">%1$s is in need of %2$s type blood at %3$s hospital within %4$s date.</string>
+    <string name="help_asked_message">We have arranged donors for you!.</string>
 
 </resources>
