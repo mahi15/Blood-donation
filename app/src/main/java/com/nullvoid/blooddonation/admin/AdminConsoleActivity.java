@@ -60,7 +60,7 @@ public class AdminConsoleActivity extends AppCompatActivity {
         donorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AdminConsoleActivity.this, AdminDonorActivity.class));
+                startActivity(new Intent(AdminConsoleActivity.this, DonorListActivity.class));
             }
         });
 
@@ -74,7 +74,7 @@ public class AdminConsoleActivity extends AppCompatActivity {
         donneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AdminConsoleActivity.this, AdminDonneActivity.class));
+                startActivity(new Intent(AdminConsoleActivity.this, DonneListActivity.class));
             }
         });
 

@@ -48,6 +48,7 @@
     <string name="call">Call</string>
     <string name="close">Close</string>
     <string name="message">Message</string>
+    <string name="thank_you">Thank You</string>
     
     <string name="logout_error_message">You must be logged in to logout</string>
     <string name="please_wait_message">Please wait until the process is completed</string>
@@ -87,13 +88,14 @@
     <string name="registration_unsuccessful">Something went wrong\nPlease try again later</string>
     <string name="registration_successful_greeting">Thank You for Registering</string>
     <string name="tnc_error">"You have to accept to our Terms and Conditions to continue"</string>
+    <string name="thank_for_reg_message">Thank you for registering</string>
 
     <!--DoneeRequestActivity srings-->
     <string name="req_submitted_message">Your request has been submitted successfully!</string>
     <string name="registering_request_message">Registering your Request</string>
     <string name="choose_req_group">Choose Required Blood Group</string>
 
-    <!--DonorSelectionActivity strings-->
+    <!--DonorSelectionListActivity strings-->
     <string name="donor_notified_message">The selected donors have been notified</string>
 
     <!--sms templates-->

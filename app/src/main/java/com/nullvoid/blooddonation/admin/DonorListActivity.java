@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
  * Created by sanath on 13/06/17.
  */
 
-public class AdminDonorActivity extends AppCompatActivity {
+public class DonorListActivity extends AppCompatActivity {
 
     Context context = this;
     ProgressDialog progressDialog;
@@ -53,8 +53,17 @@ public class AdminDonorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_view);
         ButterKnife.bind(this);
         loadToolbars();
-
         db = FirebaseDatabase.getInstance().getReference();
+
+        loadData();
+
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(context);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+    }
+
+    public void loadData() {
         db.child(Constants.donors()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -63,7 +72,7 @@ public class AdminDonorActivity extends AppCompatActivity {
                     donors.add(donor);
                 }
 
-                donorAdapter = new DonorAdapter(donors, context, context.getClass().equals(DonorSelectionActivity.class));
+                donorAdapter = new DonorAdapter(donors, context, context.getClass().equals(DonorSelectionListActivity.class));
                 recyclerView.setAdapter(donorAdapter);
             }
 
@@ -72,11 +81,6 @@ public class AdminDonorActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
         });
-
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(context);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(llm);
     }
 
     public void loadToolbars(){

@@ -41,12 +41,12 @@
             android:theme="@style/AppThemeNoActionBar" />
 
         <activity
-            android:name=".admin.AdminDonneActivity"
+            android:name=".admin.DonneListActivity"
             android:label="Donnes"
             android:theme="@style/AppThemeNoActionBar" />
 
         <activity
-            android:name=".admin.DonorSelectionActivity"
+            android:name=".admin.DonorSelectionListActivity"
             android:label="Select a Donor"
             android:theme="@style/AppThemeNoActionBar" />
 
@@ -60,7 +60,7 @@
             android:label="Admin Console"
             android:theme="@style/AppThemeNoActionBar" />
 
-        <activity android:name=".admin.AdminDonorActivity"
+        <activity android:name=".admin.DonorListActivity"
             android:label="Donors"
             android:theme="@style/AppThemeNoActionBar"/>
 
@@ -70,6 +70,9 @@
 
         <activity android:name=".admin.MatchDetailActivity"
             android:label="Donation Details"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity android:name=".admin.DonneDetailActivity"
+            android:label="Donne Details"
             android:theme="@style/AppThemeNoActionBar" />
     </application>
 

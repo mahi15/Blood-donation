@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.nullvoid.blooddonation.R;
+import com.nullvoid.blooddonation.adapters.DonorAdapter;
 import com.nullvoid.blooddonation.beans.Donee;
 import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.beans.Match;
@@ -33,6 +34,9 @@ import org.parceler.Parcels;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,9 +45,9 @@ import butterknife.ButterKnife;
  * Created by sanath on 19/06/17.
  */
 
-public class DonorSelectionActivity extends AdminDonorActivity {
+public class DonorSelectionListActivity extends DonorListActivity {
 
-    DonorSelectionActivity context = this;
+    DonorSelectionListActivity context = this;
 
     BroadcastReceiver selectionChangeReciever;
     Intent intent;
@@ -64,6 +68,67 @@ public class DonorSelectionActivity extends AdminDonorActivity {
         clickedDonee = Parcels.unwrap(intent.getParcelableExtra(Constants.donee()));
 
         loadAdditionalView();
+    }
+
+    @Override
+    public void loadData() {
+        db.child(Constants.donors()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Donor donor = postSnapshot.getValue(Donor.class);
+                    if (isCompactible(clickedDonee.getRequiredBloodGroup(), donor.getBloodGroup())) {
+                        donors.add(donor);
+                    }
+                }
+                donorAdapter = new DonorAdapter(donors, context, context.getClass().equals(DonorSelectionListActivity.class));
+                recyclerView.setAdapter(donorAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    public boolean isCompactible(String baseType, String givenType) {
+
+        if (givenType.equals(baseType)){return true;}
+        if (baseType.equals("AB+")){return true;}
+
+        Set<String> Ap = new HashSet<>(Arrays.asList("A+", "A-", "O-", "O+"));
+        Set<String> Bp = new HashSet<>(Arrays.asList("B+", "B-", "O-", "O+"));
+        Set<String> An = new HashSet<>(Arrays.asList("A-", "O-"));
+        Set<String> Bn = new HashSet<>(Arrays.asList("B-", "O-"));
+        Set<String> Op = new HashSet<>(Arrays.asList("O-", "O+"));
+        Set<String> ABn = new HashSet<>(Arrays.asList("O-", "A-", "B-", "AB-"));
+
+        switch (baseType) {
+            case "AB+":
+                return true;
+            case "O-":
+                return givenType.equals("O-");
+            case "A+":
+                if (Ap.contains(givenType)){return true;}
+                else {return false;}
+            case "B+":
+                if (Bp.contains(givenType)){return true;}
+                else {return false;}
+            case "A-":
+                if (An.contains(givenType)) {return true;}
+                else {return false;}
+            case "B-":
+                if (Bn.contains(givenType)) {return true;}
+                else {return false;}
+            case "O+":
+                if (Op.contains(givenType)) {return true;}
+                else{return false;}
+            case "AB-":
+                if (ABn.contains(givenType)) {return true;}
+                else {return false;}
+        }
+        return false;
     }
 
     public void loadAdditionalView() {

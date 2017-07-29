@@ -22,6 +22,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -369,7 +370,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
 
     public void checkIfDonorAlreadyExist(){
 
-        dbRef.child(Constants.donors()).orderByChild("phoneNumber").equalTo(donor.getPhoneNumber())
+        dbRef.child(Constants.donors()).orderByChild(Constants.phoneNumber).equalTo(donor.getPhoneNumber())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -470,10 +471,22 @@ public class DonorRegistrationActivity extends AppCompatActivity {
                         progressDialog.cancel();
                         if (task.isSuccessful()) {
                             writeToSharedPreference(donor);
-                            CommonFunctions.showToast(context,
-                                    getString(R.string.registration_successful_greeting));
-                            finish();
-                            startActivity(new Intent(DonorRegistrationActivity.this, MainActivity.class));
+
+                            new MaterialDialog.Builder(context)
+                                    .title(R.string.success)
+                                    .content(R.string.thank_for_reg_message)
+                                    .contentColor(Color.BLACK)
+                                    .cancelable(false)
+                                    .positiveText(R.string.ok)
+                                    .onAny(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(MaterialDialog dialog,
+                                                            DialogAction which) {
+                                            finish();
+                                            startActivity(new Intent(context, MainActivity.class));
+                                        }
+                                    }).show();
+
                         } else {
                             //if it fails
                             progressDialog.dismiss();

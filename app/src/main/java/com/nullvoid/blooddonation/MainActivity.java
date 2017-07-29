@@ -6,10 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -52,21 +49,18 @@ public class MainActivity extends AppCompatActivity {
     Donor tempDonor;
 
     @BindView(R.id.parent_view) LinearLayout parentView;
-    @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.admin) Button adminButton;
     @BindView(R.id.btn_donate_today) Button donateTodayButton;
     @BindView(R.id.btn_donate_blood) Button donateBloodButton;
     @BindView(R.id.btn_req_blood) Button requestBloodButton;
+    @BindView(R.id.btn_profile) Button profileButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        //nav drawer and toolbar
         setCurrentUserFromSharedPreference();
-        setSupportActionBar(toolbar);
 
         //firebase stuff
         mAuth = FirebaseAuth.getInstance();
@@ -84,6 +78,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, DonorRegistrationActivity.class));
+            }
+        });
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentUser == null) {
+                    checkIfDonorExists();
+                } else {
+                    startActivity(new Intent(context, DonorProfileActivity.class));
+                }
             }
         });
 
@@ -118,24 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AdminConsoleActivity.class));
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_toolbar_menu, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.profile_toolbar_icon) {
-            if (currentUser == null) {
-                checkIfDonorExists();
-            } else {
-                startActivity(new Intent(context, DonorProfileActivity.class));
-            }
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void setCurrentUserFromSharedPreference() {
@@ -178,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                                 .show();
 
                         String number = input.toString().trim();
-                        db.child(Constants.donors()).orderByChild(Constants.phoneNumber())
+                        db.child(Constants.donors()).orderByChild(Constants.phoneNumber)
                                 .equalTo(number).limitToFirst(1)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override

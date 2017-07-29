@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.nullvoid.blooddonation.admin.AdminDonneActivity;
+import com.nullvoid.blooddonation.admin.DonneListActivity;
 import com.nullvoid.blooddonation.admin.DoneeListFragment;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.others.Constants;
@@ -17,9 +17,9 @@ import com.nullvoid.blooddonation.others.Constants;
  */
 
 public class DonnePagerAdapter extends FragmentPagerAdapter {
-    AdminDonneActivity parentActivity;
+    DonneListActivity parentActivity;
 
-    public DonnePagerAdapter(FragmentManager fm, AdminDonneActivity parentActivity) {
+    public DonnePagerAdapter(FragmentManager fm, DonneListActivity parentActivity) {
         super(fm);
         this.parentActivity = parentActivity;
     }

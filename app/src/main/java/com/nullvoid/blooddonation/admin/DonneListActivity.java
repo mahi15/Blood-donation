@@ -1,6 +1,5 @@
 package com.nullvoid.blooddonation.admin;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -45,8 +44,8 @@ import butterknife.ButterKnife;
  * Created by sanath on 13/06/17.
  */
 
-public class AdminDonneActivity extends AppCompatActivity {
-    Activity context = this;
+public class DonneListActivity extends AppCompatActivity {
+    DonneListActivity context = DonneListActivity.this;
 
     DatabaseReference db;
     private DonnePagerAdapter mAdapter;
@@ -76,7 +75,7 @@ public class AdminDonneActivity extends AppCompatActivity {
                 .progress(true, 0)
                 .build();
 
-        mAdapter = new DonnePagerAdapter(getSupportFragmentManager(), AdminDonneActivity.this);
+        mAdapter = new DonnePagerAdapter(getSupportFragmentManager(), context);
 
         // Give the TabLayout the ViewPager
         tabLayout.setupWithViewPager(viewPager);
@@ -92,8 +91,12 @@ public class AdminDonneActivity extends AppCompatActivity {
 
     public void getSelectedDonors(final Donee donee, final String action) {
 
-
-        loadingDialog.show();
+        try {
+            loadingDialog.show();
+        } catch (Exception e) {
+            System.out.println("Error Handled");
+            return;
+        }
 
         db.child(Constants.matches)
                 .child(donee.getDoneeId())

@@ -6,26 +6,40 @@
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/splash_screen_bg"
     android:orientation="vertical"
     tools:context="com.nullvoid.blooddonation.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="false"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@color/colorPrimary"
+        android:fontFamily="sans-serif"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:text="RSS HSS Blood Donors Bureau"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:textAlignment="gravity"
-            app:logo="@mipmap/ic_launcher"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
 
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/bd_logo_trans" />
+
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -34,69 +48,104 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="6dp">
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp">
-
-                <Button
-                    android:id="@+id/btn_req_blood"
-                    style="@style/dash_board_element"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Request for Blood" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp">
-
-                <Button
-                    android:id="@+id/btn_donate_blood"
-                    style="@style/dash_board_element"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Register as a donor" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp">
-
-                <Button
-                    android:id="@+id/btn_donate_today"
-                    style="@style/dash_board_element"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Donate Today" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TableLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp">
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/admin"
-                    style="@style/dash_board_element"
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="admin console"
-                    android:visibility="gone" />
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp">
+
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal">
+
+                        <Button
+                            android:id="@+id/btn_req_blood"
+                            android:layout_width="130dp"
+                            android:layout_height="130dp"
+                            android:background="@drawable/circle_button_background"
+                            android:drawableTop="@drawable/ic_add_circle_outline_white"
+                            android:paddingTop="20dp"
+                            android:text="Request"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal">
+
+                        <Button
+                            android:id="@+id/btn_donate_blood"
+                            android:layout_width="130dp"
+                            android:layout_height="130dp"
+                            android:background="@drawable/circle_button_background"
+                            android:drawableTop="@drawable/ic_person_add_white"
+                            android:paddingTop="20dp"
+                            android:text="Donate"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal">
+                        <Button
+                            android:id="@+id/btn_donate_today"
+                            android:layout_width="130dp"
+                            android:layout_height="130dp"
+                            android:background="@drawable/circle_button_background"
+                            android:drawableTop="@drawable/ic_sentiment_satisfied_white"
+                            android:paddingTop="20dp"
+                            android:text="Donate Today"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal">
+
+                        <Button
+                            android:id="@+id/btn_profile"
+                            android:layout_width="130dp"
+                            android:layout_height="130dp"
+                            android:background="@drawable/circle_button_background"
+                            android:drawableTop="@drawable/ic_info_outline_white"
+                            android:paddingTop="20dp"
+                            android:text="Profile"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+                </TableRow>
+
+            </TableLayout>
+
+            <Button
+                android:id="@+id/admin"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/circle_button_background"
+                android:drawableTop="@drawable/ic_change_history_white"
+                android:paddingTop="20dp"
+                android:text="Admin"
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

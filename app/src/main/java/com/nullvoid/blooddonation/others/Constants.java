@@ -40,9 +40,7 @@ public class Constants {
     }
 
     //donor stuff
-    public static final String phoneNumber(){
-        return "phoneNumber";
-    }
+    public static final String phoneNumber = "phoneNumber";
     public static final String registeredDate(){
         return "registeredDate";
     }

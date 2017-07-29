@@ -17,10 +17,11 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nullvoid.blooddonation.R;
-import com.nullvoid.blooddonation.admin.DonorSelectionActivity;
+import com.nullvoid.blooddonation.admin.DonneDetailActivity;
+import com.nullvoid.blooddonation.admin.DonorSelectionListActivity;
 import com.nullvoid.blooddonation.beans.Donee;
-import com.nullvoid.blooddonation.others.Constants;
 import com.nullvoid.blooddonation.others.CommonFunctions;
+import com.nullvoid.blooddonation.others.Constants;
 
 import org.parceler.Parcels;
 
@@ -87,13 +88,13 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    Intent intent = new Intent(context, DonorSelectionActivity.class);
+                                    Intent intent = new Intent(context, DonorSelectionListActivity.class);
                                     intent.putExtra(Constants.donee(), Parcels.wrap(donee));
                                     context.startActivity(intent);
                                 }
                             }).show();
                 } else {
-                    Intent intent = new Intent(context, DonorSelectionActivity.class);
+                    Intent intent = new Intent(context, DonorSelectionListActivity.class);
                     intent.putExtra(Constants.donee(), Parcels.wrap(donee));
                     context.startActivity(intent);
                 }
@@ -105,6 +106,15 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
             public void onClick(View v) {
                 showNumbersToCallDialog(donee.getRequesterName(), donee.getPatientAttendantName(),
                         donee.getRequesterPhoneNumber(), donee.getPatientAttendantNumber());
+            }
+        });
+
+        holder.fullInfoImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DonneDetailActivity.class);
+                intent.putExtra(Constants.donee(), Parcels.wrap(donee));
+                context.startActivity(intent);
             }
         });
 
@@ -200,6 +210,7 @@ public class DoneeAdapter extends RecyclerView.Adapter<DoneeAdapter.DoneeViewHol
         @BindView(R.id.select_donors_image) ImageView selectDonorImage;
         @BindView(R.id.view_selected_donors_image) ImageView viewSelectedDonorsImage;
         @BindView(R.id.mark_complete_image) ImageView markCompleteImage;
+        @BindView(R.id.full_info_image) ImageView fullInfoImage;
         //layouts
         @BindView(R.id.pending_donne_actions_layout) LinearLayout pendingDonneActionsLayout;
         @BindView(R.id.hidden_part) LinearLayout hiddenPartLayout;
