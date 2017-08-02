@@ -9,17 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,23 +22,29 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.nullvoid.blooddonation.admin.AdminConsoleActivity;
+import com.nullvoid.blooddonation.beans.DonateToday;
 import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.others.CommonFunctions;
 import com.nullvoid.blooddonation.others.Constants;
+import com.nullvoid.blooddonation.others.SMS;
 
-import java.util.concurrent.TimeUnit;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-
     MainActivity context = this;
 
     MaterialDialog loadingDialog;
 
     FirebaseAuth mAuth;
     DatabaseReference db;
+
+    SharedPreferences mPrefs;
+    Gson gson;
 
     Donor currentUser;
     Donor tempDonor;
@@ -54,18 +55,34 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btn_donate_blood) Button donateBloodButton;
     @BindView(R.id.btn_req_blood) Button requestBloodButton;
     @BindView(R.id.btn_profile) Button profileButton;
+    @BindView(R.id.share_image) ImageView shareImage;
+    @BindView(R.id.info_image) ImageView infoImage;
+    @BindView(R.id.logo_image) ImageView logoImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        setCurrentUserFromSharedPreference();
 
         //firebase stuff
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance().getReference();
 
+        currentUser = CommonFunctions.getCurrentUser(context);
+        resetDonateToday();
+
+        loadView();
+    }
+
+    public void loadView() {
+
+        loadingDialog = new MaterialDialog.Builder(context)
+                .title(R.string.loading)
+                .content(R.string.please_wait_message)
+                .progress(true, 0)
+                .cancelable(false)
+                .build();
 
         requestBloodButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,47 +112,66 @@ public class MainActivity extends AppCompatActivity {
         donateTodayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mAuth.getCurrentUser() == null){
-                    CommonFunctions.showToast(context,
-                            getString(R.string.login_first_message));
-                    checkIfDonorExists();
-                } else {
+                if (currentUser == null){
                     new MaterialDialog.Builder(context)
-                            .title(R.string.confirm)
-                            .content("Opt for donating today?")
-                            .positiveText(R.string.yes)
-                            .negativeText(R.string.cancel)
-                            .cancelable(false)
+                            .title(R.string.not_registered)
+                            .content(R.string.register_or_login)
+                            .contentColor(Color.BLACK)
+                            .autoDismiss(true)
+                            .positiveText(R.string.register)
+                            .negativeText(R.string.login)
+                            .neutralText(R.string.cancel)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
-                                public void onClick(@NonNull MaterialDialog dialog,
-                                                    @NonNull DialogAction which) {
-                                    //todo
+                                public void onClick(MaterialDialog dialog,
+                                                    DialogAction which) {
+                                    startActivity(new Intent(context, DonorRegistrationActivity.class));
                                 }
-                            });
+                            })
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog dialog,
+                                                    DialogAction which) {
+                                    checkIfDonorExists();
+                                }
+                            })
+                            .onAny(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog dialog,
+                                                    DialogAction which) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                } else {
+                    startActivity(new Intent(context, DonateTodayActivity.class));
                 }
             }
         });
 
-        adminButton.setOnClickListener(new View.OnClickListener() {
+        if (currentUser != null && currentUser.isAdmin()) {
+            adminButton.setVisibility(View.VISIBLE);
+            adminButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, AdminConsoleActivity.class));
+                }
+            });
+        }
+
+        shareImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, AdminConsoleActivity.class));
+                shareIt();
             }
         });
     }
 
-    private void setCurrentUserFromSharedPreference() {
-        SharedPreferences mPref = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String userJson = mPref.getString(Constants.currentUser, null);
-        currentUser = gson.fromJson(userJson, Donor.class);
-
-        if (currentUser != null) {
-            if (currentUser.isAdmin()) {
-                adminButton.setVisibility(View.VISIBLE);
-            }
-        }
+    public void shareIt() {
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, Constants.shareAppBody);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, Constants.shareAppExtra);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
     private void checkIfDonorExists() {
@@ -156,29 +192,24 @@ public class MainActivity extends AppCompatActivity {
                 .input(getString(R.string.enter_here), "", false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
-
-                        loadingDialog = new MaterialDialog.Builder(MainActivity.this)
-                                .title(R.string.loading)
-                                .content(R.string.please_wait_message)
-                                .progress(true, 0)
-                                .cancelable(false)
-                                .show();
+                        loadingDialog.show();
 
                         String number = input.toString().trim();
-                        db.child(Constants.donors()).orderByChild(Constants.phoneNumber)
-                                .equalTo(number).limitToFirst(1)
+                        db.child(Constants.donors).orderByChild(Constants.phoneNumber)
+                                .equalTo(number)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot d : dataSnapshot.getChildren()) {
-                                            tempDonor = d.getValue(Donor.class);
+
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            tempDonor = ds.getValue(Donor.class);
                                         }
+                                        loadingDialog.dismiss();
                                         if (tempDonor == null) {
-                                            loadingDialog.dismiss();
                                             showFailedDialog(getString(R.string.no_donor_message));
                                             return;
                                         }
-                                        verifyPhoneNumber(tempDonor.getPhoneNumber());
+                                        verifyPhoneNumber(tempDonor);
                                     }
 
                                     @Override
@@ -194,79 +225,86 @@ public class MainActivity extends AppCompatActivity {
     public void showFailedDialog(String message) {
 
         new MaterialDialog.Builder(MainActivity.this)
-                .neutralText(R.string.ok)
+                .positiveText(R.string.ok)
                 .title(R.string.failed)
                 .content(message)
                 .show();
     }
 
-    public void verifyPhoneNumber(final String phoneNumber) {
+    public void verifyPhoneNumber(final Donor donor){
 
-        final PhoneAuthProvider phoneAuth = PhoneAuthProvider.getInstance();
-        phoneAuth.verifyPhoneNumber(phoneNumber, 120, TimeUnit.SECONDS, MainActivity.this,
-                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                    @Override
-                    public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-                        signInUser(phoneAuthCredential);
-                    }
+        final String otp = CommonFunctions.generateOTP();
+//        new SMS.sendOtp(context).execute(donor.getPhoneNumber(), otp);
 
-                    @Override
-                    public void onVerificationFailed(FirebaseException e) {
-                        loadingDialog.dismiss();
-                        showFailedDialog(getString(R.string.verification_failed));
-                    }
-
-                    @Override
-                    public void onCodeSent(final String verificationId, final PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                        super.onCodeSent(verificationId, forceResendingToken);
-                        showOtpPrompt(verificationId);
-                    }
-                });
-    }
-
-    private void showOtpPrompt(final String verificationId) {
-
-        new MaterialDialog.Builder(MainActivity.this)
-                .cancelable(false)
-                .positiveText(R.string.submit)
-                .negativeText(R.string.cancel)
-                .title(R.string.enter_otp_title)
-                .content(R.string.enter_otp_message)
-                .input(R.string.enter_here, R.string.blank, false, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        String enteredCode = input.toString().trim();
-                        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, enteredCode);
-                        signInUser(credential);
-                    }
-                })
-                .show();
-    }
-
-    public void signInUser(PhoneAuthCredential credential) {
-
-        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        new SMS.sendOtp(context) {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-
-                    SharedPreferences mPrefs = getSharedPreferences(Constants.currentUser, MODE_PRIVATE);
-                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                    Gson gson = new Gson();
-                    String jsonDonor = gson.toJson(tempDonor);
-                    prefsEditor.putString(Constants.currentUser, jsonDonor);
-                    prefsEditor.commit();
-                    finish();
-                    startActivity(new Intent(MainActivity.this, MainActivity.class));
-                    CommonFunctions.showToast(context,
-                            getString(R.string.login_success_message));
-
-                } else {
-                    showFailedDialog("Unable to verify\nPlease try again later");
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                System.out.println(s);
+                if (s.equals("f")) {
+                    showFailedDialog(getString(R.string.on_cancelled_message));
+                    return;
                 }
+
+                new MaterialDialog.Builder(context)
+                        .cancelable(false)
+                        .positiveText(R.string.submit)
+                        .negativeText(R.string.cancel)
+                        .title(R.string.enter_otp_title)
+                        .content(R.string.enter_otp_message)
+                        .input(R.string.enter_here, R.string.blank, false, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                String enteredCode = input.toString().trim();
+                                if (otp.equals(enteredCode)) {
+                                    CommonFunctions.signInUser(context, donor);
+                                    finish();
+                                    startActivity(new Intent(context, MainActivity.class));
+                                }
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(MaterialDialog dialog,
+                                                DialogAction which) {
+                                cancel(true);
+                            }
+                        })
+                        .show();
+            }
+        }.execute(donor.getPhoneNumber(), otp);
+    }
+
+    //to be made as a server side function
+    public void resetDonateToday() {
+
+        SimpleDateFormat thisDate = new SimpleDateFormat("dd/MM/yyyy");
+        final String todate = thisDate.format(new Timestamp(System.currentTimeMillis()));
+
+        final ArrayList<DonateToday> donateTodays = new ArrayList<>();
+        db.child(Constants.donatetoday)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    DonateToday dt = ds.getValue(DonateToday.class);
+                    donateTodays.add(dt);
+                    if (!dt.getDate().equals(todate)) {
+                        db.child(Constants.donors)
+                                .child(dt.getDonorId())
+                                .child(Constants.willingToDonateToday)
+                                .setValue(false);
+
+                        db.child(Constants.donatetoday).child(dt.getDonorId()).removeValue();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
-
 }
-

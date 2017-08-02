@@ -18,7 +18,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
@@ -58,7 +57,6 @@ public class DonorProfileActivity extends AppCompatActivity {
     DonorProfileActivity context = this;
 
     DatabaseReference db;
-    FirebaseAuth mAuth;
 
     Donor user;
     boolean adminMode;
@@ -70,11 +68,7 @@ public class DonorProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donor_profile);
         ButterKnife.bind(this);
-        db = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
-
         setSupportActionBar(toolbar);
-
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,14 +76,20 @@ public class DonorProfileActivity extends AppCompatActivity {
             }
         });
 
-        Donor otherUser = Parcels.unwrap(getIntent().getParcelableExtra(Constants.donor));
+        db = FirebaseDatabase.getInstance().getReference();
 
+        Donor otherUser = Parcels.unwrap(getIntent().getParcelableExtra(Constants.donor));
         adminMode = otherUser != null;
 
-        if (adminMode) {
-            user = otherUser;
-            getSupportActionBar().setTitle(user.getName());
+        user = adminMode ? otherUser : CommonFunctions.getCurrentUser(context);
 
+        loadView();
+        setProfileContent(user);
+    }
+
+    public void loadView() {
+        if (adminMode) {
+            getSupportActionBar().setTitle(user.getName());
             callDonorImage.setVisibility(View.VISIBLE);
             callDonorImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -97,56 +97,40 @@ public class DonorProfileActivity extends AppCompatActivity {
                     CommonFunctions.call(context, user.getPhoneNumber());
                 }
             });
+
             logoutText.setVisibility(View.GONE);
-        } else {
-            sp = getSharedPreferences(currentUser, MODE_PRIVATE);
-            String userJson = sp.getString(currentUser, null);
-            gson = new Gson();
-            user = gson.fromJson(userJson, Donor.class);
+
+
+        }
+        else {
 
             logoutText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    logoutUser();
+
+                    new MaterialDialog.Builder(context)
+                            .title(R.string.confirm)
+                            .content(R.string.logout_confirm_message)
+                            .positiveText(R.string.yes)
+                            .negativeText(R.string.no)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    CommonFunctions.signOutUser(context);
+                                    finish();
+                                    startActivity(new Intent(context, MainActivity.class));
+                                    CommonFunctions.showToast( context,
+                                            getString(R.string.logout_success_message));
+                                }
+                            })
+                            .show();
                 }
             });
-        }
-        setProfileContent(user);
-    }
-
-    public void logoutUser() {
-        if (currentUser == null) {
-            new MaterialDialog.Builder(context)
-                    .title(R.string.error)
-                    .content(R.string.logout_error_message)
-                    .positiveText(R.string.ok)
-                    .show();
-        } else {
-
-            final SharedPreferences mPrefs = getSharedPreferences(currentUser, MODE_PRIVATE);
-            new MaterialDialog.Builder(context)
-                    .title(R.string.confirm)
-                    .content(R.string.logout_confirm_message)
-                    .positiveText(R.string.yes)
-                    .negativeText(R.string.no)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mAuth.signOut();
-                            SharedPreferences.Editor editor = mPrefs.edit();
-                            editor.clear().apply();
-                            finish();
-                            startActivity(new Intent(context, MainActivity.class));
-                            CommonFunctions.showToast( context,
-                                    getString(R.string.logout_success_message));
-                        }
-                    })
-                    .show();
         }
     }
 
     public void toggleAvailable(final Donor user, final boolean available) {
-        db.child(Constants.donors())
+        db.child(Constants.donors)
                 .child(user.getDonorId())
                 .child(Constants.isAvailable)
                 .setValue(available)

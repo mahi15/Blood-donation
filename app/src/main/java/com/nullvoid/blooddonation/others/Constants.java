@@ -6,7 +6,7 @@ package com.nullvoid.blooddonation.others;
 
 public class Constants {
 
-    public static final String smsApiKey = "pXeD2smsTCo-kcltBRDTn63S7Ej1jQ4YVP204G0OIh";
+    public static final String smsApiKey = "167663A2Dyfg7UZI597df63f";
 
     public static final String select = "SELECT";
     public static final String remove = "REMOVE";
@@ -15,9 +15,6 @@ public class Constants {
     public static final String currentUser = "CURRENT_USER";
     public static final String notProvided =  "Not Provided";
     public static final String selectionChange = "SELECTION_CHANGE";
-    public static final String matchCategory = "matchCategory";
-    public static final String matchCategoryNormal = "MATCH_NORMAL";
-    public static final String matchCategoryDonateToday = "MATCH_DONATE_TODAY";
 
     //donne action buttons stuff
     public static final String donneAction(){
@@ -31,13 +28,12 @@ public class Constants {
     }
 
     //database node names
-    public static final String donors(){
-        return "donors";
-    }
+    public static final String donors = "donors";
     public static final String matches = "matches";
-    public static final String donees(){
-        return "donees";
-    }
+    public static final String donees = "donees";
+    public static final String completedDate = "completedDate";
+    public static final String donatetoday = "donatetoday";
+    public static final String willingToDonateToday = "willingToDonateToday";
 
     //donor stuff
     public static final String phoneNumber = "phoneNumber";
@@ -70,4 +66,11 @@ public class Constants {
         return "requestedDate";
     }
 
+    public static final String shareAppExtra = "Download RSS HSS Blood Donors Bureau android application from PlayStore now!\n" +
+            " https://play.google.com/store/apps/details?id=blood_donation";
+    public static final String shareAppBody = "RSS HSS Blood Donors Bureau android application is now available";
+
+    //SMS
+    public static final String smsSenderId = "RSSHSS";
+    public static final String smsOtpUrl = "http://api.msg91.com/api/sendotp.php?";
 }

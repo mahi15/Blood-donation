@@ -10,9 +10,11 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -21,10 +23,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nullvoid.blooddonation.beans.Donee;
+import com.nullvoid.blooddonation.others.CommonFunctions;
 import com.nullvoid.blooddonation.others.Constants;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -107,6 +111,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
                         .show();
             }
         });
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +119,12 @@ public class DoneeRequestActivity extends AppCompatActivity {
             }
         });
 
-        reqDate.addTextChangedListener(dateWatcher);
+        reqDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePicker();
+            }
+        });
     }
 
     public void getInfoFromView() {
@@ -178,7 +188,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
         doneeId = dbRef.push().getKey();
         donee.setDoneeId(doneeId);
 
-        dbRef.child(Constants.donees()).child(doneeId).setValue(donee).
+        dbRef.child(Constants.donees).child(doneeId).setValue(donee).
         addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -208,6 +218,60 @@ public class DoneeRequestActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void showDatePicker() {
+
+        //date picker
+        String[] months = getResources().getStringArray(R.array.months);
+        final String[] days31 = new String[31];
+
+        for (int i = 0; i < 31; i++) {
+            days31[i] = String.valueOf(i+1);
+        }
+        final String[] days30 = Arrays.copyOfRange(days31, 0, 29);
+        final String[] days29 = Arrays.copyOfRange(days31, 0, 27);
+
+        final ArrayAdapter dayAdapter = new ArrayAdapter<String>(context,
+                android.R.layout.simple_spinner_dropdown_item, days31);
+        ArrayAdapter monthAdapter = new ArrayAdapter<String>(context,
+                android.R.layout.simple_spinner_dropdown_item, months);
+        ArrayAdapter yearAdapter = new ArrayAdapter<String>(context,
+                android.R.layout.simple_spinner_dropdown_item, Arrays.asList(String.valueOf(cYear)));
+
+        MaterialDialog datePicker = new MaterialDialog.Builder(context)
+                .title(R.string.dob_title)
+                .customView(R.layout.date_picker_layout, false)
+                .positiveText(R.string.ok)
+                .cancelable(false)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog dialog,
+                                        DialogAction which) {
+                        View view = dialog.getView();
+                        final Spinner daySpinner = (Spinner) view.findViewById(R.id.day_spinner);
+                        Spinner monthSpinner = (Spinner) view.findViewById(R.id.month_spinner);
+                        Spinner yearSpinner = (Spinner) view.findViewById(R.id.year_spinner);
+
+                        String d = daySpinner.getSelectedItem().toString();
+                        d = d.length() == 1 ? "0"+d : d;
+                        String m = String.valueOf(monthSpinner.getSelectedItemPosition() + 1);
+                        m = m.length() == 1 ? "0"+m : m;
+
+                        String dobDate =  d + "/" + m + "/" + yearSpinner.getSelectedItem().toString();
+
+                        reqDate.setText(dobDate);
+                    }
+                }).show();
+        View view = datePicker.getCustomView();
+        Spinner daySpinner = (Spinner) view.findViewById(R.id.day_spinner);
+        Spinner monthSpinner = (Spinner) view.findViewById(R.id.month_spinner);
+        Spinner yearSpinner = (Spinner) view.findViewById(R.id.year_spinner);
+
+        daySpinner.setAdapter(dayAdapter);
+        monthSpinner.setAdapter(monthAdapter);
+        yearSpinner.setAdapter(yearAdapter);
     }
 
     public boolean validateForm() {
@@ -244,6 +308,23 @@ public class DoneeRequestActivity extends AppCompatActivity {
             reqDate.setError(required);
             reqDate.requestFocus();
             return false;
+        }
+        String[] rd = dRequestedDate.split("/");
+        int d = Integer.parseInt(rd[0]);
+        int m = Integer.parseInt(rd[1]);
+        int y = Integer.parseInt(rd[2]);
+        if (m == 2){
+            if ( (y % 4 != 0) && d >= 29 ) {
+                CommonFunctions.showToast(context, "Not a valid date");
+                return false;
+            }
+        } else {
+            if (m % 2 == 0) {
+                if (!(d <= 30)) {
+                    CommonFunctions.showToast(context, "Not a valid date");
+                    return false;
+                }
+            }
         }
         if (dPAreaOfResidence.length() < 4) {
             reqAreaOfResidence.setError(notValid);

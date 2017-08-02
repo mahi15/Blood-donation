@@ -269,7 +269,7 @@
                     android:id="@+id/textView18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hospital PIN : "
+                    android:text="Hospital Pincode : "
                     android:textColor="#585858" />
 
                 <TextView

@@ -1,10 +1,10 @@
 package com.nullvoid.blooddonation.admin;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
@@ -28,7 +28,6 @@ public class MatchDetailActivity extends AppCompatActivity {
     Activity context = this;
 
     Match match;
-    Intent startedIntent;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.match_donne_name) TextView donneName;
@@ -41,6 +40,8 @@ public class MatchDetailActivity extends AppCompatActivity {
     @BindView(R.id.match_donors_contacted) TextView contactedDonorsCount;
     @BindView(R.id.match_donors_helped) TextView helpedDonorsCount;
     @BindView(R.id.match_contacted_donors_list) ExpandableHeightListView contactedDonorsListView;
+    @BindView(R.id.match_helped_donors_card) CardView helpedDonorsCard;
+    @BindView(R.id.match_helped_donors_list) ExpandableHeightListView helpedDonorsListView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +56,7 @@ public class MatchDetailActivity extends AppCompatActivity {
             }
         });
 
+
         match = Parcels.unwrap(getIntent().getParcelableExtra(Constants.matches));
 
         donneName.setText(match.getDonee().getPatientName());
@@ -67,7 +69,15 @@ public class MatchDetailActivity extends AppCompatActivity {
         contactedDonorsCount.setText(String.valueOf(match.getContactedDonors().size()));
         helpedDonorsCount.setText(match.getHelpedDonors() == null ? "NONE" : String.valueOf(match.getHelpedDonors().size()));
 
-        DonorMinimalAdapter contactedDonorAdapter = new DonorMinimalAdapter(context, match.getContactedDonors());
+        if (match.getHelpedDonors().isEmpty()) {
+            helpedDonorsCard.setVisibility(View.GONE);
+        } else {
+            final DonorMinimalAdapter helpedDonorAdapter = new DonorMinimalAdapter(context, match.getHelpedDonors());
+            helpedDonorsListView.setAdapter(helpedDonorAdapter);
+            helpedDonorsListView.setExpanded(true);
+        }
+
+        final DonorMinimalAdapter contactedDonorAdapter = new DonorMinimalAdapter(context, match.getContactedDonors());
         contactedDonorsListView.setAdapter(contactedDonorAdapter);
         contactedDonorsListView.setExpanded(true);
     }

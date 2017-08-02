@@ -41,8 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Age : "
-                android:textColor="#585858"
-                 />
+                android:textColor="#585858" />
 
             <TextView
                 android:id="@+id/donor_age"
@@ -272,14 +271,14 @@
                     android:id="@+id/textView18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pin Code : "
+                    android:text="Pincode : "
                     android:textColor="#585858" />
 
                 <TextView
                     android:id="@+id/donor_pin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pin Code"
+                    android:text="`code"
                     android:textColor="#414141"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -311,12 +310,26 @@
 
         <CheckBox
             android:id="@+id/selection_checkBox"
+            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/linearLayout2"
             android:layout_marginEnd="15dp"
             android:layout_toStartOf="@+id/donor_group"
             android:padding="3dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/donate_today_lable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/donor_group"
+            android:layout_below="@+id/donor_group"
+            android:text="DONATE TODAY"
+            android:textAlignment="center"
+            android:textColor="#24c200"
+            android:textSize="12sp"
+            android:textStyle="bold"
             android:visibility="gone" />
 
     </RelativeLayout>

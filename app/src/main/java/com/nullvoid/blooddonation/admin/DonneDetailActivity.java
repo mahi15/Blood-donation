@@ -122,7 +122,6 @@ public class DonneDetailActivity extends AppCompatActivity {
         if (donee.getStatus().equals(Constants.statusNotComplete())) {
             viewMatch.setVisibility(View.GONE);
         } else {
-
             viewMatch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

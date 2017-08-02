@@ -142,6 +142,7 @@
                     android:hint="Required Date"
                     android:inputType="date"
                     android:orientation="horizontal"
+                    android:focusable="false"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
 
@@ -233,7 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Hospital Pin Code"
+                    android:hint="Hospital Pincode"
                     android:inputType="number"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>

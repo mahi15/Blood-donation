@@ -6,9 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import butterknife.BindView;
@@ -34,47 +31,35 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         ButterKnife.bind(context);
 
-        final Animation fadeIn = AnimationUtils.loadAnimation(context, R.anim.alpha);
-        Animation fallDown = AnimationUtils.loadAnimation(context, R.anim.translate);
-        final Animation fallDown2 = AnimationUtils.loadAnimation(context, R.anim.translate);
+        //animation preparation
+        drop1.setTranslationY(-200.f);
+        drop1.setAlpha(0.f);
 
-        final AnimationSet s = new AnimationSet(true);
-        s.addAnimation(fadeIn);
-        s.addAnimation(fallDown2);
+        drop2.setTranslationY(-50.f);
+        drop2.setAlpha(0.f);
 
         light.setAlpha(0.f);
 
-        drop2.setAlpha(0.f);
-        drop2.setTranslationY(-100.f);
+        drop1.animate()
+                .alpha(1.f)
+                .translationY(0.f)
+                .setDuration(2000)
+                .start();
 
-        fallDown.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+        drop2.animate()
+                .alpha(1.f)
+                .translationY(0.f)
+                .setDuration(1500)
+                .withEndAction(new Runnable() {
                     @Override
                     public void run() {
                         light.animate()
                                 .alpha(1.f)
                                 .setDuration(2500)
                                 .start();
-
-                        drop2.animate()
-                                .alpha(1.f)
-                                .translationY(0.f)
-                                .setDuration(2000)
-                                .start();
                     }
-                }, 1000);
-            }
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-        drop1.startAnimation(fallDown);
+                })
+                .start();
 
         new Handler().postDelayed(new Runnable() {
 

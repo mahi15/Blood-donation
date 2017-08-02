@@ -271,6 +271,10 @@ public class DonneListActivity extends AppCompatActivity {
         match.setCompletedDate(date);
         match.setCompleted(true);
 
+        Donee donee = match.getDonee();
+        donee.setStatus(Constants.statusComplete());
+        match.setDonee(donee);
+
         db.child(Constants.matches)
                 .child(match.getMatchId())
                 .setValue(match)
@@ -287,14 +291,14 @@ public class DonneListActivity extends AppCompatActivity {
                             loadingDialog.dismiss();
                         }
                         //update donne status in Database
-                        db.child(Constants.donees())
+                        db.child(Constants.donees)
                                 .child(match.getMatchId())
                                 .child(Constants.status)
                                 .setValue(Constants.statusComplete());
 
                         //update donor's donation count in database
                         for (Donor donor : helpedDonors) {
-                            db.child(Constants.donors())
+                            db.child(Constants.donors)
                                     .child(donor.getDonorId())
                                     .child(Constants.donationCount())
                                     .setValue(donor.getDonationCount() + 1);

@@ -9,6 +9,20 @@
         <item>AB-</item>
         <item>O-</item>
     </string-array>
+    <string-array name="months">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
+        <item>Sep</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
+    </string-array>
 
     <string name="choose_gender_title">Choose Your Gender</string>
     <string-array name="gender_array">
@@ -27,6 +41,8 @@
     <string name="mark_complete_title">Mark Donation As Complete</string>
     <string name="blank"></string>
     <string name="no_internet_message">Please check your Internet connection and try again</string>
+    <string name="donate_today_registered_status_title">Registered for Donating Today</string>
+    <string name="donate_today_registered_status_message">Thank you for opting to donate today</string>
 
     <!--validation messages-->
     <string name="required_error">Required</string>
@@ -49,13 +65,18 @@
     <string name="close">Close</string>
     <string name="message">Message</string>
     <string name="thank_you">Thank You</string>
-    
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+
+    <string name="dob_title">Date Of Birth</string>
     <string name="logout_error_message">You must be logged in to logout</string>
     <string name="please_wait_message">Please wait until the process is completed</string>
     <string name="logout_confirm_message">Are you sure you want to logout ?</string>
     <string name="enter_otp_message">Enter the One Time Password you received through SMS</string>
     <string name="enter_otp_title">Enter OTP</string>
     <string name="enter_number_title">Enter your phone number</string>
+    <string name="enter_request_code_title">Enter Request Code</string>
+    <string name="enter_request_code_message">Enter the request code you recieved through SMS.</string>
     <string name="enter_number_message">Your phone number is required for OTP verification</string>
     <string name="on_cancelled_message">Something went wrong.\nPlease try again later.</string>
     <string name="wrong_otp_message">Sorry that does not seem to be the right code</string>
@@ -74,17 +95,31 @@
     </plurals>
     <string name="available_toggled_message">You have been marked as %1$s</string>
     <string name="req_made_today">Requests Made Today</string>
+    <string name="donate_today_title">What is Donate today ?</string>
+    <string name="donate_today_message">
+        Donate today is a way to make a donation especially today for any reason that you like.
+    </string>
+    <string name="how_it_works_title">How it works ?</string>
+    <string name="how_it_works_message">
+        You will be contacted within today if there is any need of your compatible blood type.
+    </string>
+    <string name="donate_today_registered_message">
+        You have been registered for making donations today. You will be contacted in needed.
+    </string>
 
     <!--MainActivity strings-->
+    <string name="no_donne_message">Invalid request ID</string>
     <string name="no_donor_message">There is no donor with the given phone number</string>
     <string name="login_success_message">Successfully Logged In</string>
     <string name="logout_success_message">Logged out Successfully</string>
     <string name="login_first_message">Please login first to continue</string>
+    <string name="not_registered">Not registered</string>
+    <string name="register_or_login">Register or Login to continue</string>
 
     <!--DonorRegistrationActivity strings-->
     <string name="choose_your_group">Choose your Blood Group</string>
     <string name="registering_donor_message">Please wait while you are being registered</string>
-    <string name="already_exist_error">There exists a user with the given phone number.\nPlease use another number.</string>
+    <string name="already_exist_error">This phone number is already registered with an account.\nPlease use another number.</string>
     <string name="registration_unsuccessful">Something went wrong\nPlease try again later</string>
     <string name="registration_successful_greeting">Thank You for Registering</string>
     <string name="tnc_error">"You have to accept to our Terms and Conditions to continue"</string>
@@ -99,7 +134,9 @@
     <string name="donor_notified_message">The selected donors have been notified</string>
 
     <!--sms templates-->
-    <string name="need_help_message">%1$s is in need of %2$s type blood at %3$s hospital within %4$s date.</string>
+    <string name="need_help_message">
+        URGENT:Blood Donation Request. %1$s at %2$s hospital requires %3$s blood type.We need your help now. Please contact %4$s - %5$s.
+    </string>
     <string name="help_asked_message">We have arranged donors for you!.</string>
 
 </resources>

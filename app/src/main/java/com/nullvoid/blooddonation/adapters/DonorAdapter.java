@@ -70,6 +70,13 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         holder.donorLocation.setText(donor.getLocation());
         holder.donorPin.setText(donor.getPincode());
 
+        //for donate today
+        if (donor.isWillingToDonateToday()) {
+            holder.donateTodayLable.setVisibility(View.VISIBLE);
+        } else {
+            holder.donateTodayLable.setVisibility(View.GONE);
+        }
+
         //For donor selection activity
         if (selectionMode){
             holder.checkBox.setVisibility(View.VISIBLE);
@@ -161,6 +168,7 @@ public class DonorAdapter extends RecyclerView.Adapter<DonorAdapter.DonorViewHol
         @BindView(R.id.donor_address) TextView donorAddress;
         @BindView(R.id.donor_location) TextView donorLocation;
         @BindView(R.id.donor_pin) TextView donorPin;
+        @BindView(R.id.donate_today_lable) TextView donateTodayLable;
         @BindView(R.id.visible_part) RelativeLayout visiblePart;
         @BindView(R.id.hidden_part) LinearLayout hiddenPart;
         @BindView(R.id.selection_checkBox) CheckBox checkBox;

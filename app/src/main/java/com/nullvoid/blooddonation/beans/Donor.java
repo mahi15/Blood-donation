@@ -10,10 +10,19 @@ public class Donor {
 
     private String donorId, name, gender, bloodGroup, dateOfBirth, age,
             phoneNumber, email, address, location, pincode, registeredDate, registeredTime;
-    private boolean isAvailable = true, donationInLastSixMonths, admin = false, selected=false;
+    private boolean isAvailable = true, donationInLastSixMonths, admin = false, selected=false,
+            willingToDonateToday = false;
     private int donationCount;
 
     public Donor() {
+    }
+
+    public boolean isWillingToDonateToday() {
+        return willingToDonateToday;
+    }
+
+    public void setWillingToDonateToday(boolean willingToDonateToday) {
+        this.willingToDonateToday = willingToDonateToday;
     }
 
     public boolean isSelected() {

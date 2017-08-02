@@ -64,7 +64,7 @@
             android:label="Donors"
             android:theme="@style/AppThemeNoActionBar"/>
 
-        <activity android:name=".admin.DonationHistoryActivity"
+        <activity android:name=".admin.MatchListActivity"
             android:theme="@style/AppThemeNoActionBar"
             android:label="History of Donations" />
 
@@ -73,6 +73,9 @@
             android:theme="@style/AppThemeNoActionBar" />
         <activity android:name=".admin.DonneDetailActivity"
             android:label="Donne Details"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity android:name=".DonateTodayActivity"
+            android:label="Donate Today"
             android:theme="@style/AppThemeNoActionBar" />
     </application>
 

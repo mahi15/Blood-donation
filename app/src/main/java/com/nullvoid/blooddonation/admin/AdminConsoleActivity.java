@@ -40,6 +40,7 @@ public class AdminConsoleActivity extends AppCompatActivity {
     @BindView(R.id.admin_history_button) Button historyButton;
     @BindView(R.id.donate_today_count) TextView donateTodayCountView;
     @BindView(R.id.req_made_today_count) TextView requestsTodayCountView;
+    @BindView(R.id.donation_done_today_count) TextView donationDoneTodayText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class AdminConsoleActivity extends AppCompatActivity {
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context, DonationHistoryActivity.class));
+                startActivity(new Intent(context, MatchListActivity.class));
             }
         });
 
@@ -86,10 +87,10 @@ public class AdminConsoleActivity extends AppCompatActivity {
         SimpleDateFormat thisDate = new SimpleDateFormat("dd/MM/yyyy");
         String todate = thisDate.format(new Timestamp(System.currentTimeMillis()));
 
-        db.child(Constants.donees())
+        db.child(Constants.donees)
                 .orderByChild(Constants.requestedDate())
                 .equalTo(todate)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String requestsTodayCount = String.valueOf(dataSnapshot.getChildrenCount());
@@ -100,10 +101,23 @@ public class AdminConsoleActivity extends AppCompatActivity {
             }
         });
 
-        db.child(Constants.donors())
+        db.child(Constants.matches).orderByChild(Constants.completedDate)
+                .equalTo(todate).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String donationCompleteTodayCount = String.valueOf(dataSnapshot.getChildrenCount());
+                donationDoneTodayText.setText(donationCompleteTodayCount);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        db.child(Constants.donors)
                 .orderByChild(Constants.registeredDate())
                 .equalTo(todate)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String donorsTodayCount = String.valueOf(dataSnapshot.getChildrenCount());

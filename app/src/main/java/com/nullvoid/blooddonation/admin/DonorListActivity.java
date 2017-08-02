@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +43,9 @@ public class DonorListActivity extends AppCompatActivity {
     public @BindView(R.id.cardList) RecyclerView recyclerView;
     public @BindView(R.id.toolbar) Toolbar toolbar;
     public @BindView(R.id.searchbar) Toolbar searchbar;
+    @BindView(R.id.list_view_message_box) CardView listMessageBox;
+    @BindView(R.id.list_view_message) TextView listMessageText;
+    @BindView(R.id.list_view_title) TextView listTitleText;
 
     DatabaseReference db;
 
@@ -55,6 +60,9 @@ public class DonorListActivity extends AppCompatActivity {
         loadToolbars();
         db = FirebaseDatabase.getInstance().getReference();
 
+        listMessageBox.setVisibility(View.VISIBLE);
+        listTitleText.setText(R.string.loading);
+
         loadData();
 
         recyclerView.setHasFixedSize(true);
@@ -64,16 +72,16 @@ public class DonorListActivity extends AppCompatActivity {
     }
 
     public void loadData() {
-        db.child(Constants.donors()).addListenerForSingleValueEvent(new ValueEventListener() {
+        db.child(Constants.donors).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Donor donor = postSnapshot.getValue(Donor.class);
                     donors.add(donor);
                 }
-
                 donorAdapter = new DonorAdapter(donors, context, context.getClass().equals(DonorSelectionListActivity.class));
                 recyclerView.setAdapter(donorAdapter);
+                listMessageBox.setVisibility(View.GONE);
             }
 
             @Override

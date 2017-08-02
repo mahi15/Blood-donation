@@ -10,9 +10,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -28,6 +30,7 @@ import com.nullvoid.blooddonation.beans.Donor;
 import com.nullvoid.blooddonation.beans.Match;
 import com.nullvoid.blooddonation.others.CommonFunctions;
 import com.nullvoid.blooddonation.others.Constants;
+import com.nullvoid.blooddonation.others.SMS;
 
 import org.parceler.Parcels;
 
@@ -57,11 +60,17 @@ public class DonorSelectionListActivity extends DonorListActivity {
 
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.list_view_parent) LinearLayout parentView;
+    @BindView(R.id.list_view_message_box) CardView listMessageBox;
+    @BindView(R.id.list_view_message) TextView listMessageText;
+    @BindView(R.id.list_view_title) TextView listTitleText;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+
+        listMessageBox.setVisibility(View.VISIBLE);
+        listTitleText.setText(R.string.loading);
 
         //get the started intent
         intent = getIntent();
@@ -72,7 +81,7 @@ public class DonorSelectionListActivity extends DonorListActivity {
 
     @Override
     public void loadData() {
-        db.child(Constants.donors()).addListenerForSingleValueEvent(new ValueEventListener() {
+        db.child(Constants.donors).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
@@ -82,7 +91,14 @@ public class DonorSelectionListActivity extends DonorListActivity {
                     }
                 }
                 donorAdapter = new DonorAdapter(donors, context, context.getClass().equals(DonorSelectionListActivity.class));
+                listMessageBox.setVisibility(View.GONE);
                 recyclerView.setAdapter(donorAdapter);
+
+                if (donors.isEmpty()) {
+                    listMessageBox.setVisibility(View.VISIBLE);
+                    listTitleText.setText("No Donors Found");
+                    listMessageText.setText("There are no compatible donors available.");
+                }
             }
 
             @Override
@@ -203,44 +219,49 @@ public class DonorSelectionListActivity extends DonorListActivity {
                         Match match = dataSnapshot.getValue(Match.class);
 
                         ArrayList<Donor> alreadySelectedDonorsList = match.getContactedDonors();
+                        final ArrayList<Donor> newlySelectedDonorsList = new ArrayList<Donor>();
 
                         //check if any newly selected donor has been already assigned and skip him
                         for (Donor donor : selectedDonorsList) {
                             if (!alreadySelectedDonorsList.contains(donor)) {
-                                alreadySelectedDonorsList.add(donor);
+//                                alreadySelectedDonorsList.add(donor);
+                                newlySelectedDonorsList.add(donor);
                             }
-
-                            //now update the donorslist in db
-                            db.child(Constants.matches).child(clickedDonee.getDoneeId())
-                                    .child(Constants.contactedDonors()).setValue(alreadySelectedDonorsList)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            matchLoader.dismiss();
-                                            if (task.isSuccessful()) {
-
-                                                new MaterialDialog.Builder(context)
-                                                        .title(R.string.success)
-                                                        .content(R.string.donor_notified_message)
-                                                        .contentColor(Color.BLACK)
-                                                        .autoDismiss(true)
-                                                        .cancelable(false)
-                                                        .positiveText(R.string.ok)
-                                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                                            @Override
-                                                            public void onClick(MaterialDialog dialog,
-                                                                                DialogAction which) {
-                                                                finish();
-                                                            }
-                                                        })
-                                                        .show();
-                                            } else {
-                                                CommonFunctions.showSnackBar(parentView,
-                                                        getString(R.string.on_cancelled_message));
-                                            }
-                                        }
-                                    });
                         }
+                        alreadySelectedDonorsList.addAll(newlySelectedDonorsList);
+
+                        //now update the donorslist in db
+                        db.child(Constants.matches).child(clickedDonee.getDoneeId())
+                                .child(Constants.contactedDonors()).setValue(alreadySelectedDonorsList)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        matchLoader.dismiss();
+                                        if (task.isSuccessful()) {
+
+                                            notifyDonorsViaSms(newlySelectedDonorsList);
+
+                                            new MaterialDialog.Builder(context)
+                                                    .title(R.string.success)
+                                                    .content(R.string.donor_notified_message)
+                                                    .contentColor(Color.BLACK)
+                                                    .autoDismiss(true)
+                                                    .cancelable(false)
+                                                    .positiveText(R.string.ok)
+                                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                                        @Override
+                                                        public void onClick(MaterialDialog dialog,
+                                                                            DialogAction which) {
+                                                            finish();
+                                                        }
+                                                    })
+                                                    .show();
+                                        } else {
+                                            CommonFunctions.showSnackBar(parentView,
+                                                    getString(R.string.on_cancelled_message));
+                                        }
+                                    }
+                                });
                     }
 
                     @Override
@@ -281,8 +302,10 @@ public class DonorSelectionListActivity extends DonorListActivity {
                 matchLoader.dismiss();
                 if (task.isSuccessful()) {
 
+                    notifyDonorsViaSms(selectedDonorsList);
+
                     //update the status of the donne
-                    db.child(Constants.donees()).child(clickedDonee.getDoneeId())
+                    db.child(Constants.donees).child(clickedDonee.getDoneeId())
                             .child(Constants.status).setValue(Constants.statusPending());
 
                     new MaterialDialog.Builder(context)
@@ -301,6 +324,22 @@ public class DonorSelectionListActivity extends DonorListActivity {
             }
         });
 
+    }
+
+    public void notifyDonorsViaSms(ArrayList<Donor> donors) {
+        String requestTemplate = getString(R.string.need_help_message);
+        for (Donor donor : donors) {
+
+            String type = clickedDonee.getRequiredBloodGroup().contains("+") ? "positive" : "negative";
+            String requestMessage = String.format(requestTemplate,
+                    clickedDonee.getPatientName(),
+                    clickedDonee.getHospitalName(),
+                    clickedDonee.getRequiredBloodGroup() + type,
+                    clickedDonee.getPatientAttendantName(),
+                    clickedDonee.getPatientAttendantNumber() );
+
+            new SMS.sendMessage().execute(donor.getPhoneNumber(), requestMessage);
+        }
     }
 
     @Override
