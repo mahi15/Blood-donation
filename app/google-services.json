@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "809435882356",
-    "firebase_url": "https://blood-donation-58916.firebaseio.com",
-    "project_id": "blood-donation-58916",
-    "storage_bucket": "blood-donation-58916.appspot.com"
+    "project_number": "1042150716744",
+    "firebase_url": "https://rss-hss-blood-donors-bureau.firebaseio.com",
+    "project_id": "rss-hss-blood-donors-bureau",
+    "storage_bucket": "rss-hss-blood-donors-bureau.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:809435882356:android:3e46eaf569607c75",
+        "mobilesdk_app_id": "1:1042150716744:android:3e46eaf569607c75",
         "android_client_info": {
           "package_name": "com.nullvoid.blooddonation"
         }
       },
       "oauth_client": [
         {
-          "client_id": "809435882356-h2tjo9m8m5lgfkqqfkto1obn7u9asa70.apps.googleusercontent.com",
+          "client_id": "1042150716744-sfpcqscod551gp3uaok8c93g4jp6b4s4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.nullvoid.blooddonation",
@@ -23,13 +23,13 @@
           }
         },
         {
-          "client_id": "809435882356-9lpsr7pjcgkojqmju5r3ctdnf29r98s6.apps.googleusercontent.com",
+          "client_id": "1042150716744-iq5hracjkafmlluidikglpbf1ep6edp1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBO1-ZpjtrxdbZC15PFX0L2SHUzbIgdG20"
+          "current_key": "AIzaSyB-XiHUMHLt2OtW9h2Sez6A6ftzhZM-IlM"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "809435882356-9lpsr7pjcgkojqmju5r3ctdnf29r98s6.apps.googleusercontent.com",
+              "client_id": "1042150716744-iq5hracjkafmlluidikglpbf1ep6edp1.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

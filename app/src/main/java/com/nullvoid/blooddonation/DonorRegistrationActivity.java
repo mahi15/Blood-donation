@@ -120,7 +120,7 @@ public class DonorRegistrationActivity extends AppCompatActivity {
 
         tncText.setClickable(true);
         tncText.setMovementMethod(LinkMovementMethod.getInstance());
-        String tnc = "I Accept the <a href='http://www.google.com'>Terms and Conditions</a> " +
+        String tnc = "I Accept the <a href='" + Constants.privacyPolicyLink +"'>Terms and Conditions</a> " +
                 "Privacy Policy of RSS HSS Blood Donors Bureau";
         tncText.setText(Html.fromHtml(tnc));
 

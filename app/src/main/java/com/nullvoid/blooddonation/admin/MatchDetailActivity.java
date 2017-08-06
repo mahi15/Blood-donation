@@ -69,7 +69,7 @@ public class MatchDetailActivity extends AppCompatActivity {
         contactedDonorsCount.setText(String.valueOf(match.getContactedDonors().size()));
         helpedDonorsCount.setText(match.getHelpedDonors() == null ? "NONE" : String.valueOf(match.getHelpedDonors().size()));
 
-        if (match.getHelpedDonors().isEmpty()) {
+        if (match.getHelpedDonors() == null) {
             helpedDonorsCard.setVisibility(View.GONE);
         } else {
             final DonorMinimalAdapter helpedDonorAdapter = new DonorMinimalAdapter(context, match.getHelpedDonors());

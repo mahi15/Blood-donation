@@ -6,7 +6,7 @@ package com.nullvoid.blooddonation.others;
 
 public class Constants {
 
-    public static final String smsApiKey = "167663A2Dyfg7UZI597df63f";
+    public static final String smsApiKey = "168313AyQFg3Tl59832822";
 
     public static final String select = "SELECT";
     public static final String remove = "REMOVE";
@@ -15,6 +15,7 @@ public class Constants {
     public static final String currentUser = "CURRENT_USER";
     public static final String notProvided =  "Not Provided";
     public static final String selectionChange = "SELECTION_CHANGE";
+    public static final String privacyPolicyLink = "https://drive.google.com/open?id=0B6UUx2oiIrwoZWVxX1o1V3VfQm8";
 
     //donne action buttons stuff
     public static final String donneAction(){
@@ -34,6 +35,8 @@ public class Constants {
     public static final String completedDate = "completedDate";
     public static final String donatetoday = "donatetoday";
     public static final String willingToDonateToday = "willingToDonateToday";
+    public static final String others = "others";
+    public static final String ppLink = "privacy_policy_link";
 
     //donor stuff
     public static final String phoneNumber = "phoneNumber";
@@ -67,7 +70,7 @@ public class Constants {
     }
 
     public static final String shareAppExtra = "Download RSS HSS Blood Donors Bureau android application from PlayStore now!\n" +
-            " https://play.google.com/store/apps/details?id=blood_donation";
+            " https://play.google.com/store/apps/details?id=com.nullvoid.blooddonation";
     public static final String shareAppBody = "RSS HSS Blood Donors Bureau android application is now available";
 
     //SMS

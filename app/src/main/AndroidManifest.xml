@@ -77,6 +77,9 @@
         <activity android:name=".DonateTodayActivity"
             android:label="Donate Today"
             android:theme="@style/AppThemeNoActionBar" />
+        <activity android:name=".InfoActivity"
+            android:label="About Us"
+            android:theme="@style/AppThemeNoActionBar" />
     </application>
 
 </manifest>

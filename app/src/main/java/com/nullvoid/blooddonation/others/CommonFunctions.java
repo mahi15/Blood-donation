@@ -11,10 +11,11 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -27,16 +28,6 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.nullvoid.blooddonation.R;
 import com.nullvoid.blooddonation.beans.Donor;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Random;
-
-import static android.R.attr.max;
 import static android.content.Context.MODE_PRIVATE;
 import static com.nullvoid.blooddonation.others.Constants.currentUser;
 
@@ -117,103 +108,6 @@ public class CommonFunctions {
         return ret.toString();
     }
 
-    public static String sendSms(ArrayList<String> numbers, String message) {
-
-        String response = "";
-
-        String mobiles = "";
-        String authkey = Constants.smsApiKey;
-        String senderId = "102234";
-        String route="default";
-        for (int i = 1; i <= numbers.size(); i++) {
-            mobiles += numbers.get(i-1);
-            if (!(i == numbers.size())) {
-                mobiles += ",";
-            }
-        }
-
-        URLConnection myURLConnection=null;
-        URL myURL=null;
-        BufferedReader reader=null;
-
-        String encoded_message= URLEncoder.encode(message);
-        String mainUrl="http://api.msg91.com/api/sendhttp.php?";
-
-        StringBuilder sbPostData= new StringBuilder(mainUrl);
-        sbPostData.append("authkey="+authkey);
-        sbPostData.append("&mobiles="+mobiles);
-        sbPostData.append("&message="+encoded_message);
-        sbPostData.append("&route="+route);
-        sbPostData.append("&sender="+senderId);
-
-        //final string
-        mainUrl = sbPostData.toString();
-        try
-        {
-            //prepare connection
-            myURL = new URL(mainUrl);
-            myURLConnection = myURL.openConnection();
-            myURLConnection.connect();
-            reader= new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
-
-            //reading response
-            while ((response = reader.readLine()) != null)
-                //print response
-                Log.d("RESPONSE", ""+response);
-
-            //finally close connection
-            reader.close();
-        }
-        catch (IOException e)
-        {
-            Log.e("SMS", "Error Sending SMS");
-        }
-        return response;
-    }
-
-    public static String sendOtp(String number) {
-        int randomNum = (int) ((Math.random() * (9999 + 1 - 1000)) + 9999);
-        String response = "";
-
-        String otp = String.valueOf(randomNum);
-        String encoded_message = "Your OTP is " + otp;
-        String authkey = Constants.smsApiKey;
-        String mainUrl="http://api.msg91.com/api/sendotp.php?";
-
-        URLConnection myURLConnection=null;
-        BufferedReader reader=null;
-
-
-        StringBuilder sbPostData= new StringBuilder(mainUrl);
-        sbPostData.append("authkey="+authkey);
-        sbPostData.append("&mobiles="+number);
-        sbPostData.append("&message="+encoded_message);
-        sbPostData.append("&otp="+otp);
-//        sbPostData.append("&sender="+senderId);
-
-        try
-        {
-            //prepare connection
-            URL myURL = new URL(mainUrl);
-            myURLConnection = myURL.openConnection();
-            myURLConnection.connect();
-            reader= new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
-
-            //reading response
-            while ((response = reader.readLine()) != null)
-                //print response
-                Log.d("RESPONSE", ""+response);
-
-            //finally close connection
-            reader.close();
-        }
-        catch (IOException e)
-        {
-            Log.e("SMS", "Error Sending SMS");
-        }
-        return otp;
-    }
-
     public static String generateOTP() {
         int randomNum = (int) ((Math.random() * (9999 + 1 - 1000)) + 1000);
         return String.valueOf(randomNum);
@@ -241,4 +135,5 @@ public class CommonFunctions {
 
         return user;
     }
+
 }

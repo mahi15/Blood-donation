@@ -309,7 +309,7 @@ public class DoneeRequestActivity extends AppCompatActivity {
             reqDate.requestFocus();
             return false;
         }
-        String[] rd = dRequestedDate.split("/");
+        String[] rd = dRequiredDate.split("/");
         int d = Integer.parseInt(rd[0]);
         int m = Integer.parseInt(rd[1]);
         int y = Integer.parseInt(rd[2]);
@@ -331,23 +331,6 @@ public class DoneeRequestActivity extends AppCompatActivity {
             reqAreaOfResidence.requestFocus();
             return false;
         }
-        if (TextUtils.isEmpty(dPatientRefNumber)) {
-            dPatientRefNumber = Constants.notProvided;
-        }
-        if (TextUtils.isEmpty(dAttendantName)) {
-            dAttendantName = Constants.notProvided;
-        }
-        else if (dAttendantName.length() < 3){
-            reqAttendantName.setError(leaveBlank);
-        }
-        if (TextUtils.isEmpty(dAttendantNumber)){
-            dAttendantNumber = Constants.notProvided;
-        }
-        else if (dAttendantNumber.length() != 10) {
-            reqAttendantNumber.setError(leaveBlank);
-            reqAttendantNumber.requestFocus();
-            return false;
-        }
         if (TextUtils.isEmpty(dHospitalName)) {
             hospitalName.setError(required);
             hospitalName.requestFocus();
@@ -359,18 +342,40 @@ public class DoneeRequestActivity extends AppCompatActivity {
             return false;
         }
         if (TextUtils.isEmpty(dHospitalNumber)) {
-            hospitalNumber.setError(required);
+            dHospitalNumber = Constants.notProvided;
+        } else if (dHospitalNumber.length() < 6) {
+            hospitalNumber.setError(notValid);
             hospitalNumber.requestFocus();
             return false;
         }
         if (TextUtils.isEmpty(dHospitalAddress)) {
-            hospitalAddress.setError(required);
+            dHospitalAddress = Constants.notProvided;
+        } else if (dHospitalAddress.length() < 5) {
+            hospitalAddress.setError(notValid);
             hospitalAddress.requestFocus();
             return false;
         }
         if (dHospitalPincode.length() != 6) {
             hospitalPin.setError(notValid);
             hospitalPin.requestFocus();
+            return false;
+        }
+        if (TextUtils.isEmpty(dPatientRefNumber)) {
+            dPatientRefNumber = Constants.notProvided;
+        }
+        if (TextUtils.isEmpty(dAttendantName)) {
+            dAttendantName = Constants.notProvided;
+        }
+        else if (dAttendantName.length() < 3){
+            reqAttendantName.setError(leaveBlank);
+        }
+        if (TextUtils.isEmpty(dAttendantNumber)){
+            reqAttendantNumber.setError(required);
+            reqAttendantNumber.requestFocus();
+        }
+        else if (dAttendantNumber.length() != 10) {
+            reqAttendantNumber.setError(leaveBlank);
+            reqAttendantNumber.requestFocus();
             return false;
         }
         return true;

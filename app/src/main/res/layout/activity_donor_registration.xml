@@ -286,12 +286,15 @@
 
             <Button
                 android:id="@+id/regSubmit"
-                style="@style/button_style"
+                android:background="@drawable/background_ripple_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="Register" />
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="Submit" />
 
         </LinearLayout>
     </ScrollView>

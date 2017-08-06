@@ -117,16 +117,17 @@
                         android:textColor="@android:color/black"
                         android:textSize="18sp" />
                 </TableRow>
-
             </TableLayout>
-
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
     <Button
         android:id="@+id/admin_donne_button"
-        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@drawable/background_ripple_button"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="25dp"
@@ -139,7 +140,10 @@
 
     <Button
         android:id="@+id/admin_donor_button"
-        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@drawable/background_ripple_button"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="25dp"
@@ -151,7 +155,10 @@
 
     <Button
         android:id="@+id/admin_history_button"
-        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@drawable/background_ripple_button"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="25dp"

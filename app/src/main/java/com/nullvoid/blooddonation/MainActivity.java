@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btn_donate_blood) Button donateBloodButton;
     @BindView(R.id.btn_req_blood) Button requestBloodButton;
     @BindView(R.id.btn_profile) Button profileButton;
+    @BindView(R.id.btn_share) Button shareButton;
     @BindView(R.id.share_image) ImageView shareImage;
     @BindView(R.id.info_image) ImageView infoImage;
     @BindView(R.id.logo_image) ImageView logoImage;
@@ -101,8 +103,36 @@ public class MainActivity extends AppCompatActivity {
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentUser == null) {
-                    checkIfDonorExists();
+                if (currentUser == null){
+                    new MaterialDialog.Builder(context)
+                            .title(R.string.not_registered)
+                            .content(R.string.register_or_login)
+                            .contentColor(Color.BLACK)
+                            .autoDismiss(true)
+                            .positiveText(R.string.register)
+                            .negativeText(R.string.login)
+                            .neutralText(R.string.cancel)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog dialog,
+                                                    DialogAction which) {
+                                    startActivity(new Intent(context, DonorRegistrationActivity.class));
+                                }
+                            })
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog dialog,
+                                                    DialogAction which) {
+                                    checkIfDonorExists();
+                                }
+                            })
+                            .onAny(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog dialog,
+                                                    DialogAction which) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
                 } else {
                     startActivity(new Intent(context, DonorProfileActivity.class));
                 }
@@ -145,6 +175,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     startActivity(new Intent(context, DonateTodayActivity.class));
                 }
+            }
+        });
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareIt();
             }
         });
 
@@ -233,8 +270,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void verifyPhoneNumber(final Donor donor){
 
+        if(!CommonFunctions.isNetworkAvailable(context)) {
+            CommonFunctions.showToast(context, getString(R.string.no_internet_message));
+            return;
+        }
+
         final String otp = CommonFunctions.generateOTP();
-//        new SMS.sendOtp(context).execute(donor.getPhoneNumber(), otp);
 
         new SMS.sendOtp(context) {
             @Override
@@ -257,9 +298,19 @@ public class MainActivity extends AppCompatActivity {
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 String enteredCode = input.toString().trim();
                                 if (otp.equals(enteredCode)) {
-                                    CommonFunctions.signInUser(context, donor);
-                                    finish();
-                                    startActivity(new Intent(context, MainActivity.class));
+                                    loadingDialog.show();
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            CommonFunctions.signInUser(context, donor);
+                                            CommonFunctions.showToast(context, getString(R.string.login_success_message));
+                                            Intent i = new Intent(context, MainActivity.class);
+                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(i);
+                                            loadingDialog.dismiss();
+                                        }
+                                    }, 2000);
+
                                 }
                             }
                         })
@@ -286,6 +337,9 @@ public class MainActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    return;
+                }
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     DonateToday dt = ds.getValue(DonateToday.class);
                     donateTodays.add(dt);

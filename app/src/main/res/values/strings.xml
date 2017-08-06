@@ -32,6 +32,15 @@
     </string-array>
 
     <string name="app_name">RSS HSS Blood Donors Bureau</string>
+    <string name="rss_hss_about_info">The history of voluntary blood donation in India dates back to 1942
+        during the second world war, when blood donors were required to help the wounded soldiers.
+        The first blood bank was established in Kolkata, West Bengal in March 1942 at the All India
+        Institute of Hygiene and Public Health and was managed by the Red Cross. The donors were mostly
+        government employees and people from the Anglo-Indian community who donated blood for a humanitarian
+        cause. We at RSS HSS Blood Donors Bureau try to save every life who in need of blood.
+    </string>
+    <string name="contact_email">rsshssblooddonors@gmail.com</string>
+
     <string name="select">select</string>
     <string name="remove">remove</string>
     <string name="user_details">userDetails</string>

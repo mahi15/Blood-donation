@@ -35,15 +35,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="15dp">
 
             <ImageView
                 android:id="@+id/logo_image"
-                android:layout_width="85dp"
-                android:layout_height="85dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="20dp"
@@ -83,8 +83,8 @@
 
                             <Button
                                 android:id="@+id/btn_req_blood"
-                                android:layout_width="120dp"
-                                android:layout_height="120dp"
+                                android:layout_width="110dp"
+                                android:layout_height="110dp"
                                 android:background="@drawable/circle_button_background"
                                 android:drawableTop="@drawable/ic_add_circle_outline_white"
                                 android:paddingBottom="20dp"
@@ -100,8 +100,8 @@
 
                             <Button
                                 android:id="@+id/btn_donate_blood"
-                                android:layout_width="120dp"
-                                android:layout_height="120dp"
+                                android:layout_width="110dp"
+                                android:layout_height="110dp"
                                 android:background="@drawable/circle_button_background"
                                 android:drawableTop="@drawable/ic_person_add_white"
                                 android:paddingBottom="20dp"
@@ -117,7 +117,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center_horizontal"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="15dp">
 
                         <LinearLayout
                             android:layout_weight="1"
@@ -125,8 +126,8 @@
 
                             <Button
                                 android:id="@+id/btn_donate_today"
-                                android:layout_width="120dp"
-                                android:layout_height="120dp"
+                                android:layout_width="110dp"
+                                android:layout_height="110dp"
                                 android:background="@drawable/circle_button_background"
                                 android:drawableTop="@drawable/ic_sentiment_satisfied_white"
                                 android:paddingBottom="20dp"
@@ -142,8 +143,8 @@
 
                             <Button
                                 android:id="@+id/btn_profile"
-                                android:layout_width="120dp"
-                                android:layout_height="120dp"
+                                android:layout_width="110dp"
+                                android:layout_height="110dp"
                                 android:background="@drawable/circle_button_background"
                                 android:drawableTop="@drawable/ic_person_outline_white"
                                 android:paddingBottom="20dp"
@@ -154,12 +155,51 @@
                         </LinearLayout>
                     </TableRow>
 
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <!--<LinearLayout-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:gravity="center_horizontal">-->
+                            <!--<Button-->
+                                <!--android:id="@+id/btn_info"-->
+                                <!--android:layout_width="110dp"-->
+                                <!--android:layout_height="110dp"-->
+                                <!--android:background="@drawable/circle_button_background"-->
+                                <!--android:drawableTop="@drawable/ic_info_white"-->
+                                <!--android:paddingBottom="20dp"-->
+                                <!--android:paddingTop="20dp"-->
+                                <!--android:text="Info"-->
+                                <!--android:textColor="@color/white"-->
+                                <!--android:textSize="13sp" />-->
+                        <!--</LinearLayout>-->
+
+                        <LinearLayout
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal">
+                            <Button
+                                android:id="@+id/btn_share"
+                                android:layout_width="110dp"
+                                android:layout_height="110dp"
+                                android:background="@drawable/circle_button_background"
+                                android:drawableTop="@drawable/ic_share_white"
+                                android:paddingBottom="20dp"
+                                android:paddingTop="20dp"
+                                android:text="Share"
+                                android:textColor="@color/white"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </TableRow>
+
                 </TableLayout>
 
                 <Button
                     android:id="@+id/admin"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
                     android:layout_margin="10dp"
                     android:background="@drawable/circle_button_background"
                     android:drawableTop="@drawable/ic_change_history_white"
@@ -175,13 +215,14 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout8"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/bottom_bar_background"
         android:gravity="center_vertical|center_horizontal"
         android:orientation="horizontal"
-        android:id="@+id/linearLayout8">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/info_image"

@@ -2,6 +2,7 @@ package com.nullvoid.blooddonation;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -29,8 +29,6 @@ import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.nullvoid.blooddonation.others.Constants.currentUser;
 
 /**
  * Created by sanath on 27/06/17.
@@ -52,7 +50,7 @@ public class DonorProfileActivity extends AppCompatActivity {
     @BindView(R.id.profile_available_switch) Switch availableSwitch;
     @BindView(R.id.available_loading_progress) ProgressBar availableProgress;
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.call_donor_image) ImageView callDonorImage;
+//    @BindView(R.id.call_donor_image) ImageView callDonorImage;
 
     DonorProfileActivity context = this;
 
@@ -90,8 +88,10 @@ public class DonorProfileActivity extends AppCompatActivity {
     public void loadView() {
         if (adminMode) {
             getSupportActionBar().setTitle(user.getName());
-            callDonorImage.setVisibility(View.VISIBLE);
-            callDonorImage.setOnClickListener(new View.OnClickListener() {
+
+            profileNumber.setTextColor(Color.BLUE);
+            profileNumber.setClickable(true);
+            profileNumber.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     CommonFunctions.call(context, user.getPhoneNumber());
@@ -143,10 +143,7 @@ public class DonorProfileActivity extends AppCompatActivity {
 
                         if (!adminMode) {
                             user.setAvailable(available);
-                            SharedPreferences.Editor editor = sp.edit();
-                            String userJson = gson.toJson(user);
-                            editor.putString(currentUser, userJson);
-                            editor.apply();
+                            CommonFunctions.signInUser(context, user);
                         }
 
                         //show completion dialog

@@ -206,7 +206,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Hospital Phone Number"
+                    android:hint="Hospital Phone Number (If Any)"
                     android:inputType="number"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
@@ -220,7 +220,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Hospital Address"
+                    android:hint="Hospital Address (If Any)"
                     android:inputType="textPostalAddress"
                     android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
@@ -248,7 +248,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Optional Details"
+                    android:text="OtherDetails"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="24sp" />
@@ -299,7 +299,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Patient's Attendant's Number(If Any)"
+                    android:hint="Patient's Attendant's Number"
                     android:inputType="textPersonName"
                     android:orientation="horizontal"
                     android:textAlignment="center" />
@@ -307,13 +307,15 @@
 
             <Button
                 android:id="@+id/reqSubmit"
-                style="@style/button_style"
+                android:background="@drawable/background_ripple_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
-                android:text="SUBMIT" />
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="Submit" />
         </LinearLayout>
 
     </ScrollView>
